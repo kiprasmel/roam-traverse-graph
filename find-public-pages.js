@@ -1,7 +1,14 @@
 #!/usr/bin/env node
 
+// @ts-check
+
+/** @type string */
 const pathToGraphFile = process.argv?.[2] || "./json/kipras-g1.json";
+
+/** @type string */
 const publicTag = process.argv?.[3] || "#public";
+
+/** @type boolean */
 const enableRecursiveSearch = Boolean(Number(process.argv?.[4] ?? 0) ?? 0);
 
 console.log({
@@ -10,8 +17,14 @@ console.log({
 	enableRecursiveSearch,
 });
 
+/**
+ * @type { import("./types").Page[] }
+ */
 const allPages = require(pathToGraphFile);
 
+/**
+ * @type { import("./types").FindPublicPages }
+ */
 const findPublicPages = (somePages, isRoot = true) =>
 	somePages
 		.filter((page) => !!page.children?.length)
@@ -23,7 +36,7 @@ const findPublicPages = (somePages, isRoot = true) =>
 				return {
 					page, //
 					hasPublicTag: hasPublicTagOnRootLevelParagraphs,
-					isRoot,
+					isPublicTagInRootBlocks: isRoot,
 				};
 			}
 
@@ -31,25 +44,30 @@ const findPublicPages = (somePages, isRoot = true) =>
 				return {
 					page, //
 					hasPublicTag: true,
-					isRoot,
+					isPublicTagInRootBlocks: isRoot,
 				};
 			}
 
 			return {
 				page,
 				hasPublicTag: !!findPublicPages(page.children, false).length,
-				isRoot: false,
+				isPublicTagInRootBlocks: false,
 			};
 		})
 		.filter((x) => x.hasPublicTag);
 
+/**
+ * @type { import("./types").PageWithMetadata[] }
+ */
 const publicPagesWrappedWithMetadata = findPublicPages(allPages);
 
 console.log(
-	publicPagesWrappedWithMetadata.length,
-	publicPagesWrappedWithMetadata.map(({ isRoot, page }) => ({
+	publicPagesWrappedWithMetadata.map(({ isPublicTagInRootBlocks: isRoot, page }) => ({
 		isRoot, //
-		title: page.title,
+		title: "title" in page ? page.title : undefined,
+		string: "string" in page ? page.string : undefined,
+		/** inside array to print `page: [ [Object] ]` instead of the whole */
 		page: [page],
-	}))
+	})),
+	publicPagesWrappedWithMetadata.length
 );

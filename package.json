@@ -1,0 +1,15 @@
+{
+	"name": "roam-safe-public-pages",
+	"version": "0.0.0",
+	"main": "index.js",
+	"types": "./types.d.ts",
+	"author": "Kipras Melnikovas <kipras@kipras.org> (https://kipras.org/)",
+	"license": "UNLICENSED",
+	"scripts": {
+		"ts": "npx tsc",
+		"tss": "npx tsc -w"
+	},
+	"devDependencies": {
+		"@types/node": "16.11.0"
+	}
+}
