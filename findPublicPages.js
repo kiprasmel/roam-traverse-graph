@@ -6,8 +6,7 @@
 const findPublicPages = (
 	somePages = [], //
 	{
-		// pathToGraphJsonFile, //
-		publicTag = "#public",
+		publicTag = "#public", //
 		enableRecursiveSearch = false,
 		isRoot = true,
 		...rest
@@ -15,9 +14,10 @@ const findPublicPages = (
 ) => {
 	if (isRoot) {
 		console.log({
-			// pathToGraphFile, //
 			publicTag, //
 			enableRecursiveSearch,
+			isRoot,
+			...rest,
 		});
 	}
 
