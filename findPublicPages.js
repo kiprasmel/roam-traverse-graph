@@ -7,7 +7,7 @@ const findPublicPages = (
 	somePages = [], //
 	{
 		publicTag = "#public", //
-		enableRecursiveSearch = false,
+		recursive = false,
 		isRoot = true,
 		...rest
 	} = {}
@@ -15,7 +15,7 @@ const findPublicPages = (
 	if (isRoot) {
 		console.log({
 			publicTag, //
-			enableRecursiveSearch,
+			recursive,
 			isRoot,
 			...rest,
 		});
@@ -27,7 +27,7 @@ const findPublicPages = (
 			const hasPublicTagOnRootLevelParagraphs = !!page.children.filter((c) => c.string.includes(publicTag))
 				.length;
 
-			if (!enableRecursiveSearch) {
+			if (!recursive) {
 				return {
 					page, //
 					hasPublicTag: hasPublicTagOnRootLevelParagraphs,
@@ -46,7 +46,7 @@ const findPublicPages = (
 			/** @type boolean */
 			const doChildrenHavePublicTag = !!findPublicPages(page.children, {
 				publicTag, //
-				enableRecursiveSearch,
+				recursive,
 				isRoot: false,
 				...rest,
 			}).length;
