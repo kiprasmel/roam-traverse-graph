@@ -28,10 +28,19 @@ export type Page = EntityBase & {
 	children: Block[];
 };
 
+export type FindPublicPagesOptions = {
+	publicTag?: string;
+	enableRecursiveSearch?: boolean;
+	isRoot?: boolean;
+};
+
 export type PageWithMetadata = {
 	page: Page | Block;
 	hasPublicTag: boolean;
 	isPublicTagInRootBlocks: boolean;
 };
 
-export type FindPublicPages = (pagesOrTheirChildren: (Page | Block)[], isRoot?: boolean) => PageWithMetadata[];
+export type FindPublicPages = (
+	somePagesOrBlocks: (Page | Block)[], //
+	options?: FindPublicPagesOptions
+) => PageWithMetadata[];
