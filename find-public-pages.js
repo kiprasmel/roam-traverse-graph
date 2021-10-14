@@ -11,7 +11,7 @@ const pathToGraphFile = process.argv?.[2] || "./json/kipras-g1.json";
 const publicTag = process.argv?.[3] || "#public";
 
 /** @type boolean */
-const enableRecursiveSearch = !!(Number(process.argv?.[4] ?? 0) ?? 0);
+const recursive = !!(Number(process.argv?.[4] ?? 0) ?? 0);
 
 /**
  * @type { import("./types").Page[] }
@@ -23,7 +23,7 @@ const allPages = require(pathToGraphFile);
  */
 const publicPagesWrappedWithMetadata = findPublicPages(allPages, {
 	publicTag,
-	enableRecursiveSearch,
+	recursive,
 });
 
 console.log(
