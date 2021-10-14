@@ -2,16 +2,17 @@
 
 // @ts-check
 
+const { defaultPublicTag, defaultRecursive } = require("./defaults");
 const { findPublicPages } = require("./findPublicPages");
 
 /** @type string */
 const pathToGraphFile = process.argv?.[2] || "./json/kipras-g1.json";
 
 /** @type string */
-const publicTag = process.argv?.[3] || "#public";
+const publicTag = process.argv?.[3] || defaultPublicTag;
 
 /** @type boolean */
-const recursive = !!(Number(process.argv?.[4] ?? 0) ?? 0);
+const recursive = !!(Number(process.argv?.[4] ?? 0) ?? defaultRecursive);
 
 /**
  * @type { import("./types").Page[] }
