@@ -1,13 +1,15 @@
 // @ts-check
 
+const { defaultPublicTag, defaultRecursive } = require("./defaults");
+
 /**
  * @type { import("./types").FindPublicPages }
  */
 const findPublicPages = (
 	somePages = [], //
 	{
-		publicTag = "#public", //
-		recursive = false,
+		publicTag = defaultPublicTag, //
+		recursive = defaultRecursive,
 		isRoot = true,
 		...rest
 	} = {}
