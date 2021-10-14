@@ -30,7 +30,14 @@ export type Page = EntityBase & {
 
 export type FindPublicPagesOptions = {
 	publicTag?: string;
-	enableRecursiveSearch?: boolean;
+	/**
+	 * default=false
+	 *
+	 * if enabled, will search not only the root blocks (bulletpoints) of the page,
+	 * but also their children blocks, recursively.
+	 *
+	 */
+	recursive?: boolean;
 	isRoot?: boolean;
 };
 
