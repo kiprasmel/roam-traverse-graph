@@ -1,0 +1,30 @@
+{
+	"t": "d",
+	"d": {
+		"r": 5,
+		"a": "m",
+		"b": {
+			"p": "/v10/dbs/kiprasmel",
+			"d": {
+				"/meta/last-log-k": "-Mm0_8SyjwVWPOaxxjBk",
+				"/meta/last-log-t": { ".sv": "timestamp" },
+				"/log/-Mm0_8SyjwVWPOaxxjBk": {
+					"tx": "[[\"~:db/add\",[\"~:block/uid\",\"YkgosRxK1\"],\"~:page/permissions\",[\"^ \",\"~:public\",\"readonly\"]],[\"^ \",\"~:version/id\",\"0.8.8\",\"~:version/nonce\",\"uuidebe33063-d0c2-4f14-8809-44345eaf6968\"]]",
+					"tx-meta": {
+						"event-name": "change-page-public",
+						"tx-name": "change-page-public",
+						"tx-id": "uuidd07014e7-f27f-468c-a34a-b41e451c3238",
+						"event-id": "uuid2551793b-df0a-407f-8481-59fa4bd59207",
+						"undoable?": null
+					},
+					"app-version": "0.8.8",
+					"app-sha": "34a34e45",
+					"session-id": "uuidddf69e57-dff8-4181-b909-a02e2aaddb5b",
+					"t": { ".sv": "timestamp" },
+					"time": 1634261571660,
+					"user-uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+				}
+			}
+		}
+	}
+}
