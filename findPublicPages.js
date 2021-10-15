@@ -3,7 +3,7 @@
 const { defaultPublicTag, defaultRecursive } = require("./defaults");
 
 /**
- * @type { import("./types").FindPublicPages }
+ * @type { import("./roam").FindPublicPages }
  */
 const findPublicPages = (
 	somePages = [], //
@@ -24,7 +24,7 @@ const findPublicPages = (
 	}
 
 	return somePages
-		.filter((page) => !!page.children?.length)
+		.filter((page) => page.children && !!page.children.length)
 		.map((page) => {
 			const hasPublicTagOnRootLevelParagraphs = !!page.children.filter((c) => c.string.includes(publicTag))
 				.length;
