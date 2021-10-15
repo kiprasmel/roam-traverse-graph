@@ -1,0 +1,3 @@
+[submodule "roam-research-private-api"]
+	path = roam-research-private-api
+	url = https://github.com/kiprasmel/roam-research-private-api.git
