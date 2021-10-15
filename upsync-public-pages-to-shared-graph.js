@@ -10,8 +10,8 @@ const { findPublicPages } = require("./findPublicPages");
 const publicPages = findPublicPages(
 	require("../notes/json/kipras-g1.json"), //
 	{
-		recursive: false,
-		publicTag: "#publix", // custom for testing
+		recursive: true,
+		publicTag: "#public", // custom for testing
 	}
 ).map((p) => p.page);
 
@@ -39,7 +39,7 @@ const secrets = require("./secrets.json"); // TODO FIXME
 const publicGraphToImportInto = "kiprasmel";
 
 const api = new RoamPrivateApi(publicGraphToImportInto, secrets.email, secrets.password, {
-	headless: true,
+	headless: false,
 	// @ts-expect-error
 	folder: ".",
 	// folder: "/tmp/",
@@ -53,5 +53,8 @@ Promise.resolve()
 	.then(() => api.markSelectedPagesAsPubliclyReadable(publicPages))
 	.then(() => console.log("done", (new Date() - startTime) / 1000))
 	.then(() => process.exit(0))
-	.catch(() => process.exit(1))
+	.catch((e) => {
+		console.error(e);
+		process.exit(1);
+	})
 	.finally(() => console.log("finally"));
