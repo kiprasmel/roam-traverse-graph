@@ -58,3 +58,4 @@ Promise.resolve()
 		process.exit(1);
 	})
 	.finally(() => console.log("finally"));
+

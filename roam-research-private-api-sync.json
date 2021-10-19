@@ -2730,6 +2730,9 @@
           },
           {
             ":block/uid": "JVlsf8b-p"
+          },
+          {
+            ":block/uid": "wxkwogKAB"
           }
         ],
         ":create/user": {
@@ -3351,11 +3354,6 @@
                 "uid": "OOAVy9fO-"
               },
               {
-                ":block/refs": [
-                  {
-                    ":block/uid": "VBSImBp3a"
-                  }
-                ],
                 ":create/user": {
                   ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
                 },
@@ -3363,21 +3361,11 @@
                   ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
                 },
                 "create-time": 1632072159157,
-                "edit-time": 1632578658406,
-                "refs": [
-                  {
-                    "uid": "VBSImBp3a"
-                  }
-                ],
-                "string": "{{[[TODO]]}} zeppelin",
+                "edit-time": 1634487151741,
+                "string": "zeppelin",
                 "uid": "0FLo0J1KL"
               },
               {
-                ":block/refs": [
-                  {
-                    ":block/uid": "VBSImBp3a"
-                  }
-                ],
                 ":create/user": {
                   ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
                 },
@@ -3385,21 +3373,11 @@
                   ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
                 },
                 "create-time": 1632072161602,
-                "edit-time": 1632075291256,
-                "refs": [
-                  {
-                    "uid": "VBSImBp3a"
-                  }
-                ],
-                "string": "{{[[TODO]]}} tableau",
+                "edit-time": 1634487153013,
+                "string": "tableau",
                 "uid": "2_OiH9m5S"
               },
               {
-                ":block/refs": [
-                  {
-                    ":block/uid": "VBSImBp3a"
-                  }
-                ],
                 ":create/user": {
                   ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
                 },
@@ -3407,21 +3385,11 @@
                   ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
                 },
                 "create-time": 1632072164901,
-                "edit-time": 1632075291256,
-                "refs": [
-                  {
-                    "uid": "VBSImBp3a"
-                  }
-                ],
-                "string": "{{[[TODO]]}} more amplitude",
+                "edit-time": 1634487153838,
+                "string": "more amplitude",
                 "uid": "bavF3QQGc"
               },
               {
-                ":block/refs": [
-                  {
-                    ":block/uid": "VBSImBp3a"
-                  }
-                ],
                 ":create/user": {
                   ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
                 },
@@ -3429,14 +3397,21 @@
                   ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
                 },
                 "create-time": 1632072169164,
-                "edit-time": 1632075291256,
-                "refs": [
-                  {
-                    "uid": "VBSImBp3a"
-                  }
-                ],
-                "string": "{{[[TODO]]}} more on the custom stuff too, e.g. whatever the data warehouse people are doing",
+                "edit-time": 1634487157207,
+                "string": "more on the custom stuff too, e.g. whatever the data warehouse people are doing",
                 "uid": "Tsv4LQgUV"
+              },
+              {
+                ":create/user": {
+                  ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+                },
+                ":edit/user": {
+                  ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+                },
+                "create-time": 1634597820209,
+                "edit-time": 1634597820209,
+                "string": "",
+                "uid": "m3eDeRPTd"
               }
             ],
             "create-time": 1632072112964,
@@ -3450,9 +3425,400 @@
             "uid": "yZjzm5rF8"
           },
           {
+            ":create/user": {
+              ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+            },
+            ":edit/user": {
+              ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+            },
+            "create-time": 1632072182812,
+            "edit-time": 1634487192374,
+            "string": "more general questions:",
+            "uid": "7F3rp04u5"
+          },
+          {
+            ":block/refs": [
+              {
+                ":block/uid": "rOfyeA8Tz"
+              }
+            ],
+            ":create/user": {
+              ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+            },
+            ":edit/user": {
+              ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+            },
+            "children": [
+              {
+                ":block/refs": [
+                  {
+                    ":block/uid": "VBSImBp3a"
+                  }
+                ],
+                ":create/user": {
+                  ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+                },
+                ":edit/user": {
+                  ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+                },
+                "children": [
+                  {
+                    ":create/user": {
+                      ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+                    },
+                    ":edit/user": {
+                      ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+                    },
+                    "create-time": 1632222158982,
+                    "edit-time": 1632222164230,
+                    "string": "this year yes likely",
+                    "uid": "kQl27YxZu"
+                  },
+                  {
+                    ":create/user": {
+                      ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+                    },
+                    ":edit/user": {
+                      ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+                    },
+                    "children": [
+                      {
+                        ":create/user": {
+                          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+                        },
+                        ":edit/user": {
+                          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+                        },
+                        "create-time": 1632222182733,
+                        "edit-time": 1632222185587,
+                        "string": "cui5 theming",
+                        "uid": "-Xs7u6mro"
+                      },
+                      {
+                        ":create/user": {
+                          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+                        },
+                        ":edit/user": {
+                          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+                        },
+                        "create-time": 1632222185568,
+                        "edit-time": 1632222187119,
+                        "string": "user profile",
+                        "uid": "88dt5d6Zb"
+                      },
+                      {
+                        ":create/user": {
+                          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+                        },
+                        ":edit/user": {
+                          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+                        },
+                        "create-time": 1632222187102,
+                        "edit-time": 1632222196483,
+                        "string": "external ones too (every tuesday)",
+                        "uid": "BpXW5J3TQ"
+                      },
+                      {
+                        ":block/refs": [
+                          {
+                            ":block/uid": "VBSImBp3a"
+                          },
+                          {
+                            ":block/uid": "pHco5hQZn"
+                          }
+                        ],
+                        ":create/user": {
+                          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+                        },
+                        ":edit/user": {
+                          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+                        },
+                        "create-time": 1632222237338,
+                        "edit-time": 1632222372839,
+                        "refs": [
+                          {
+                            "uid": "VBSImBp3a"
+                          },
+                          {
+                            "uid": "pHco5hQZn"
+                          }
+                        ],
+                        "string": "{{[[TODO]]}} -> let [[Martin Kapp (Pipedrive team mngr!)]] know if you want to participate and it's already filled!! to give examples",
+                        "uid": "DAd6GKRBi"
+                      },
+                      {
+                        ":create/user": {
+                          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+                        },
+                        ":edit/user": {
+                          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+                        },
+                        "create-time": 1632222366548,
+                        "edit-time": 1632222371490,
+                        "string": "can apply in mission tool",
+                        "uid": "WUEItJmHy"
+                      }
+                    ],
+                    "create-time": 1632222165628,
+                    "edit-time": 1632222182764,
+                    "string": "some upcoming ones mayb",
+                    "uid": "44QEAmKYE"
+                  }
+                ],
+                "create-time": 1632072251996,
+                "edit-time": 1634487103855,
+                "refs": [
+                  {
+                    "uid": "VBSImBp3a"
+                  }
+                ],
+                "string": "{{[[TODO]]}} am I expected to join a mission anytime soon?",
+                "uid": "anS5Nny6r"
+              },
+              {
+                ":block/refs": [
+                  {
+                    ":block/uid": "rOfyeA8Tz"
+                  }
+                ],
+                ":create/user": {
+                  ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+                },
+                ":edit/user": {
+                  ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+                },
+                "children": [
+                  {
+                    ":create/user": {
+                      ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+                    },
+                    ":edit/user": {
+                      ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+                    },
+                    "create-time": 1632222153113,
+                    "edit-time": 1632222158226,
+                    "string": "not this year",
+                    "uid": "TJx5uWw4g"
+                  },
+                  {
+                    ":block/refs": [
+                      {
+                        ":block/uid": "VBSImBp3a"
+                      }
+                    ],
+                    ":create/user": {
+                      ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+                    },
+                    ":edit/user": {
+                      ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+                    },
+                    "create-time": 1632072276068,
+                    "edit-time": 1632075291256,
+                    "refs": [
+                      {
+                        "uid": "VBSImBp3a"
+                      }
+                    ],
+                    "string": "{{[[TODO]]}} how could I get as well prepared for it as possible?",
+                    "uid": "AiAu0q2kX"
+                  }
+                ],
+                "create-time": 1632072267911,
+                "edit-time": 1634487255357,
+                "refs": [
+                  {
+                    "uid": "rOfyeA8Tz"
+                  }
+                ],
+                "string": "{{[[DONE]]}} am I expected to lead one?",
+                "uid": "O8NxOXtHW"
+              },
+              {
+                ":create/user": {
+                  ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+                },
+                ":edit/user": {
+                  ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+                },
+                "create-time": 1632072293586,
+                "edit-time": 1632075291256,
+                "string": ".",
+                "uid": "WBcNmIrNt"
+              }
+            ],
+            "create-time": 1632072239627,
+            "edit-time": 1634597786255,
+            "refs": [
+              {
+                "uid": "rOfyeA8Tz"
+              }
+            ],
+            "string": "{{[[DONE]]}} how do missions work?",
+            "uid": "B0b-D-P4p"
+          },
+          {
             ":block/refs": [
               {
                 ":block/uid": "VBSImBp3a"
+              },
+              {
+                ":block/uid": "WCJoz9AhZ"
+              },
+              {
+                ":block/uid": "hMBgHmSNk"
+              }
+            ],
+            ":create/user": {
+              ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+            },
+            ":edit/user": {
+              ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+            },
+            "children": [
+              {
+                ":block/refs": [
+                  {
+                    ":block/uid": "relh_XTeT"
+                  }
+                ],
+                ":create/user": {
+                  ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+                },
+                ":edit/user": {
+                  ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+                },
+                "create-time": 1632072300725,
+                "edit-time": 1632075291256,
+                "refs": [
+                  {
+                    "uid": "relh_XTeT"
+                  }
+                ],
+                "string": "talked w/ [[Ingrid Palm - pipedrive recruiter & people partner :>]] recently",
+                "uid": "0bBf_2soE"
+              },
+              {
+                ":create/user": {
+                  ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+                },
+                ":edit/user": {
+                  ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+                },
+                "create-time": 1632072333076,
+                "edit-time": 1632075291256,
+                "string": "feel like it would be very beneficial to learn how the process works, how to start helping out myself, start shadowing someone to learn more about it, etc",
+                "uid": "JGk78a5W4"
+              },
+              {
+                ":create/user": {
+                  ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+                },
+                ":edit/user": {
+                  ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+                },
+                "children": [
+                  {
+                    ":create/user": {
+                      ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+                    },
+                    ":edit/user": {
+                      ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+                    },
+                    "create-time": 1632072416731,
+                    "edit-time": 1632075291256,
+                    "string": " to start doing interviews (likely technical)",
+                    "uid": "SoPTxcqwk"
+                  },
+                  {
+                    ":create/user": {
+                      ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+                    },
+                    ":edit/user": {
+                      ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+                    },
+                    "create-time": 1632072424180,
+                    "edit-time": 1632075291256,
+                    "string": "preparing material for them",
+                    "uid": "XXAXiWBBo"
+                  },
+                  {
+                    ":create/user": {
+                      ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+                    },
+                    ":edit/user": {
+                      ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+                    },
+                    "create-time": 1632072374558,
+                    "edit-time": 1632075291256,
+                    "string": "defining how the process is done for our tribe/other tribes/the org in general as well.",
+                    "uid": "5glRWUt2y"
+                  },
+                  {
+                    ":create/user": {
+                      ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+                    },
+                    ":edit/user": {
+                      ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+                    },
+                    "create-time": 1632072431039,
+                    "edit-time": 1632075291256,
+                    "string": "hiring someone!",
+                    "uid": "ysyvf1r6Z"
+                  },
+                  {
+                    ":create/user": {
+                      ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+                    },
+                    ":edit/user": {
+                      ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+                    },
+                    "create-time": 1632072438892,
+                    "edit-time": 1632075291256,
+                    "string": "",
+                    "uid": "HM_I4Jx-b"
+                  }
+                ],
+                "create-time": 1632072410251,
+                "edit-time": 1632075291256,
+                "string": "end goal would be:",
+                "uid": "3rLYjWQtQ"
+              },
+              {
+                ":create/user": {
+                  ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+                },
+                ":edit/user": {
+                  ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+                },
+                "create-time": 1632072324589,
+                "edit-time": 1632075291256,
+                "string": ".",
+                "uid": "R6Yc5UdAW"
+              }
+            ],
+            "create-time": 1632072295890,
+            "edit-time": 1634636353934,
+            "refs": [
+              {
+                "uid": "VBSImBp3a"
+              },
+              {
+                "uid": "WCJoz9AhZ"
+              },
+              {
+                "uid": "hMBgHmSNk"
+              }
+            ],
+            "string": "{{[[TODO]]}} #tp [[hiring]]",
+            "uid": "_myo51oUR"
+          },
+          {
+            ":block/refs": [
+              {
+                ":block/uid": "VBSImBp3a"
+              },
+              {
+                ":block/uid": "hMBgHmSNk"
               }
             ],
             ":create/user": {
@@ -3471,11 +3837,6 @@
                 },
                 "children": [
                   {
-                    ":block/refs": [
-                      {
-                        ":block/uid": "VBSImBp3a"
-                      }
-                    ],
                     ":create/user": {
                       ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
                     },
@@ -3490,10 +3851,10 @@
                         ":edit/user": {
                           ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
                         },
-                        "create-time": 1632222158982,
-                        "edit-time": 1632222164230,
-                        "string": "this year yes likely",
-                        "uid": "kQl27YxZu"
+                        "create-time": 1632072470004,
+                        "edit-time": 1632075291256,
+                        "string": "1. private",
+                        "uid": "vVX8G23Bb"
                       },
                       {
                         ":create/user": {
@@ -3502,104 +3863,33 @@
                         ":edit/user": {
                           ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
                         },
-                        "children": [
-                          {
-                            ":create/user": {
-                              ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
-                            },
-                            ":edit/user": {
-                              ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
-                            },
-                            "create-time": 1632222182733,
-                            "edit-time": 1632222185587,
-                            "string": "cui5 theming",
-                            "uid": "-Xs7u6mro"
-                          },
-                          {
-                            ":create/user": {
-                              ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
-                            },
-                            ":edit/user": {
-                              ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
-                            },
-                            "create-time": 1632222185568,
-                            "edit-time": 1632222187119,
-                            "string": "user profile",
-                            "uid": "88dt5d6Zb"
-                          },
-                          {
-                            ":create/user": {
-                              ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
-                            },
-                            ":edit/user": {
-                              ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
-                            },
-                            "create-time": 1632222187102,
-                            "edit-time": 1632222196483,
-                            "string": "external ones too (every tuesday)",
-                            "uid": "BpXW5J3TQ"
-                          },
-                          {
-                            ":block/refs": [
-                              {
-                                ":block/uid": "VBSImBp3a"
-                              },
-                              {
-                                ":block/uid": "pHco5hQZn"
-                              }
-                            ],
-                            ":create/user": {
-                              ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
-                            },
-                            ":edit/user": {
-                              ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
-                            },
-                            "create-time": 1632222237338,
-                            "edit-time": 1632222372839,
-                            "refs": [
-                              {
-                                "uid": "VBSImBp3a"
-                              },
-                              {
-                                "uid": "pHco5hQZn"
-                              }
-                            ],
-                            "string": "{{[[TODO]]}} -> let [[Martin Kapp (Pipedrive team mngr!)]] know if you want to participate and it's already filled!! to give examples",
-                            "uid": "DAd6GKRBi"
-                          },
-                          {
-                            ":create/user": {
-                              ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
-                            },
-                            ":edit/user": {
-                              ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
-                            },
-                            "create-time": 1632222366548,
-                            "edit-time": 1632222371490,
-                            "string": "can apply in mission tool",
-                            "uid": "WUEItJmHy"
-                          }
-                        ],
-                        "create-time": 1632222165628,
-                        "edit-time": 1632222182764,
-                        "string": "some upcoming ones mayb",
-                        "uid": "44QEAmKYE"
-                      }
-                    ],
-                    "create-time": 1632072251996,
-                    "edit-time": 1632075291256,
-                    "refs": [
+                        "create-time": 1632072473888,
+                        "edit-time": 1632075291256,
+                        "string": "2. signal/noise ratio",
+                        "uid": "JeBkrKF7P"
+                      },
                       {
-                        "uid": "VBSImBp3a"
+                        ":create/user": {
+                          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+                        },
+                        ":edit/user": {
+                          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+                        },
+                        "create-time": 1632072480964,
+                        "edit-time": 1632075291256,
+                        "string": "3. you wouldn't search the regardless",
+                        "uid": "Safnc78Dh"
                       }
                     ],
-                    "string": "{{[[TODO]]}} am I expected to join one anytime soon?",
-                    "uid": "anS5Nny6r"
+                    "create-time": 1632072462978,
+                    "edit-time": 1632075291256,
+                    "string": "slack chat is bad because",
+                    "uid": "SJlu1RTf6"
                   },
                   {
                     ":block/refs": [
                       {
-                        ":block/uid": "VBSImBp3a"
+                        ":block/uid": "g-47fCS4m"
                       }
                     ],
                     ":create/user": {
@@ -3608,116 +3898,15 @@
                     ":edit/user": {
                       ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
                     },
-                    "children": [
-                      {
-                        ":create/user": {
-                          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
-                        },
-                        ":edit/user": {
-                          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
-                        },
-                        "create-time": 1632222153113,
-                        "edit-time": 1632222158226,
-                        "string": "not this year",
-                        "uid": "TJx5uWw4g"
-                      },
-                      {
-                        ":block/refs": [
-                          {
-                            ":block/uid": "VBSImBp3a"
-                          }
-                        ],
-                        ":create/user": {
-                          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
-                        },
-                        ":edit/user": {
-                          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
-                        },
-                        "create-time": 1632072276068,
-                        "edit-time": 1632075291256,
-                        "refs": [
-                          {
-                            "uid": "VBSImBp3a"
-                          }
-                        ],
-                        "string": "{{[[TODO]]}} how could I get as well prepared for it as possible?",
-                        "uid": "AiAu0q2kX"
-                      }
-                    ],
-                    "create-time": 1632072267911,
+                    "create-time": 1632072488957,
                     "edit-time": 1632075291256,
                     "refs": [
                       {
-                        "uid": "VBSImBp3a"
+                        "uid": "g-47fCS4m"
                       }
                     ],
-                    "string": "{{[[TODO]]}} am I expected to lead one?",
-                    "uid": "O8NxOXtHW"
-                  },
-                  {
-                    ":create/user": {
-                      ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
-                    },
-                    ":edit/user": {
-                      ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
-                    },
-                    "create-time": 1632072293586,
-                    "edit-time": 1632075291256,
-                    "string": ".",
-                    "uid": "WBcNmIrNt"
-                  }
-                ],
-                "create-time": 1632072239627,
-                "edit-time": 1632075291256,
-                "string": "how do missions work?",
-                "uid": "B0b-D-P4p"
-              },
-              {
-                ":block/refs": [
-                  {
-                    ":block/uid": "VBSImBp3a"
-                  }
-                ],
-                ":create/user": {
-                  ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
-                },
-                ":edit/user": {
-                  ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
-                },
-                "children": [
-                  {
-                    ":block/refs": [
-                      {
-                        ":block/uid": "relh_XTeT"
-                      }
-                    ],
-                    ":create/user": {
-                      ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
-                    },
-                    ":edit/user": {
-                      ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
-                    },
-                    "create-time": 1632072300725,
-                    "edit-time": 1632075291256,
-                    "refs": [
-                      {
-                        "uid": "relh_XTeT"
-                      }
-                    ],
-                    "string": "talked w/ [[Ingrid Palm - pipedrive recruiter & people partner :>]] recently",
-                    "uid": "0bBf_2soE"
-                  },
-                  {
-                    ":create/user": {
-                      ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
-                    },
-                    ":edit/user": {
-                      ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
-                    },
-                    "create-time": 1632072333076,
-                    "edit-time": 1632075291256,
-                    "string": "feel like it would be very beneficial to learn how the process works, how to start helping out myself, start shadowing someone to learn more about it, etc",
-                    "uid": "JGk78a5W4"
+                    "string": "would highly prefer the central location, which in our case is #confluence",
+                    "uid": "efpVzwXCT"
                   },
                   {
                     ":create/user": {
@@ -3734,10 +3923,10 @@
                         ":edit/user": {
                           ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
                         },
-                        "create-time": 1632072416731,
+                        "create-time": 1632072538663,
                         "edit-time": 1632075291256,
-                        "string": " to start doing interviews (likely technical)",
-                        "uid": "SoPTxcqwk"
+                        "string": "e.g. reviewing the \"done\" column, clearing it up every week or so, and stuff like that - it should all be written down in a page like \"how we work\" or \"our processes\"",
+                        "uid": "T3E8Z-koL"
                       },
                       {
                         ":create/user": {
@@ -3746,10 +3935,10 @@
                         ":edit/user": {
                           ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
                         },
-                        "create-time": 1632072424180,
+                        "create-time": 1632075002257,
                         "edit-time": 1632075291256,
-                        "string": "preparing material for them",
-                        "uid": "XXAXiWBBo"
+                        "string": "for takeaways from retro, eng chat (tho 2nd seems already in line with this)",
+                        "uid": "KWFj3qrFJ"
                       },
                       {
                         ":create/user": {
@@ -3758,10 +3947,10 @@
                         ":edit/user": {
                           ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
                         },
-                        "create-time": 1632072374558,
+                        "create-time": 1632072588606,
                         "edit-time": 1632075291256,
-                        "string": "defining how the process is done for our tribe/other tribes/the org in general as well.",
-                        "uid": "5glRWUt2y"
+                        "string": "applies to anything else that we discussed, others, from the future as well, could just read up on and be familiar, instead of relying on individual knowledge which has a risk of getting lost",
+                        "uid": "Sv8BYNhkA"
                       },
                       {
                         ":create/user": {
@@ -3770,219 +3959,16 @@
                         ":edit/user": {
                           ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
                         },
-                        "create-time": 1632072431039,
-                        "edit-time": 1632075291256,
-                        "string": "hiring someone!",
-                        "uid": "ysyvf1r6Z"
-                      },
-                      {
-                        ":create/user": {
-                          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
-                        },
-                        ":edit/user": {
-                          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
-                        },
-                        "create-time": 1632072438892,
-                        "edit-time": 1632075291256,
-                        "string": "",
-                        "uid": "HM_I4Jx-b"
-                      }
-                    ],
-                    "create-time": 1632072410251,
-                    "edit-time": 1632075291256,
-                    "string": "end goal would be:",
-                    "uid": "3rLYjWQtQ"
-                  },
-                  {
-                    ":create/user": {
-                      ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
-                    },
-                    ":edit/user": {
-                      ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
-                    },
-                    "create-time": 1632072324589,
-                    "edit-time": 1632075291256,
-                    "string": ".",
-                    "uid": "R6Yc5UdAW"
-                  }
-                ],
-                "create-time": 1632072295890,
-                "edit-time": 1632075291256,
-                "refs": [
-                  {
-                    "uid": "VBSImBp3a"
-                  }
-                ],
-                "string": "{{[[TODO]]}} hiring",
-                "uid": "_myo51oUR"
-              },
-              {
-                ":create/user": {
-                  ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
-                },
-                ":edit/user": {
-                  ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
-                },
-                "children": [
-                  {
-                    ":create/user": {
-                      ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
-                    },
-                    ":edit/user": {
-                      ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
-                    },
-                    "children": [
-                      {
-                        ":create/user": {
-                          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
-                        },
-                        ":edit/user": {
-                          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
-                        },
-                        "children": [
-                          {
-                            ":create/user": {
-                              ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
-                            },
-                            ":edit/user": {
-                              ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
-                            },
-                            "create-time": 1632072470004,
-                            "edit-time": 1632075291256,
-                            "string": "1. private",
-                            "uid": "vVX8G23Bb"
-                          },
-                          {
-                            ":create/user": {
-                              ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
-                            },
-                            ":edit/user": {
-                              ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
-                            },
-                            "create-time": 1632072473888,
-                            "edit-time": 1632075291256,
-                            "string": "2. signal/noise ratio",
-                            "uid": "JeBkrKF7P"
-                          },
-                          {
-                            ":create/user": {
-                              ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
-                            },
-                            ":edit/user": {
-                              ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
-                            },
-                            "create-time": 1632072480964,
-                            "edit-time": 1632075291256,
-                            "string": "3. you wouldn't search the regardless",
-                            "uid": "Safnc78Dh"
-                          }
-                        ],
-                        "create-time": 1632072462978,
-                        "edit-time": 1632075291256,
-                        "string": "slack chat is bad because",
-                        "uid": "SJlu1RTf6"
-                      },
-                      {
-                        ":block/refs": [
-                          {
-                            ":block/uid": "g-47fCS4m"
-                          }
-                        ],
-                        ":create/user": {
-                          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
-                        },
-                        ":edit/user": {
-                          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
-                        },
-                        "create-time": 1632072488957,
-                        "edit-time": 1632075291256,
-                        "refs": [
-                          {
-                            "uid": "g-47fCS4m"
-                          }
-                        ],
-                        "string": "would highly prefer the central location, which in our case is #confluence",
-                        "uid": "efpVzwXCT"
-                      },
-                      {
-                        ":create/user": {
-                          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
-                        },
-                        ":edit/user": {
-                          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
-                        },
-                        "children": [
-                          {
-                            ":create/user": {
-                              ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
-                            },
-                            ":edit/user": {
-                              ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
-                            },
-                            "create-time": 1632072538663,
-                            "edit-time": 1632075291256,
-                            "string": "e.g. reviewing the \"done\" column, clearing it up every week or so, and stuff like that - it should all be written down in a page like \"how we work\" or \"our processes\"",
-                            "uid": "T3E8Z-koL"
-                          },
-                          {
-                            ":create/user": {
-                              ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
-                            },
-                            ":edit/user": {
-                              ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
-                            },
-                            "create-time": 1632075002257,
-                            "edit-time": 1632075291256,
-                            "string": "for takeaways from retro, eng chat (tho 2nd seems already in line with this)",
-                            "uid": "KWFj3qrFJ"
-                          },
-                          {
-                            ":create/user": {
-                              ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
-                            },
-                            ":edit/user": {
-                              ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
-                            },
-                            "create-time": 1632072588606,
-                            "edit-time": 1632075291256,
-                            "string": "applies to anything else that we discussed, others, from the future as well, could just read up on and be familiar, instead of relying on individual knowledge which has a risk of getting lost",
-                            "uid": "Sv8BYNhkA"
-                          },
-                          {
-                            ":create/user": {
-                              ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
-                            },
-                            ":edit/user": {
-                              ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
-                            },
-                            "create-time": 1632072640542,
-                            "edit-time": 1632075291256,
-                            "string": ".",
-                            "uid": "fNUJ0iST4"
-                          }
-                        ],
-                        "create-time": 1632072506764,
-                        "edit-time": 1632075291256,
-                        "string": "the times I've been saying that \"hey maybe we should write this down\" is when I feel like this fits esp. well",
-                        "uid": "okcV6dWT4"
-                      },
-                      {
-                        ":create/user": {
-                          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
-                        },
-                        ":edit/user": {
-                          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
-                        },
-                        "create-time": 1632075026556,
+                        "create-time": 1632072640542,
                         "edit-time": 1632075291256,
                         "string": ".",
-                        "uid": "HhIBZmdsB"
+                        "uid": "fNUJ0iST4"
                       }
                     ],
-                    "create-time": 1632072452588,
+                    "create-time": 1632072506764,
                     "edit-time": 1632075291256,
-                    "string": "don't particularly like our tribe's approach to info sharing rn",
-                    "uid": "0BIvwHSoW"
+                    "string": "the times I've been saying that \"hey maybe we should write this down\" is when I feel like this fits esp. well",
+                    "uid": "okcV6dWT4"
                   },
                   {
                     ":create/user": {
@@ -3991,16 +3977,16 @@
                     ":edit/user": {
                       ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
                     },
-                    "create-time": 1632072641708,
+                    "create-time": 1632075026556,
                     "edit-time": 1632075291256,
                     "string": ".",
-                    "uid": "G5FsDJXZJ"
+                    "uid": "HhIBZmdsB"
                   }
                 ],
-                "create-time": 1632072441592,
+                "create-time": 1632072452588,
                 "edit-time": 1632075291256,
-                "string": "information sharing",
-                "uid": "cis92_NR_"
+                "string": "don't particularly like our tribe's approach to info sharing rn",
+                "uid": "0BIvwHSoW"
               },
               {
                 ":create/user": {
@@ -4009,23 +3995,31 @@
                 ":edit/user": {
                   ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
                 },
-                "create-time": 1632072642247,
+                "create-time": 1632072641708,
                 "edit-time": 1632075291256,
                 "string": ".",
-                "uid": "ILAOVwibj"
+                "uid": "G5FsDJXZJ"
               }
             ],
-            "create-time": 1632072182812,
-            "edit-time": 1632222074699,
+            "create-time": 1632072441592,
+            "edit-time": 1634636378070,
             "refs": [
               {
                 "uid": "VBSImBp3a"
+              },
+              {
+                "uid": "hMBgHmSNk"
               }
             ],
-            "string": "{{[[TODO]]}} more general questions:",
-            "uid": "7F3rp04u5"
+            "string": "{{[[TODO]]}} #tp information sharing",
+            "uid": "cis92_NR_"
           },
           {
+            ":block/refs": [
+              {
+                ":block/uid": "rOfyeA8Tz"
+              }
+            ],
             ":create/user": {
               ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
             },
@@ -4113,14 +4107,22 @@
               }
             ],
             "create-time": 1632072442202,
-            "edit-time": 1632075291256,
-            "string": "in general, need some catching-up to do on:",
+            "edit-time": 1634597839356,
+            "refs": [
+              {
+                "uid": "rOfyeA8Tz"
+              }
+            ],
+            "string": "{{[[DONE]]}} in general, need some catching-up to do on:",
             "uid": "GUCCYS11y"
           },
           {
             ":block/refs": [
               {
                 ":block/uid": "VBSImBp3a"
+              },
+              {
+                ":block/uid": "hMBgHmSNk"
               }
             ],
             ":create/user": {
@@ -4232,19 +4234,25 @@
               }
             ],
             "create-time": 1632075032177,
-            "edit-time": 1632075291256,
+            "edit-time": 1634636360834,
             "refs": [
               {
                 "uid": "VBSImBp3a"
+              },
+              {
+                "uid": "hMBgHmSNk"
               }
             ],
-            "string": "{{[[TODO]]}} would like some feedback (if any?) on:",
+            "string": "{{[[TODO]]}} #tp would like some feedback (if any?) on:",
             "uid": "rME-R-tqA"
           },
           {
             ":block/refs": [
               {
                 ":block/uid": "VBSImBp3a"
+              },
+              {
+                ":block/uid": "hMBgHmSNk"
               }
             ],
             ":create/user": {
@@ -4348,16 +4356,24 @@
               }
             ],
             "create-time": 1632075159243,
-            "edit-time": 1632219945164,
+            "edit-time": 1634636363467,
             "refs": [
               {
                 "uid": "VBSImBp3a"
+              },
+              {
+                "uid": "hMBgHmSNk"
               }
             ],
-            "string": "{{[[TODO]]}} my feedback so far:",
+            "string": "{{[[TODO]]}} #tp my feedback so far:",
             "uid": "nv_ZdHT3W"
           },
           {
+            ":block/refs": [
+              {
+                ":block/uid": "rOfyeA8Tz"
+              }
+            ],
             ":create/user": {
               ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
             },
@@ -4427,11 +4443,21 @@
               }
             ],
             "create-time": 1632076269191,
-            "edit-time": 1632076814996,
-            "string": "misc",
+            "edit-time": 1634597739705,
+            "refs": [
+              {
+                "uid": "rOfyeA8Tz"
+              }
+            ],
+            "string": "{{[[DONE]]}} misc",
             "uid": "3id5Gvy0s"
           },
           {
+            ":block/refs": [
+              {
+                ":block/uid": "rOfyeA8Tz"
+              }
+            ],
             ":create/user": {
               ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
             },
@@ -4469,8 +4495,13 @@
               }
             ],
             "create-time": 1632076941917,
-            "edit-time": 1632077203719,
-            "string": "fun",
+            "edit-time": 1634597731835,
+            "refs": [
+              {
+                "uid": "rOfyeA8Tz"
+              }
+            ],
+            "string": "{{[[DONE]]}} fun",
             "uid": "wMpmAsHMK"
           },
           {
@@ -4480,6 +4511,9 @@
               },
               {
                 ":block/uid": "U7haQNUPX"
+              },
+              {
+                ":block/uid": "hMBgHmSNk"
               }
             ],
             ":create/user": {
@@ -4503,16 +4537,19 @@
               }
             ],
             "create-time": 1632077226528,
-            "edit-time": 1632218220999,
+            "edit-time": 1634649700846,
             "refs": [
               {
                 "uid": "VBSImBp3a"
               },
               {
                 "uid": "U7haQNUPX"
+              },
+              {
+                "uid": "hMBgHmSNk"
               }
             ],
-            "string": "{{[[TODO]]}} #vacay",
+            "string": "{{[[TODO]]}} #tp #vacay",
             "uid": "Qwqq0UBRy"
           },
           {
@@ -4529,7 +4566,7 @@
           }
         ],
         "create-time": 1632071816206,
-        "edit-time": 1632075399912,
+        "edit-time": 1634597656031,
         "refs": [
           {
             "uid": "pHco5hQZn"
@@ -4542,9 +4579,12 @@
           },
           {
             "uid": "JVlsf8b-p"
+          },
+          {
+            "uid": "wxkwogKAB"
           }
         ],
-        "string": "#public notes for #next #1on1 w/ [[Martin Kapp (Pipedrive team mngr!)]]",
+        "string": "#public notes for #next #1on1 [[next 1on1]] w/ [[Martin Kapp (Pipedrive team mngr!)]]",
         "uid": "WKQHia-MB"
       },
       {
@@ -6402,5 +6442,1063 @@
     "edit-time": 1633800115646,
     "title": "voidrice (public)",
     "uid": "w51VwiNQH"
+  },
+  {
+    ":create/user": {
+      ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+    },
+    ":edit/user": {
+      ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+    },
+    "children": [
+      {
+        ":block/refs": [
+          {
+            ":block/uid": "-r0GufHj8"
+          },
+          {
+            ":block/uid": "j-eCgnBmv"
+          }
+        ],
+        ":create/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        ":edit/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        "create-time": 1634486823348,
+        "edit-time": 1634486827248,
+        "refs": [
+          {
+            "uid": "-r0GufHj8"
+          },
+          {
+            "uid": "j-eCgnBmv"
+          }
+        ],
+        "string": "#public #query",
+        "uid": "WSPO6nxZS"
+      },
+      {
+        ":create/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        ":edit/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        "create-time": 1634486828202,
+        "edit-time": 1634486828202,
+        "string": "",
+        "uid": "AAO0LiCVq"
+      },
+      {
+        ":block/refs": [
+          {
+            ":block/uid": "j-eCgnBmv"
+          },
+          {
+            ":block/uid": "jOMmlCP4S"
+          },
+          {
+            ":block/uid": "EwlSYwkBW"
+          }
+        ],
+        ":create/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        ":edit/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        "create-time": 1634486827397,
+        "edit-time": 1634486841333,
+        "refs": [
+          {
+            "uid": "j-eCgnBmv"
+          },
+          {
+            "uid": "jOMmlCP4S"
+          },
+          {
+            "uid": "EwlSYwkBW"
+          }
+        ],
+        "string": "{{[[query]]: {and: [[OKR]] [[idea]]}}}",
+        "uid": "TEm2Gw3Vx"
+      },
+      {
+        ":create/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        ":edit/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        "create-time": 1634486842266,
+        "edit-time": 1634486842266,
+        "string": "",
+        "uid": "f0lTOdYFw"
+      },
+      {
+        ":create/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        ":edit/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        "create-time": 1634486827241,
+        "edit-time": 1634486827241,
+        "string": "",
+        "uid": "U4nRy4XuH"
+      }
+    ],
+    "create-time": 1634486821519,
+    "edit-time": 1634486821519,
+    "title": "OKR-ideas-query-public",
+    "uid": "JZvAwDEut"
+  },
+  {
+    ":create/user": {
+      ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+    },
+    ":edit/user": {
+      ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+    },
+    "children": [
+      {
+        ":block/refs": [
+          {
+            ":block/uid": "-r0GufHj8"
+          },
+          {
+            ":block/uid": "j-eCgnBmv"
+          }
+        ],
+        ":create/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        ":edit/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        "create-time": 1634487008398,
+        "edit-time": 1634487011939,
+        "refs": [
+          {
+            "uid": "-r0GufHj8"
+          },
+          {
+            "uid": "j-eCgnBmv"
+          }
+        ],
+        "string": "#public #query",
+        "uid": "1I4s6Hue8"
+      },
+      {
+        ":create/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        ":edit/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        "create-time": 1634486910567,
+        "edit-time": 1634486910567,
+        "string": "",
+        "uid": "RpERwVtLb"
+      },
+      {
+        ":block/props": {
+          ":query": {
+            ":hide-paths?": false,
+            ":not-by-page?": false
+          }
+        },
+        ":block/refs": [
+          {
+            ":block/uid": "VBSImBp3a"
+          },
+          {
+            ":block/uid": "j-eCgnBmv"
+          },
+          {
+            ":block/uid": "s1p7372Kx"
+          },
+          {
+            ":block/uid": "JVlsf8b-p"
+          }
+        ],
+        ":create/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        ":edit/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        "create-time": 1634486910777,
+        "edit-time": 1634487029890,
+        "props": {
+          "query": {
+            "hide-paths?": false,
+            "not-by-page?": false
+          }
+        },
+        "refs": [
+          {
+            "uid": "VBSImBp3a"
+          },
+          {
+            "uid": "j-eCgnBmv"
+          },
+          {
+            "uid": "s1p7372Kx"
+          },
+          {
+            "uid": "JVlsf8b-p"
+          }
+        ],
+        "string": "{{[[query]]: {and: [[next]] [[1on1]] [[TODO]]}}}",
+        "uid": "GWrcsLaMN"
+      },
+      {
+        ":create/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        ":edit/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        "create-time": 1634486910915,
+        "edit-time": 1634486910915,
+        "string": "",
+        "uid": "hFarF4HkA"
+      },
+      {
+        ":create/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        ":edit/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        "create-time": 1634486910279,
+        "edit-time": 1634486910279,
+        "string": "",
+        "uid": "mcJR4BeBc"
+      }
+    ],
+    "create-time": 1634486908453,
+    "edit-time": 1634487024168,
+    "title": "next-1on1-todos-public-query",
+    "uid": "HeMjvRF41"
+  },
+  {
+    ":create/user": {
+      ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+    },
+    ":edit/user": {
+      ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+    },
+    "children": [
+      {
+        ":block/refs": [
+          {
+            ":block/uid": "-r0GufHj8"
+          }
+        ],
+        ":create/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        ":edit/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        "create-time": 1634637491531,
+        "edit-time": 1634637494258,
+        "refs": [
+          {
+            "uid": "-r0GufHj8"
+          }
+        ],
+        "string": "#public",
+        "uid": "GFi5sGe-x"
+      },
+      {
+        ":create/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        ":edit/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        "create-time": 1634643093291,
+        "edit-time": 1634643093291,
+        "string": "",
+        "uid": "LauSbCOJU"
+      },
+      {
+        ":create/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        ":edit/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        "create-time": 1634643084182,
+        "edit-time": 1634643084182,
+        "string": "",
+        "uid": "q73rnkCd4"
+      },
+      {
+        ":create/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        ":edit/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        "create-time": 1634643083733,
+        "edit-time": 1634643090945,
+        "string": "all todos & dones:",
+        "uid": "qXSEx24uG"
+      },
+      {
+        ":block/refs": [
+          {
+            ":block/uid": "IbLkgPXPH"
+          }
+        ],
+        ":create/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        ":edit/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        "create-time": 1634642961487,
+        "edit-time": 1634643311105,
+        "refs": [
+          {
+            "uid": "IbLkgPXPH"
+          }
+        ],
+        "string": "[[ongoing topics for 1on1's (public)]] (right click & open in new tab)",
+        "uid": "caJGff8Sm"
+      },
+      {
+        ":create/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        ":edit/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        "create-time": 1634643267115,
+        "edit-time": 1634643267115,
+        "string": "",
+        "uid": "RBZ8NoERz"
+      },
+      {
+        ":create/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        ":edit/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        "create-time": 1634642622292,
+        "edit-time": 1634642622292,
+        "string": "",
+        "uid": "vs4K0DfwR"
+      },
+      {
+        ":create/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        ":edit/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        "create-time": 1634637154980,
+        "edit-time": 1634643367087,
+        "string": "done this time (read the last item of the path that includes the `#tp` talking point):",
+        "uid": "NJSQOwsJC"
+      },
+      {
+        ":block/refs": [
+          {
+            ":block/uid": "VBSImBp3a"
+          },
+          {
+            ":block/uid": "j-eCgnBmv"
+          },
+          {
+            ":block/uid": "wxkwogKAB"
+          },
+          {
+            ":block/uid": "hMBgHmSNk"
+          },
+          {
+            ":block/uid": "13s0DhNbi"
+          }
+        ],
+        ":create/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        ":edit/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        "create-time": 1634642623256,
+        "edit-time": 1634643079732,
+        "refs": [
+          {
+            "uid": "VBSImBp3a"
+          },
+          {
+            "uid": "j-eCgnBmv"
+          },
+          {
+            "uid": "wxkwogKAB"
+          },
+          {
+            "uid": "hMBgHmSNk"
+          },
+          {
+            "uid": "13s0DhNbi"
+          }
+        ],
+        "string": "{{[[query]]: {and: [[1on1 w42 2021]] [[next 1on1]] [[tp]] {not: [[TODO]]}}}}",
+        "uid": "CDe7gaCM-"
+      },
+      {
+        ":create/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        ":edit/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        "create-time": 1634643264347,
+        "edit-time": 1634643264347,
+        "string": "",
+        "uid": "oZnfNb2f-"
+      },
+      {
+        ":create/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        ":edit/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        "create-time": 1634636700438,
+        "edit-time": 1634637629168,
+        "string": "",
+        "uid": "dls1p1Z7B"
+      },
+      {
+        ":block/refs": [
+          {
+            ":block/uid": "EkNKI3n1D"
+          }
+        ],
+        ":create/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        ":edit/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        "children": [
+          {
+            ":create/user": {
+              ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+            },
+            ":edit/user": {
+              ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+            },
+            "children": [
+              {
+                ":create/user": {
+                  ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+                },
+                ":edit/user": {
+                  ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+                },
+                "create-time": 1634638091533,
+                "edit-time": 1634638097955,
+                "string": "https://app.7geese.com/oneonone/720964",
+                "uid": "yZM-wllhs"
+              },
+              {
+                ":block/refs": [
+                  {
+                    ":block/uid": "gmEjXMPhW"
+                  }
+                ],
+                ":create/user": {
+                  ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+                },
+                ":edit/user": {
+                  ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+                },
+                "children": [
+                  {
+                    ":block/refs": [
+                      {
+                        ":block/uid": "VBSImBp3a"
+                      }
+                    ],
+                    ":create/user": {
+                      ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+                    },
+                    ":edit/user": {
+                      ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+                    },
+                    "create-time": 1634638271100,
+                    "edit-time": 1634638279117,
+                    "refs": [
+                      {
+                        "uid": "VBSImBp3a"
+                      }
+                    ],
+                    "string": "{{[[TODO]]}} auto-index note",
+                    "uid": "nn-rZnXTp"
+                  },
+                  {
+                    ":block/refs": [
+                      {
+                        ":block/uid": "VBSImBp3a"
+                      }
+                    ],
+                    ":create/user": {
+                      ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+                    },
+                    ":edit/user": {
+                      ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+                    },
+                    "create-time": 1634638279791,
+                    "edit-time": 1634638291234,
+                    "refs": [
+                      {
+                        "uid": "VBSImBp3a"
+                      }
+                    ],
+                    "string": "{{[[TODO]]}} redirect notes to note",
+                    "uid": "IAm6AeqkU"
+                  }
+                ],
+                "create-time": 1634638109802,
+                "edit-time": 1634638123676,
+                "refs": [
+                  {
+                    "uid": "gmEjXMPhW"
+                  }
+                ],
+                "string": "#url note/1on1-w42-2021",
+                "uid": "aiKbBU-rm"
+              }
+            ],
+            "create-time": 1634637390461,
+            "edit-time": 1634637460186,
+            "string": "http://go.kipras.org/note/1on1-w42-2021",
+            "uid": "9BLtGPtGX"
+          }
+        ],
+        "create-time": 1634636500355,
+        "edit-time": 1634637390468,
+        "refs": [
+          {
+            "uid": "EkNKI3n1D"
+          }
+        ],
+        "string": "#strong-connectivity",
+        "uid": "1UzB7l7eZ"
+      },
+      {
+        ":create/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        ":edit/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        "create-time": 1634643261584,
+        "edit-time": 1634643261584,
+        "string": "",
+        "uid": "jCBevc0jW"
+      },
+      {
+        ":create/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        ":edit/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        "create-time": 1634643261862,
+        "edit-time": 1634643261862,
+        "string": "",
+        "uid": "Lgd-ClE3-"
+      },
+      {
+        ":create/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        ":edit/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        "create-time": 1634636468032,
+        "edit-time": 1634636468032,
+        "string": "",
+        "uid": "Ivl0l-PRl"
+      }
+    ],
+    "create-time": 1634636466738,
+    "edit-time": 1634638052757,
+    "title": "1on1 w42 2021",
+    "uid": "13s0DhNbi"
+  },
+  {
+    ":create/user": {
+      ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+    },
+    ":edit/user": {
+      ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+    },
+    "children": [
+      {
+        ":block/refs": [
+          {
+            ":block/uid": "-r0GufHj8"
+          }
+        ],
+        ":create/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        ":edit/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        "create-time": 1634642214442,
+        "edit-time": 1634642216294,
+        "refs": [
+          {
+            "uid": "-r0GufHj8"
+          }
+        ],
+        "string": "#public",
+        "uid": "f3eFTi-9g"
+      },
+      {
+        ":create/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        ":edit/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        "create-time": 1634643213418,
+        "edit-time": 1634643213418,
+        "string": "",
+        "uid": "y5pAuEvBu"
+      },
+      {
+        ":create/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        ":edit/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        "children": [
+          {
+            ":create/user": {
+              ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+            },
+            ":edit/user": {
+              ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+            },
+            "create-time": 1634644152999,
+            "edit-time": 1634644179957,
+            "string": "http://go.kipras.org/note/ongoing-1on1",
+            "uid": "4XG8S-hE7"
+          }
+        ],
+        "create-time": 1634643213728,
+        "edit-time": 1634644153010,
+        "string": "note: if ur bookmarking this page, don't use the direct link, use this one instead:",
+        "uid": "ZAB5ERMUD"
+      },
+      {
+        ":create/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        ":edit/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        "create-time": 1634644658755,
+        "edit-time": 1634644658755,
+        "string": "",
+        "uid": "tAEZTf15f"
+      },
+      {
+        ":create/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        ":edit/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        "create-time": 1634644659008,
+        "edit-time": 1634644659008,
+        "string": "",
+        "uid": "6G0l8iFY7"
+      },
+      {
+        ":create/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        ":edit/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        "create-time": 1634642218578,
+        "edit-time": 1634642218578,
+        "string": "",
+        "uid": "n0NbTINy9"
+      },
+      {
+        ":create/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        ":edit/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        "create-time": 1634642218741,
+        "edit-time": 1634642978272,
+        "string": "todo:",
+        "uid": "p_5QVJgoT"
+      },
+      {
+        ":block/refs": [
+          {
+            ":block/uid": "rOfyeA8Tz"
+          },
+          {
+            ":block/uid": "j-eCgnBmv"
+          },
+          {
+            ":block/uid": "wxkwogKAB"
+          },
+          {
+            ":block/uid": "hMBgHmSNk"
+          }
+        ],
+        ":create/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        ":edit/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        "create-time": 1634642216287,
+        "edit-time": 1634642217499,
+        "refs": [
+          {
+            "uid": "rOfyeA8Tz"
+          },
+          {
+            "uid": "j-eCgnBmv"
+          },
+          {
+            "uid": "wxkwogKAB"
+          },
+          {
+            "uid": "hMBgHmSNk"
+          }
+        ],
+        "string": "{{[[query]]: {and: [[next 1on1]] [[tp]] {not: [[DONE]]}}}}",
+        "uid": "36Zr2LdRq"
+      },
+      {
+        ":create/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        ":edit/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        "create-time": 1634643218084,
+        "edit-time": 1634643218084,
+        "string": "",
+        "uid": "k5Yfg94SX"
+      },
+      {
+        ":create/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        ":edit/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        "create-time": 1634650313943,
+        "edit-time": 1634650313943,
+        "string": "",
+        "uid": "DmKEU3tkJ"
+      },
+      {
+        ":create/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        ":edit/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        "create-time": 1634650314105,
+        "edit-time": 1634650314105,
+        "string": "",
+        "uid": "qwm3ZeIzW"
+      },
+      {
+        ":create/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        ":edit/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        "create-time": 1634649445278,
+        "edit-time": 1634670964010,
+        "string": "forgotten / miss-classified (should be 0):",
+        "uid": "8xkxJC6k2"
+      },
+      {
+        ":block/refs": [
+          {
+            ":block/uid": "VBSImBp3a"
+          },
+          {
+            ":block/uid": "rOfyeA8Tz"
+          },
+          {
+            ":block/uid": "j-eCgnBmv"
+          },
+          {
+            ":block/uid": "wxkwogKAB"
+          },
+          {
+            ":block/uid": "hMBgHmSNk"
+          }
+        ],
+        ":create/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        ":edit/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        "create-time": 1634649453605,
+        "edit-time": 1634650314923,
+        "refs": [
+          {
+            "uid": "VBSImBp3a"
+          },
+          {
+            "uid": "rOfyeA8Tz"
+          },
+          {
+            "uid": "j-eCgnBmv"
+          },
+          {
+            "uid": "wxkwogKAB"
+          },
+          {
+            "uid": "hMBgHmSNk"
+          }
+        ],
+        "string": "{{[[query]]: {and: [[next 1on1]] [[tp]] {not: {or: [[TODO]] [[DONE]]}}}}}",
+        "uid": "BypoKsGvc"
+      },
+      {
+        ":create/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        ":edit/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        "create-time": 1634642987691,
+        "edit-time": 1634642987691,
+        "string": "",
+        "uid": "CeOW-UchD"
+      },
+      {
+        ":create/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        ":edit/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        "create-time": 1634650317591,
+        "edit-time": 1634650317591,
+        "string": "",
+        "uid": "qy12pUQRk"
+      },
+      {
+        ":create/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        ":edit/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        "create-time": 1634642214578,
+        "edit-time": 1634642214578,
+        "string": "",
+        "uid": "X5ZypS13r"
+      },
+      {
+        ":create/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        ":edit/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        "create-time": 1634642220311,
+        "edit-time": 1634642985911,
+        "string": "done:",
+        "uid": "ZCUyxRdVP"
+      },
+      {
+        ":block/refs": [
+          {
+            ":block/uid": "VBSImBp3a"
+          },
+          {
+            ":block/uid": "j-eCgnBmv"
+          },
+          {
+            ":block/uid": "wxkwogKAB"
+          },
+          {
+            ":block/uid": "hMBgHmSNk"
+          }
+        ],
+        ":create/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        ":edit/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        "create-time": 1634642985904,
+        "edit-time": 1634642987023,
+        "refs": [
+          {
+            "uid": "VBSImBp3a"
+          },
+          {
+            "uid": "j-eCgnBmv"
+          },
+          {
+            "uid": "wxkwogKAB"
+          },
+          {
+            "uid": "hMBgHmSNk"
+          }
+        ],
+        "string": "{{[[query]]: {and: [[next 1on1]] [[tp]] {not: [[TODO]]}}}}",
+        "uid": "cUwDgbTNu"
+      },
+      {
+        ":create/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        ":edit/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        "create-time": 1634642220472,
+        "edit-time": 1634642220472,
+        "string": "",
+        "uid": "hFd72jqBX"
+      },
+      {
+        ":create/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        ":edit/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        "create-time": 1634649444917,
+        "edit-time": 1634649444917,
+        "string": "",
+        "uid": "aYbL_yo4_"
+      },
+      {
+        ":create/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        ":edit/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        "create-time": 1634649445287,
+        "edit-time": 1634649445287,
+        "string": "",
+        "uid": "LJK68Rzlp"
+      },
+      {
+        ":block/refs": [
+          {
+            ":block/uid": "EkNKI3n1D"
+          }
+        ],
+        ":create/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        ":edit/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        "children": [
+          {
+            ":block/refs": [
+              {
+                ":block/uid": "4XG8S-hE7"
+              }
+            ],
+            ":create/user": {
+              ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+            },
+            ":edit/user": {
+              ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+            },
+            "create-time": 1634644665994,
+            "edit-time": 1634644687267,
+            "refs": [
+              {
+                "uid": "4XG8S-hE7"
+              }
+            ],
+            "string": "((4XG8S-hE7))",
+            "uid": "BaaFkt_r6"
+          }
+        ],
+        "create-time": 1634644663450,
+        "edit-time": 1634644666001,
+        "refs": [
+          {
+            "uid": "EkNKI3n1D"
+          }
+        ],
+        "string": "#strong-connectivity",
+        "uid": "Vv4AMJwaU"
+      },
+      {
+        ":create/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        ":edit/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        "create-time": 1634670994742,
+        "edit-time": 1634670994742,
+        "string": "",
+        "uid": "ZNpM-Ngl_"
+      },
+      {
+        ":create/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        ":edit/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        "create-time": 1634670994977,
+        "edit-time": 1634670994977,
+        "string": "",
+        "uid": "Rmee0iXEA"
+      },
+      {
+        ":create/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        ":edit/user": {
+          ":user/uid": "SwKOwuWKEYXyNGwpHSZBeHGrz1m2"
+        },
+        "create-time": 1634642214009,
+        "edit-time": 1634642214009,
+        "string": "",
+        "uid": "5JOx4Ge7M"
+      }
+    ],
+    "create-time": 1634642203927,
+    "edit-time": 1634643207148,
+    "title": "ongoing topics for 1on1's (public)",
+    "uid": "IbLkgPXPH"
   }
 ]

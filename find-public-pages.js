@@ -28,8 +28,9 @@ const publicPagesWrappedWithMetadata = findPublicPages(allPages, {
 });
 
 console.log(
-	publicPagesWrappedWithMetadata.map(({ isPublicTagInRootBlocks: isRoot, page }) => ({
+	publicPagesWrappedWithMetadata.map(({ isPublicTagInRootBlocks: isRoot, page, isFullyPublic }) => ({
 		isRoot, //
+		isFullyPublic,
 		title: "title" in page ? page.title : undefined,
 		string: "string" in page ? page.string : undefined,
 		/** inside array to print `page: [ [Object] ]` instead of the whole */
