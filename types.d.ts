@@ -22,6 +22,12 @@ export type FindPublicPagesOptions = {
 	 * make the publicTag page itself public
 	 */
 	makeThePublicTagPagePublic?: boolean;
+
+	/**
+	 * TODO and DONE are more like boolean toggles to indicate if something's done or not,
+	 * and show a visual indicator, thus we have a special case for them
+	 */
+	doNotHideTodoAndDone?: boolean;
 };
 
 export type PageWithMetadata = {
