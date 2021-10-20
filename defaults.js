@@ -7,4 +7,6 @@ module.exports = {
 	defaultRecursive: false,
 	/** @type { "hidden" } */
 	defaultHiddenStringValue: "hidden",
+	/** @type boolean */
+	defaultMakeThePublicTagPagePublic: false,
 };
