@@ -1,5 +1,7 @@
 // @ts-check
 
+/* eslint-disable indent */
+
 const { defaultPublicTag, defaultRecursive, defaultHiddenStringValue } = require("./defaults");
 
 /**
@@ -279,7 +281,18 @@ const findPublicPages = (
 			hasAtLeastOnePublicBlockAnywhereInTheHierarchy: true,
 		})),
 		...partlyPublicPages,
-	];
+	].sort((A, B) =>
+		/** public tag itself first, then public pages, then all other ones */
+		"title" in A.page && A.page.title === publicTag
+			? -1
+			: "title" in B.page && B.page.title === publicTag
+			? 1
+			: A.hasAtLeastOnePublicBlockAnywhereInTheHierarchy
+			? -1
+			: B.hasAtLeastOnePublicBlockAnywhereInTheHierarchy
+			? 1
+			: 0
+	);
 };
 
 module.exports = {
