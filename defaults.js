@@ -5,8 +5,8 @@ module.exports = {
 	defaultPublicTag: "#public",
 	/** @type boolean */
 	defaultRecursive: false,
-	/** @type { "hidden" } */
-	defaultHiddenStringValue: "hidden",
+	/** @type { "#hidden" } */
+	defaultHiddenStringValue: "#hidden",
 	/** @type boolean */
 	defaultMakeThePublicTagPagePublic: false,
 	/** @type boolean */
