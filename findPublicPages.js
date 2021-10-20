@@ -7,6 +7,7 @@ const {
 	defaultRecursive,
 	defaultHiddenStringValue,
 	defaultMakeThePublicTagPagePublic,
+	defaultDoNotHideTodoAndDone,
 } = require("./defaults");
 
 /**
@@ -23,6 +24,7 @@ const findPublicPages = (
 		hiddenStringValue = defaultHiddenStringValue,
 		isRoot = true,
 		makeThePublicTagPagePublic = defaultMakeThePublicTagPagePublic,
+		doNotHideTodoAndDone = defaultDoNotHideTodoAndDone,
 		...rest
 	} = {}
 ) => {
@@ -68,6 +70,7 @@ const findPublicPages = (
 			isRoot,
 			hiddenStringValue,
 			makeThePublicTagPagePublic,
+			doNotHideTodoAndDone,
 			...rest,
 		});
 
@@ -181,7 +184,17 @@ const findPublicPages = (
 					 *
 					 */
 
-					c.string = `(${hiddenStringValue}) ${c.uid}`;
+					if (doNotHideTodoAndDone) {
+						if (c.string.includes("{{[[TODO]]}}")) {
+							c.string = `{{[[TODO]]}} (${hiddenStringValue}) ${c.uid}`;
+						} else if (c.string.includes("{{[[DONE]]}}")) {
+							c.string = `{{[[DONE]]}} (${hiddenStringValue}) ${c.uid}`;
+						} else {
+							c.string = `(${hiddenStringValue}) ${c.uid}`;
+						}
+					} else {
+						c.string = `(${hiddenStringValue}) ${c.uid}`;
+					}
 
 					/**
 					 * search if any children are public and can be not hidden,

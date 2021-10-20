@@ -9,4 +9,6 @@ module.exports = {
 	defaultHiddenStringValue: "hidden",
 	/** @type boolean */
 	defaultMakeThePublicTagPagePublic: false,
+	/** @type boolean */
+	defaultDoNotHideTodoAndDone: true,
 };
