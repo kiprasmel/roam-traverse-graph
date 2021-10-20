@@ -36,6 +36,7 @@ export type PageWithMetadata = {
 	isPublicTagInRootBlocks: boolean;
 	isFullyPublic: boolean;
 	hasAtLeastOnePublicBlockAnywhereInTheHierarchy: boolean;
+	hasAtLeastOneLinkedReference: boolean;
 };
 
 export type FindPublicPages = (
