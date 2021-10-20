@@ -5,7 +5,7 @@
 
 const path = require("path");
 
-const { readJsonSync } = require("./util");
+const { readJsonSync, getAllBlocksFromPages } = require("./util");
 const { findPublicPages } = require("./findPublicPages");
 
 const publicPages = findPublicPages(readJsonSync(path.resolve(__dirname, "../notes/json/kipras-g1.json")), {
@@ -45,7 +45,16 @@ const api = new RoamPrivateApi(publicGraphToImportInto, secrets.email, secrets.p
 
 const startTime = new Date();
 
+const allBlocks = getAllBlocksFromPages(publicPages).splice(0, 500); // TODO FIXME REMVOE
+
+console.log(
+	"allBlocks",
+	allBlocks,
+	allBlocks.filter((b) => typeof b !== "string")
+);
+
 Promise.resolve()
+	.then(() => api.deleteBlocks(allBlocks))
 	.then(() => api.deletePages(publicPages))
 	.then(() => api.import(publicPages))
 	.then(() => api.markSelectedPagesAsPubliclyReadable(publicPages))
