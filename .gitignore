@@ -4,3 +4,6 @@ node_modules
 
 secrets.json
 temp/
+
+*.json
+*.edn
