@@ -53,11 +53,13 @@ const startTime = new Date();
 // 	allBlocks.filter((b) => typeof b !== "string")
 // );
 
-const maxRequestsPerInterval = 300 - 5;
 const minimumIntervalMsBetweenMaxRequests = 1000 * (60 + 2);
+const maxRequestsPerInterval = 300 - 5;
 
 Promise.resolve()
 	// .then(() => api.deleteBlocks(allBlocks))
+	.then(() => api.logIn()) // bad, need more time pause lol
+	.then(() => api.beforeDeletePages())
 	.then(() =>
 		poolPromises(
 			minimumIntervalMsBetweenMaxRequests,
@@ -65,6 +67,7 @@ Promise.resolve()
 			publicPages.map((page) => async () => await api.deletePage(page.uid))
 		)
 	)
+	.then(() => api.afterDeletePages())
 	.then(() => api.import(publicPages))
 	.then(() => api.markSelectedPagesAsPubliclyReadable(publicPages))
 	.then(() => console.log("done", (new Date() - startTime) / 1000))
