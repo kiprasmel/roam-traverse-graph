@@ -18,6 +18,10 @@ export type FindPublicPagesOptions = {
 	 * (or keep and concat w/ the .title / .string to make obvious it's hidden)
 	 */
 	hiddenStringValue?: string;
+	/**
+	 * make the publicTag page itself public
+	 */
+	makeThePublicTagPagePublic?: boolean;
 };
 
 export type PageWithMetadata = {

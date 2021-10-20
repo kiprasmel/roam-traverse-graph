@@ -2,7 +2,12 @@
 
 /* eslint-disable indent */
 
-const { defaultPublicTag, defaultRecursive, defaultHiddenStringValue } = require("./defaults");
+const {
+	defaultPublicTag, //
+	defaultRecursive,
+	defaultHiddenStringValue,
+	defaultMakeThePublicTagPagePublic,
+} = require("./defaults");
 
 /**
  * @type { import("./types").FindPublicPages }
@@ -17,6 +22,7 @@ const findPublicPages = (
 		recursive = defaultRecursive,
 		hiddenStringValue = defaultHiddenStringValue,
 		isRoot = true,
+		makeThePublicTagPagePublic = defaultMakeThePublicTagPagePublic,
 		...rest
 	} = {}
 ) => {
@@ -45,15 +51,32 @@ const findPublicPages = (
 	/** @type { import("./types").PageOrBlock[] } */
 	const fullyPublicPages = [];
 
+	/**
+	 * @type { (title: import("./types").PageOrBlock) => boolean }
+	 */
+	const titleIsPublicTag = (page) => {
+		if (!("title" in page)) return false;
+
+		const { title } = page;
+		return !![title, "#" + title, "[[" + title + "]]", title + "::"].includes(publicTag);
+	};
+
 	if (isRoot) {
 		console.log({
 			publicTag, //
 			recursive,
 			isRoot,
+			hiddenStringValue,
+			makeThePublicTagPagePublic,
 			...rest,
 		});
 
 		for (const page of somePages) {
+			if (makeThePublicTagPagePublic && titleIsPublicTag(page)) {
+				fullyPublicPages.push(page);
+				continue;
+			}
+
 			const rootLevelParagraphsWithPublicTag =
 				page.children && page.children.filter((c) => c.string.includes(publicTag));
 
@@ -169,6 +192,7 @@ const findPublicPages = (
 						publicTag,
 						recursive,
 						hiddenStringValue,
+						makeThePublicTagPagePublic,
 						isRoot: false,
 					});
 
@@ -283,9 +307,9 @@ const findPublicPages = (
 		...partlyPublicPages,
 	].sort((A, B) =>
 		/** public tag itself first, then public pages, then all other ones */
-		"title" in A.page && A.page.title === publicTag
+		titleIsPublicTag(A.page)
 			? -1
-			: "title" in B.page && B.page.title === publicTag
+			: titleIsPublicTag(B.page)
 			? 1
 			: A.hasAtLeastOnePublicBlockAnywhereInTheHierarchy
 			? -1
