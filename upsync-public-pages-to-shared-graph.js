@@ -5,7 +5,7 @@
 
 const path = require("path");
 
-const { readJsonSync, getAllBlocksFromPages } = require("./util");
+const { readJsonSync, getAllBlocksFromPages, poolPromises } = require("./util");
 const { findPublicPages } = require("./findPublicPages");
 
 const publicPages = findPublicPages(readJsonSync(path.resolve(__dirname, "../notes/json/kipras-g1.json")), {
@@ -45,17 +45,26 @@ const api = new RoamPrivateApi(publicGraphToImportInto, secrets.email, secrets.p
 
 const startTime = new Date();
 
-const allBlocks = getAllBlocksFromPages(publicPages).splice(0, 500); // TODO FIXME REMVOE
+// const allBlocks = getAllBlocksFromPages(publicPages).splice(0, 500); // TODO FIXME REMVOE
 
-console.log(
-	"allBlocks",
-	allBlocks,
-	allBlocks.filter((b) => typeof b !== "string")
-);
+// console.log(
+// 	"allBlocks",
+// 	allBlocks,
+// 	allBlocks.filter((b) => typeof b !== "string")
+// );
+
+const maxRequestsPerInterval = 300 - 5;
+const minimumIntervalMsBetweenMaxRequests = 1000 * (60 + 2);
 
 Promise.resolve()
-	.then(() => api.deleteBlocks(allBlocks))
-	.then(() => api.deletePages(publicPages))
+	// .then(() => api.deleteBlocks(allBlocks))
+	.then(() =>
+		poolPromises(
+			minimumIntervalMsBetweenMaxRequests,
+			maxRequestsPerInterval,
+			publicPages.map((page) => async () => await api.deletePage(page.uid))
+		)
+	)
 	.then(() => api.import(publicPages))
 	.then(() => api.markSelectedPagesAsPubliclyReadable(publicPages))
 	.then(() => console.log("done", (new Date() - startTime) / 1000))
