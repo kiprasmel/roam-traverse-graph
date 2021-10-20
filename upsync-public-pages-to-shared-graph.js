@@ -3,17 +3,15 @@
 // @ts-check
 /* eslint-disable @typescript-eslint/no-var-requires */
 
-// const fs = require("fs");
+const path = require("path");
 
+const { readJsonSync } = require("./util");
 const { findPublicPages } = require("./findPublicPages");
 
-const publicPages = findPublicPages(
-	require("../notes/json/kipras-g1.json"), //
-	{
-		recursive: true,
-		publicTag: "#public", // custom for testing
-	}
-).map((p) => p.page);
+const publicPages = findPublicPages(readJsonSync(path.resolve(__dirname, "../notes/json/kipras-g1.json")), {
+	recursive: true,
+	publicTag: "#public", // custom for testing
+}).map((p) => p.page);
 
 // fs.writeFileSync("public-pages.json", JSON.stringify(publicPages, null, 2), { encoding: "utf-8" });
 
@@ -58,4 +56,3 @@ Promise.resolve()
 		process.exit(1);
 	})
 	.finally(() => console.log("finally"));
-

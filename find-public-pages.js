@@ -7,6 +7,7 @@ const path = require("path");
 
 const { defaultPublicTag, defaultRecursive } = require("./defaults");
 const { findPublicPages } = require("./findPublicPages");
+const { readJsonSync } = require("./util");
 
 /** @type string */
 const pathToGraphFile = process.argv?.[2] || "./json/kipras-g1.json";
@@ -20,7 +21,7 @@ const recursive = !!(Number(process.argv?.[4] ?? 0) ?? defaultRecursive);
 /**
  * @type { import("./types").Page[] }
  */
-const allPages = JSON.parse(fs.readFileSync(path.resolve(pathToGraphFile), { encoding: "utf-8" }));
+const allPages = readJsonSync(path.resolve(__dirname, pathToGraphFile));
 
 /**
  * @type { import("./types").PageWithMetadata[] }
