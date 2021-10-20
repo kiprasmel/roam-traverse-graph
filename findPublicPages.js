@@ -184,7 +184,9 @@ const findPublicPages = (
 					 *
 					 */
 
-					if (doNotHideTodoAndDone) {
+					if (c.string === "") {
+						// do nothing
+					} else if (doNotHideTodoAndDone) {
 						if (c.string.includes("{{[[TODO]]}}")) {
 							c.string = `{{[[TODO]]}} (${hiddenStringValue}) ${c.uid}`;
 						} else if (c.string.includes("{{[[DONE]]}}")) {
