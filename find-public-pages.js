@@ -2,6 +2,9 @@
 
 // @ts-check
 
+const fs = require("fs");
+const path = require("path");
+
 const { defaultPublicTag, defaultRecursive } = require("./defaults");
 const { findPublicPages } = require("./findPublicPages");
 
@@ -17,7 +20,7 @@ const recursive = !!(Number(process.argv?.[4] ?? 0) ?? defaultRecursive);
 /**
  * @type { import("./types").Page[] }
  */
-const allPages = require(pathToGraphFile);
+const allPages = JSON.parse(fs.readFileSync(path.resolve(pathToGraphFile), { encoding: "utf-8" }));
 
 /**
  * @type { import("./types").PageWithMetadata[] }
@@ -27,13 +30,28 @@ const publicPagesWrappedWithMetadata = findPublicPages(allPages, {
 	recursive,
 });
 
+fs.writeFileSync(
+	path.resolve(__dirname, "../kiprasmel.json"), //
+	JSON.stringify(
+		publicPagesWrappedWithMetadata.map((p) => p.page),
+		null,
+		2
+	),
+	{
+		encoding: "utf-8",
+	}
+);
+
 console.log(
-	publicPagesWrappedWithMetadata.map(({ isPublicTagInRootBlocks: isRoot, page }) => ({
-		isRoot, //
-		title: "title" in page ? page.title : undefined,
-		string: "string" in page ? page.string : undefined,
-		/** inside array to print `page: [ [Object] ]` instead of the whole */
-		page: [page],
-	})),
+	publicPagesWrappedWithMetadata
+		.filter((p) => p.hasAtLeastOnePublicBlockAnywhereInTheHierarchy)
+		.map(({ isPublicTagInRootBlocks: isRoot, page, isFullyPublic }) => ({
+			isRoot, //
+			isFullyPublic,
+			title: "title" in page ? page.title : undefined,
+			string: "string" in page ? page.string : undefined,
+			/** inside array to print `page: [ [Object] ]` instead of the whole */
+			page: [page],
+		})),
 	publicPagesWrappedWithMetadata.length
 );
