@@ -43,7 +43,10 @@ const publicPagesWrappedWithMetadata = findPublicPages(allPages, {
 // 	}
 // );
 
-writeJsonSync("../kiprasmel.json", publicPagesWrappedWithMetadata.map((p) => p.page));
+writeJsonSync(
+	"../kiprasmel.json",
+	publicPagesWrappedWithMetadata.map((p) => p.page)
+);
 writeJsonSync("../kiprasmelraw.json", publicPagesWrappedWithMetadata);
 
 console.log(
