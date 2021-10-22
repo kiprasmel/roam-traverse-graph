@@ -38,14 +38,14 @@ const findPublicPages = (
 		 */
 		({
 			uid: page.uid,
-			string: page.string,
-			title: page.title,
-			heading: page.heading,
+			...("string" in page ? { string: page.string } : "title" in page ? { title: page.title } : {}),
+			...("heading" in page ? { heading: page.heading } : {}),
 			"create-time": page["create-time"],
 			"edit-time": page["edit-time"],
 			"edit-email": page["edit-email"],
-			"text-align": page["text-align"],
 			children: page.children,
+			...("text-align" in page ? { "text-aling": page["text-align"] } : {}),
+			...("refs" in page ? { refs: page.refs } : {}),
 		})
 	);
 
@@ -135,6 +135,49 @@ const findPublicPages = (
 				page.children = [];
 			}
 
+			const findMatches = (str, regex) => {
+				const matches = [];
+				let tmp;
+
+				while ((tmp = regex.exec(str))) {
+					matches.push(tmp);
+				}
+
+				return matches;
+			};
+
+			const findMatchesForMultiple = (str = "", regexes = []) =>
+				// TODO what if empty str?
+				regexes
+					.map((r) => findMatches(str, r))
+					.flat()
+					.filter((m) => !!m)
+					.map((m) => m && m[0]);
+			const linkedReferencesMatchers = [
+				/#\w+/,
+				/\[\[\w+\]\]/ /* /\w+\:\:/ */ /* disabling attributes intentionally, needs work-around to create proper one */,
+			];
+
+			const findLinkedReferencesForPage = (p) =>
+				findMatchesForMultiple(
+					"title" in p ? p.title : "string" in p ? p.string : "",
+					linkedReferencesMatchers
+				);
+
+			// const matchedLinkedReferencesForPage = findLinkedReferencesForPage(page);
+
+			/** @type { (testee: string) => boolean } */
+			const matchAtLeastOne = (testee, matchers = linkedReferencesMatchers) =>
+				matchers.some((matcher) => matcher.test(testee));
+
+			/** @type { (page: import("./types").PageOrBlock) => boolean } */
+			const doesPageHaveAtLeastOneLinkedReference = (p) =>
+				"title" in p ? matchAtLeastOne(p.title) : "string" in p ? matchAtLeastOne(p.string) : false;
+			const pageHasAtLeastOneLinkedReference = doesPageHaveAtLeastOneLinkedReference(page);
+			/** @type { boolean } */
+			// //const pageHasAtLeastOneLinkedReference = doesPageHaveAtLeastOneLinkedReference(page);
+			// const pageHasAtLeastOneLinkedReference = !!matchedLinkedReferencesForPage.length;
+
 			/**
 			 * @type { import("./types").PageWithMetadata[] }
 			 */
@@ -157,6 +200,13 @@ const findPublicPages = (
 					"text-align": c["text-align"],
 				};
 
+				// const matchedLinkedReferencesForChild = findLinkedReferencesForPage(c);
+
+				const childHasAtLeastOneLinkedReference = doesPageHaveAtLeastOneLinkedReference(c);
+				/** @type { boolean } */
+				// //const childHasAtLeastOneLinkedReference = doesPageHaveAtLeastOneLinkedReference(c);
+				// const childHasAtLeastOneLinkedReference = !!matchedLinkedReferencesForChild.length;
+
 				if (c.string.includes(publicTag)) {
 					/** boom, do not hide the string or any strings of it's children */
 
@@ -166,6 +216,8 @@ const findPublicPages = (
 						isFullyPublic: false,
 						isPublicTagInRootBlocks: false,
 						hasAtLeastOnePublicBlockAnywhereInTheHierarchy: true,
+						matchedLinkedReferences: "TODO RM", // matchedLinkedReferencesForChild,
+						hasAtLeastOneLinkedReference: childHasAtLeastOneLinkedReference, //  childHasAtLeastOneLinkedReference, // TODO CHILDREN. EDIT NVM NO TODO, NO CHILDREN, ALL GOOD
 					};
 				} else {
 					/**
@@ -221,8 +273,14 @@ const findPublicPages = (
 						isFullyPublic: false,
 						isPublicTagInRootBlocks: false,
 						hasAtLeastOnePublicBlockAnywhereInTheHierarchy: !!ret.filter(
-							(pp) => pp.hasAtLeastOnePublicBlockAnywhereInTheHierarchy
+							(cc) => cc.hasAtLeastOnePublicBlockAnywhereInTheHierarchy
 						).length,
+						matchedLinkedReferences: "TODO RM", // matchedLinkedReferencesForChild,
+						hasAtLeastOneLinkedReference: childHasAtLeastOneLinkedReference, // childHasAtLeastOneLinkedReference
+						// EXPLICITLY DISABLED - CHECK ONLY URSELF
+						// || !!ret.find((cc) =>
+						//		cc.hasAtLeastOneLinkedReference
+						//		cc)
 					};
 				}
 			});
@@ -252,6 +310,10 @@ const findPublicPages = (
 				if ("string" in page) {
 					page.string = `(${hiddenStringValue}) ${page.uid}`;
 				}
+
+				if ("title" in page && "string" in page) {
+					console.warn("both title and string found in page", page.uid, page.title);
+				}
 			} else {
 				/**
 				 * YAY! page will be partly public.
@@ -273,6 +335,8 @@ const findPublicPages = (
 				hasPublicTag: false,
 				isPublicTagInRootBlocks: false,
 				hasAtLeastOnePublicBlockAnywhereInTheHierarchy,
+				matchedLinkedReferences: "TODO RM", // matchedLinkedReferencesForPage,
+				hasAtLeastOneLinkedReference: pageHasAtLeastOneLinkedReference,
 			};
 
 			// const hasPublicTagOnRootLevelParagraphs = !!page.children.filter((c) => c.string.includes(publicTag))
@@ -318,6 +382,7 @@ const findPublicPages = (
 			isPublicTagInRootBlocks: true,
 			isFullyPublic: true,
 			hasAtLeastOnePublicBlockAnywhereInTheHierarchy: true,
+			hasAtLeastOneLinkedReference: true, // TODO, fine for now
 		})),
 		...partlyPublicPages,
 	].sort((A, B) =>
