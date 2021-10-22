@@ -23,13 +23,11 @@ export type Heading = 0 | 1 | 2 | 3;
 export type TextAlign = "left" | "center" | "right" | "justify";
 
 export type Block = EntityBase & {
-	string?: string;
+	string: string;
 	heading?: Heading;
 	"text-align"?: TextAlign;
 };
 
 export type Page = EntityBase & {
-	title?: string;
+	title: string;
 };
-
-export type PageOrBlock = Page | Block;
