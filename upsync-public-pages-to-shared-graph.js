@@ -48,7 +48,7 @@ const api = new RoamPrivateApi(publicGraphToImportInto, secrets.email, secrets.p
 
 const startTime = new Date();
 
-const allBlocks = getAllBlocksFromPages(publicPages); //.splice(0, 500); // TODO FIXME REMVOE
+const allBlocks = getAllBlocksFromPages(publicPages); // .splice(0, 500); // TODO FIXME REMVOE
 
 // console.log(
 // 	"allBlocks",
@@ -59,24 +59,21 @@ const allBlocks = getAllBlocksFromPages(publicPages); //.splice(0, 500); // TODO
 const minimumIntervalMsBetweenMaxRequests = 1000 * (60 + 2);
 const maxRequestsPerInterval = 300 - 5;
 
-const filterPublicPages = (pps) => pps
-	.filter(pp => {
-		const raw = publicPagesRaw.find(ppr => ppr.page.uid === pp.uid);
-		if (!raw) {
-			console.warn("raw now found for page.uid", pp.uid);
-			return true;
-		}
-		return !!raw.hasAtLeastOnePublicBlockAnywhereInTheHierarchy
-			|| !!raw.hasAtLeastOneLinkedReference
-		;
-	})
-	.filter(pp => !["PmdJYvQ1i", /*anon*/, "10-20-2021"].includes(pp.uid))
-;
-
+const filterPublicPages = (pps) =>
+	pps
+		.filter((pp) => {
+			const raw = publicPagesRaw.find((ppr) => ppr.page.uid === pp.uid);
+			if (!raw) {
+				console.warn("raw now found for page.uid", pp.uid);
+				return true;
+			}
+			return !!raw.hasAtLeastOnePublicBlockAnywhereInTheHierarchy || !!raw.hasAtLeastOneLinkedReference;
+		})
+		.filter((pp) => !["PmdJYvQ1i" /* anon */, , "10-20-2021"].includes(pp.uid));
 const _publicPages = publicPages;
 
 // TODO FIXME - TEMP
-publicPages = filterPublicPages(publicPages)
+publicPages = filterPublicPages(publicPages);
 
 Promise.resolve()
 	// DISABLED, DO NOT USE (NO NEED)
@@ -93,7 +90,7 @@ Promise.resolve()
 	.then(() => api.afterDeletePages())
 	.then(() => api.import(publicPages))
 	.then(() => api.markSelectedPagesAsPubliclyReadable(filterPublicPages(publicPages)))
-	.then(() => api.import(_publicPages.filter(pps => !publicPages.map(pp => pp.uid).includes(pps.uid))))
+	.then(() => api.import(_publicPages.filter((pps) => !publicPages.map((pp) => pp.uid).includes(pps.uid))))
 	.then(() => console.log("done", (new Date() - startTime) / 1000))
 	.then(() => process.exit(0))
 	.catch((e) => {
