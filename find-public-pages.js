@@ -2,10 +2,9 @@
 
 // @ts-check
 
-const fs = require("fs");
 const path = require("path");
 
-const { defaultPublicTag, defaultRecursive } = require("./defaults");
+const { defaultPublicTag } = require("./defaults");
 const { findPublicPages } = require("./findPublicPages");
 const { readJsonSync, writeJsonSync } = require("./util");
 
@@ -14,9 +13,6 @@ const pathToGraphFile = process.argv?.[2] || "./json/kipras-g1.json";
 
 /** @type string */
 const publicTag = process.argv?.[3] || defaultPublicTag;
-
-/** @type boolean */
-const recursive = !!(Number(process.argv?.[4] ?? 0) ?? defaultRecursive);
 
 /**
  * @type { import("./types").Page[] }
@@ -28,7 +24,6 @@ const allPages = readJsonSync(path.resolve(__dirname, pathToGraphFile));
  */
 const publicPagesWrappedWithMetadata = findPublicPages(allPages, {
 	publicTag,
-	recursive,
 });
 
 // fs.writeFileSync(

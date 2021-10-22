@@ -10,7 +10,6 @@ const { readJsonSync, getAllBlocksFromPages, poolPromises } = require("./util");
 const { findPublicPages } = require("./findPublicPages");
 
 const publicPagesRaw = findPublicPages(readJsonSync(path.resolve(__dirname, "../notes/json/kipras-g1.json")), {
-	recursive: true,
 	publicTag: "#public", // custom for testing
 });
 
