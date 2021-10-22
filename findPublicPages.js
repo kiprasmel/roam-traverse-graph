@@ -1,6 +1,7 @@
 // @ts-check
 
 /* eslint-disable indent */
+/* eslint-disable no-inner-declarations */
 
 const {
 	defaultPublicTag, //
@@ -29,88 +30,160 @@ const findPublicPages = (
 		return [];
 	}
 
-	somePages = somePages.map((page) =>
-		/**
-		 * remove unknown properties from the page (same as w/ a block):
-		 */
-		({
+	/**
+	 * security et al -- in case upstream adds something potentially private
+	 * and we don't immediately update to remove it (very plausible)
+	 *
+	 * @param { import("./types").Page | Record<any, any> } page
+	 * @return { import("./types").Page } page
+	 */
+	function keepOnlyKnownPropertiesOfPage(page) {
+		return ({
 			title: page.title,
 			uid: page.uid,
 			"create-time": page["create-time"],
 			"edit-time": page["edit-time"],
 			"edit-email": page["edit-email"],
 			...("refs" in page ? { refs: page.refs } : {}),
-			children: page.children,
-		})
-	);
+			...("children" in page ? { children: page.children } : {}),
+		});
+	}
+
+	// eslint-disable-next-line no-param-reassign
+	somePages = somePages.map(keepOnlyKnownPropertiesOfPage);
 
 	/**
-	 * @type { import("./types").Page[] }
+	 * @param { import("./types").Page } page
+	 * @returns { import("./types").PageWithMetadata }
 	 */
-	const fullyPublicPages = [];
+	function toFullyPublicPage(page) {
+		return ({
+			page, //
+			hasPublicTag: true,
+			isPublicTagInRootBlocks: true,
+			isFullyPublic: true,
+			hasAtLeastOnePublicBlockAnywhereInTheHierarchy: true,
+			hasAtLeastOneLinkedReference: true, // TODO, fine for now
+		});
+	}
 
 	/**
-	 * @type { (page: import("./types").Page) => boolean }
+	 * @param { import("./types").Page } page
+	 * @returns { import("./types").PageWithMetadata }
 	 */
-	const titleIsPublicTag = (page) => {
-		if (!("title" in page)) return false;
+	function toPotentiallyPartiallyPublicPage(page) {
+		return ({
+			page, //
+			hasPublicTag: false,
+			isPublicTagInRootBlocks: false,
+			isFullyPublic: false,
+			hasAtLeastOnePublicBlockAnywhereInTheHierarchy: false, // CHANGEABLE LATER
+			hasAtLeastOneLinkedReference: false, // CHANGEABLE LATER
+		});
+	}
+
+	/**
+	 * @param { import("./types").Page } page
+	 * @returns { boolean }
+	 */
+	function titleIsPublicTag(page) {
+		if (!page.title) {
+			return false;
+		}
 
 		const { title } = page;
-		return !![title, "#" + title, "[[" + title + "]]", title + "::"].includes(publicTag);
-	};
 
-	// TODO INLINE (previously isRoot)
-	if (true) {
-		console.log({
-			publicTag, //
-			hiddenStringValue,
-			makeThePublicTagPagePublic,
-			doNotHideTodoAndDone,
-			...rest,
-		});
-
-		for (const page of somePages) {
-			if (makeThePublicTagPagePublic && titleIsPublicTag(page)) {
-				fullyPublicPages.push(page);
-				continue;
-			}
-
-			const rootLevelParagraphsWithPublicTag =
-				page.children && page.children.filter((c) => c.string.includes(publicTag));
-
-			if (!rootLevelParagraphsWithPublicTag || !rootLevelParagraphsWithPublicTag.length) {
-				continue;
-			}
-
-			/** @type { boolean } */
-			const doPublicTagParagraphsOnlyWithPublicTagAndWithoutAnyChildrenExist = !!rootLevelParagraphsWithPublicTag
-				.filter((c) => !c.children || !c.children.length)
-
-				/**
-				 * whole page should be public.
-				 *
-				 * TODO consider if the block itself should be empty except the publicTag itself
-				 * -> probably yes, just for security concerns.
-				 *
-				 */
-				.filter(
-					(c) => ("string" in c && c.string.trim() === publicTag)
-					// disabled because c is children === Block and block don't have title,
-					// it probably doesn't make sense to check Page's title anyway
-					/* || ("title" in c && c.title === publicTag) */
-				).length;
-
-			if (doPublicTagParagraphsOnlyWithPublicTagAndWithoutAnyChildrenExist) {
-				fullyPublicPages.push(page);
-			}
-		}
+		return !!([
+			title, //
+			"#" + title,
+			"[[" + title + "]]",
+			title + "::",
+		].includes(publicTag));
 	}
+
+	/**
+	 * @param { import("./types").Page } page
+	 * @returns { boolean }
+	 */
+	function isMarkedAsFullyPublic(page) {
+		const rootLevelParagraphsWithPublicTag =
+			page.children && page.children.filter((c) => c.string.includes(publicTag));
+
+		if (!rootLevelParagraphsWithPublicTag || !rootLevelParagraphsWithPublicTag.length) {
+			return false;
+		}
+
+		/** @type { boolean } */
+		const doPublicTagParagraphsOnlyWithPublicTagAndWithoutAnyChildrenExist = !!rootLevelParagraphsWithPublicTag
+			.filter((c) => !c.children || !c.children.length)
+
+			/**
+			 * whole page should be public.
+			 *
+			 * TODO consider if the block itself should be empty except the publicTag itself
+			 * -> probably yes, just for security concerns.
+			 *
+			 */
+			.filter(
+				(c) => ("string" in c && c.string.trim() === publicTag)
+				// disabled because c is children === Block and block don't have title,
+				// it probably doesn't make sense to check Page's title anyway
+				/* || ("title" in c && c.title === publicTag) */
+			).length;
+
+		if (doPublicTagParagraphsOnlyWithPublicTagAndWithoutAnyChildrenExist) {
+			return true;
+		}
+
+		return false;
+	}
+
+	console.log({
+		publicTag, //
+		hiddenStringValue,
+		makeThePublicTagPagePublic,
+		doNotHideTodoAndDone,
+		...rest,
+	});
 
 	/**
 	 * @type { import("./types").PageWithMetadata[] }
 	 */
+	const pagesWithMetadata = somePages.map((page) => {
+		const isThePublicTagPageAndShouldBePublic = (makeThePublicTagPagePublic && titleIsPublicTag(page));
+
+		if (isThePublicTagPageAndShouldBePublic || isMarkedAsFullyPublic(page)) {
+			return toFullyPublicPage(page);
+		} else {
+			return toPotentiallyPartiallyPublicPage(page);
+		}
+	});
+
+	const pagesWithParsedChildrenAndMetadata = pagesWithMetadata.map((pageWithMeta) => ({
+		...pageWithMeta,
+		...("children" in pageWithMeta ? { children: findPublicBlocks(pageWithMeta, pagesWithMetadata) } : {}),
+	}));
+
+	return pagesWithParsedChildrenAndMetadata.sort((A, B) =>
+		/** public tag itself first, then public pages, then all other ones */
+		titleIsPublicTag(A.page)
+			? -1
+			: titleIsPublicTag(B.page)
+			? 1
+			: A.hasAtLeastOnePublicBlockAnywhereInTheHierarchy
+			? -1
+			: B.hasAtLeastOnePublicBlockAnywhereInTheHierarchy
+			? 1
+			: 0
+	);
+};
+
+function findPublicBlocks(pageWithMeta, pagesWithMetadata) {
+	/**
+	 * @type { import("./types").PageWithMetadata[] }
+	 */
 	const partlyPublicPages = somePages
-		.filter((p) => !fullyPublicPages.map((fp) => fp.uid).includes(p.uid))
+		.filter((p) => !pagesWithMetadata.map((fp) => fp.uid).includes(p.uid))
 		// .filter((page) => page && page.children && page.children.length)
 		.map((page) => {
 			// /**
@@ -249,7 +322,7 @@ const findPublicPages = (
 					 * search if any children are public and can be not hidden,
 					 * and apply the same hiding mechanism for them too:
 					 */
-					const ret = findPublicPages(c.children, {
+					const ret = findPublicBlocks(c.children, {
 						...rest,
 						publicTag,
 						hiddenStringValue,
@@ -367,31 +440,9 @@ const findPublicPages = (
 		});
 	// .filter((x) => x.hasChildren !== false)
 	// .filter((x) => x.hasPublicTag);
-
-	return [
-		...fullyPublicPages.map((page) => ({
-			page, //
-			hasPublicTag: true,
-			isPublicTagInRootBlocks: true,
-			isFullyPublic: true,
-			hasAtLeastOnePublicBlockAnywhereInTheHierarchy: true,
-			hasAtLeastOneLinkedReference: true, // TODO, fine for now
-		})),
-		...partlyPublicPages,
-	].sort((A, B) =>
-		/** public tag itself first, then public pages, then all other ones */
-		titleIsPublicTag(A.page)
-			? -1
-			: titleIsPublicTag(B.page)
-			? 1
-			: A.hasAtLeastOnePublicBlockAnywhereInTheHierarchy
-			? -1
-			: B.hasAtLeastOnePublicBlockAnywhereInTheHierarchy
-			? 1
-			: 0
-	);
-};
+}
 
 module.exports = {
 	findPublicPages,
+	findPublicBlocks,
 };
