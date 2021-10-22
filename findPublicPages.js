@@ -20,7 +20,6 @@ const findPublicPages = (
 		 */
 		publicTag = defaultPublicTag, //
 		hiddenStringValue = defaultHiddenStringValue,
-		isRoot = true,
 		makeThePublicTagPagePublic = defaultMakeThePublicTagPagePublic,
 		doNotHideTodoAndDone = defaultDoNotHideTodoAndDone,
 		...rest
@@ -35,24 +34,23 @@ const findPublicPages = (
 		 * remove unknown properties from the page (same as w/ a block):
 		 */
 		({
+			title: page.title,
 			uid: page.uid,
-			...("string" in page ? { string: page.string } : "title" in page ? { title: page.title } : {}),
-			...("heading" in page ? { heading: page.heading } : {}),
 			"create-time": page["create-time"],
 			"edit-time": page["edit-time"],
 			"edit-email": page["edit-email"],
-			children: page.children,
-			...("text-align" in page ? { "text-aling": page["text-align"] } : {}),
 			...("refs" in page ? { refs: page.refs } : {}),
+			children: page.children,
 		})
 	);
 
-	/** TODO maybe only Page and ensure inside `isRoot` (tho not always so unsure) */
-	/** @type { import("./types").PageOrBlock[] } */
+	/**
+	 * @type { import("./types").Page[] }
+	 */
 	const fullyPublicPages = [];
 
 	/**
-	 * @type { (title: import("./types").PageOrBlock) => boolean }
+	 * @type { (page: import("./types").Page) => boolean }
 	 */
 	const titleIsPublicTag = (page) => {
 		if (!("title" in page)) return false;
@@ -61,10 +59,10 @@ const findPublicPages = (
 		return !![title, "#" + title, "[[" + title + "]]", title + "::"].includes(publicTag);
 	};
 
-	if (isRoot) {
+	// TODO INLINE (previously isRoot)
+	if (true) {
 		console.log({
 			publicTag, //
-			isRoot,
 			hiddenStringValue,
 			makeThePublicTagPagePublic,
 			doNotHideTodoAndDone,
@@ -256,7 +254,6 @@ const findPublicPages = (
 						publicTag,
 						hiddenStringValue,
 						makeThePublicTagPagePublic,
-						isRoot: false,
 					});
 
 					// eslint-disable-next-line @typescript-eslint/ban-ts-ignore

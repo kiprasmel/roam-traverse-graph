@@ -1,10 +1,9 @@
-import { PageOrBlock } from "./roam";
+import { Page } from "./roam";
 
 export * from "./roam";
 
 export type FindPublicPagesOptions = {
 	publicTag?: string;
-	isRoot?: boolean;
 	/**
 	 * TODO DEPRECATE - use the .uid instead! (will work for pages too to avoid merging them lol)
 	 * (or keep and concat w/ the .title / .string to make obvious it's hidden)
@@ -23,7 +22,7 @@ export type FindPublicPagesOptions = {
 };
 
 export type PageWithMetadata = {
-	page: PageOrBlock;
+	page: Page;
 	hasPublicTag: boolean;
 	isPublicTagInRootBlocks: boolean;
 	isFullyPublic: boolean;
@@ -32,6 +31,6 @@ export type PageWithMetadata = {
 };
 
 export type FindPublicPages = (
-	somePagesOrBlocks?: PageOrBlock[], //
+	pages: Page[], //
 	options?: FindPublicPagesOptions
 ) => PageWithMetadata[];

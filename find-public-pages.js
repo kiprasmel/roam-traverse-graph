@@ -50,8 +50,7 @@ console.log(
 		.map(({ isPublicTagInRootBlocks: isRoot, page, isFullyPublic }) => ({
 			isRoot, //
 			isFullyPublic,
-			title: "title" in page ? page.title : undefined,
-			string: "string" in page ? page.string : undefined,
+			title: page.title,
 			/** inside array to print `page: [ [Object] ]` instead of the whole */
 			page: [page],
 		})),
