@@ -7,7 +7,7 @@ const path = require("path");
 
 const { defaultPublicTag, defaultRecursive } = require("./defaults");
 const { findPublicPages } = require("./findPublicPages");
-const { readJsonSync } = require("./util");
+const { readJsonSync, writeJsonSync } = require("./util");
 
 /** @type string */
 const pathToGraphFile = process.argv?.[2] || "./json/kipras-g1.json";
@@ -31,17 +31,20 @@ const publicPagesWrappedWithMetadata = findPublicPages(allPages, {
 	recursive,
 });
 
-fs.writeFileSync(
-	path.resolve(__dirname, "../kiprasmel.json"), //
-	JSON.stringify(
-		publicPagesWrappedWithMetadata.map((p) => p.page),
-		null,
-		2
-	),
-	{
-		encoding: "utf-8",
-	}
-);
+// fs.writeFileSync(
+// 	path.resolve(__dirname, "../kiprasmel.json"), //
+// 	JSON.stringify(
+// 		publicPagesWrappedWithMetadata.map((p) => p.page),
+// 		null,
+// 		2
+// 	),
+// 	{
+// 		encoding: "utf-8",
+// 	}
+// );
+
+writeJsonSync("../kiprasmel.json", publicPagesWrappedWithMetadata.map((p) => p.page));
+writeJsonSync("../kiprasmelraw.json", publicPagesWrappedWithMetadata);
 
 console.log(
 	publicPagesWrappedWithMetadata

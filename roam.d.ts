@@ -6,25 +6,30 @@
  *
  */
 
+export type Ref = {
+	uid: string;
+};
+
 export type EntityBase = {
 	"create-time": number;
 	"edit-time": number;
 	"edit-email": string;
 	uid: string;
 	children?: Block[];
+	refs?: Ref[];
 };
 
 export type Heading = 0 | 1 | 2 | 3;
 export type TextAlign = "left" | "center" | "right" | "justify";
 
 export type Block = EntityBase & {
-	string: string;
-	heading: Heading;
-	"text-align": TextAlign;
+	string?: string;
+	heading?: Heading;
+	"text-align"?: TextAlign;
 };
 
 export type Page = EntityBase & {
-	title: string;
+	title?: string;
 };
 
 export type PageOrBlock = Page | Block;
