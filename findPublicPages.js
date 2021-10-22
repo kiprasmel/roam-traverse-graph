@@ -4,7 +4,6 @@
 
 const {
 	defaultPublicTag, //
-	defaultRecursive,
 	defaultHiddenStringValue,
 	defaultMakeThePublicTagPagePublic,
 	defaultDoNotHideTodoAndDone,
@@ -20,7 +19,6 @@ const findPublicPages = (
 		 * TODO: allow providing `oldPublicTagsForDeletion` array to remove the pages
 		 */
 		publicTag = defaultPublicTag, //
-		recursive = defaultRecursive,
 		hiddenStringValue = defaultHiddenStringValue,
 		isRoot = true,
 		makeThePublicTagPagePublic = defaultMakeThePublicTagPagePublic,
@@ -66,7 +64,6 @@ const findPublicPages = (
 	if (isRoot) {
 		console.log({
 			publicTag, //
-			recursive,
 			isRoot,
 			hiddenStringValue,
 			makeThePublicTagPagePublic,
@@ -257,7 +254,6 @@ const findPublicPages = (
 					const ret = findPublicPages(c.children, {
 						...rest,
 						publicTag,
-						recursive,
 						hiddenStringValue,
 						makeThePublicTagPagePublic,
 						isRoot: false,
