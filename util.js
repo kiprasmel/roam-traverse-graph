@@ -37,6 +37,33 @@ const poolPromises = async (intervalMs, maxRequestsPerIntervalIncl, arrayOfPromi
 	return results.flat();
 };
 
+/**
+ * @param { string } str
+ * @returns { import("./types").LinkedReference[] }
+ */
+function createLinkedReferences(str) {
+	return [
+		{
+			origStr: str,
+			fullStr: "#" + str, //
+			kind: "#",
+			create: (newStr) => "#" + newStr,
+		},
+		{
+			origStr: str,
+			fullStr: "[[" + str + "]]", //
+			kind: "[[]]",
+			create: (newStr) => "[[" + newStr + "]]",
+		},
+		{
+			origStr: str,
+			fullStr: str + "::", //
+			kind: "::",
+			create: (newStr) => newStr + "::",
+		},
+	];
+}
+
 //
 module.exports = {
 	readJsonSync, //
@@ -44,4 +71,5 @@ module.exports = {
 	getAllBlocksFromPages,
 	delay,
 	poolPromises,
+	createLinkedReferences,
 };
