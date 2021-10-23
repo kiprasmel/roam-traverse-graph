@@ -1,4 +1,4 @@
-import { Page } from "./roam";
+import { Page, LinkedReferenceKind } from "./roam";
 
 export * from "./roam";
 
@@ -28,9 +28,20 @@ export type PageWithMetadata = {
 	isFullyPublic: boolean;
 	hasAtLeastOnePublicBlockAnywhereInTheHierarchy: boolean;
 	hasAtLeastOneLinkedReference: boolean;
+
+	//
+	isTitleHidden?: boolean;
+	originalTitle?: string;
 };
 
 export type FindPublicPages = (
 	pages: Page[], //
 	options?: FindPublicPagesOptions
 ) => PageWithMetadata[];
+
+export type LinkedReference = {
+	origStr: string;
+	fullStr: string; //
+	kind: LinkedReferenceKind;
+	create: (newStr: string) => string;
+};
