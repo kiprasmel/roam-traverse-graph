@@ -28,6 +28,10 @@ export type PageWithMetadata = {
 	isFullyPublic: boolean;
 	hasAtLeastOnePublicBlockAnywhereInTheHierarchy: boolean;
 	hasAtLeastOneLinkedReference: boolean;
+
+	//
+	isTitleHidden?: boolean;
+	originalTitle?: string;
 };
 
 export type FindPublicPages = (
