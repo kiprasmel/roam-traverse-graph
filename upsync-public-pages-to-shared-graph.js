@@ -11,9 +11,15 @@ const { findPublicPages } = require("./findPublicPages");
 
 const publicPagesRaw = findPublicPages(readJsonSync(path.resolve(__dirname, "../notes/json/kipras-g1.json")), {
 	publicTag: "#public", // custom for testing
-});
+}).filter(
+	(raw) =>
+		![
+			"PmdJYvQ1i" /* anon */, //
+			"10-23-2021" /** TODO UPDATE TO CURRENT DAY */,
+		].includes(raw.page.uid)
+);
 
-let publicPages = publicPagesRaw.map((p) => p.page);
+const publicPages = publicPagesRaw.map((p) => p.page);
 
 // fs.writeFileSync("public-pages.json", JSON.stringify(publicPages, null, 2), { encoding: "utf-8" });
 
@@ -58,21 +64,18 @@ const allBlocks = getAllBlocksFromPages(publicPages); // .splice(0, 500); // TOD
 const minimumIntervalMsBetweenMaxRequests = 1000 * (60 + 2);
 const maxRequestsPerInterval = 300 - 5;
 
-const filterPublicPages = (pps) =>
-	pps
-		.filter((pp) => {
-			const raw = publicPagesRaw.find((ppr) => ppr.page.uid === pp.uid);
+const filterPublicPagesForHighPrio = (ppsRaw) =>
+	ppsRaw
+		.filter((raw) => {
 			if (!raw) {
-				console.warn("raw now found for page.uid", pp.uid);
-				return true;
+				return false;
 			}
-			return !!raw.hasAtLeastOnePublicBlockAnywhereInTheHierarchy || !!raw.hasAtLeastOneLinkedReference;
+			return !!raw.isFullyPublic || !!raw.hasAtLeastOnePublicBlockAnywhereInTheHierarchy;
 		})
-		.filter((pp) => !["PmdJYvQ1i" /* anon */, , "10-20-2021"].includes(pp.uid));
-const _publicPages = publicPages;
+		.map((raw) => raw.page);
 
-// TODO FIXME - TEMP
-publicPages = filterPublicPages(publicPages);
+// TODO FIXME TEMP
+const _publicPagesHighPrio = filterPublicPagesForHighPrio(publicPagesRaw);
 
 Promise.resolve()
 	// DISABLED, DO NOT USE (NO NEED)
@@ -83,13 +86,13 @@ Promise.resolve()
 		poolPromises(
 			minimumIntervalMsBetweenMaxRequests,
 			maxRequestsPerInterval,
-			_publicPages.map((page) => async () => await api.deletePage(page.uid))
+			publicPages.map((page) => async () => await api.deletePage(page.uid))
 		)
 	)
 	.then(() => api.afterDeletePages())
-	.then(() => api.import(publicPages))
-	.then(() => api.markSelectedPagesAsPubliclyReadable(filterPublicPages(publicPages)))
-	.then(() => api.import(_publicPages.filter((pps) => !publicPages.map((pp) => pp.uid).includes(pps.uid))))
+	.then(() => api.import(_publicPagesHighPrio))
+	.then(() => api.markSelectedPagesAsPubliclyReadable(_publicPagesHighPrio))
+	.then(() => api.import(publicPages.filter((pps) => !_publicPagesHighPrio.map((pp) => pp.uid).includes(pps.uid))))
 	.then(() => console.log("done", (new Date() - startTime) / 1000))
 	.then(() => process.exit(0))
 	.catch((e) => {
