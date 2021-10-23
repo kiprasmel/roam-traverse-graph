@@ -31,3 +31,5 @@ export type Block = EntityBase & {
 export type Page = EntityBase & {
 	title: string;
 };
+
+export type LinkedReferenceKind = "#" | "[[]]" | "::";
