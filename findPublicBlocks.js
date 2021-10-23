@@ -59,7 +59,12 @@ function findPublicBlocks(
 	/** @type { boolean } */
 	const isMarketAsPublic = haveParentsBeenMarkedAsPublic || currentBlock.string.includes(publicTag);
 
-	if (!isMarketAsPublic) {
+	if (isMarketAsPublic) {
+		/**
+		 * TODO FIXME, very ugly work-around lmao
+		 */
+		rootParentPage.hasAtLeastOnePublicBlockAnywhereInTheHierarchy = true;
+	} else {
 		/** @type { string } */
 		let newString = `(${hiddenStringValue}) ${currentBlock.uid}`;
 
@@ -133,11 +138,11 @@ function findPublicBlocks(
 			currentBlock.refs = linkedReferences.map((lr) => ({ uid: lr.metaPage.page.uid }));
 		}
 
-		console.log({
-			block: currentBlock.string,
-			newBlock: newString,
-			// linkedReferences: linkedReferences.flatMap((lr) => [lr.originalTitle, lr.page.title]),
-		});
+		// console.log({
+		// 	block: currentBlock.string,
+		// 	newBlock: newString,
+		// 	// linkedReferences: linkedReferences.flatMap((lr) => [lr.originalTitle, lr.page.title]),
+		// });
 
 		currentBlock.string = newString;
 	}
