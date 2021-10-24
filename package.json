@@ -9,6 +9,9 @@
 		"ts": "npx tsc",
 		"tss": "npx tsc -w"
 	},
+	"dependencies": {
+		"jsedn": "^0.4.1"
+	},
 	"devDependencies": {
 		"@types/node": "^16.11.0"
 	}

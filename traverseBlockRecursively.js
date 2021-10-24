@@ -39,20 +39,14 @@ const traverseBlockRecursively = (mutatingActionToExecute, propsForMutatingActio
 
 	if (block.children && block.children.length) {
 		newChildren = block.children.map(
-			(!propsForMutatingAction
-				? traverseBlockRecursively(
-						mutatingActionToExecute //
-				  )
-				: traverseBlockRecursively(
-						mutatingActionToExecute, //
-						propsForMutatingAction
-				  ))
+			traverseBlockRecursively(
+				mutatingActionToExecute, //
+				propsForMutatingAction
+			)
 		);
 	}
 
-	const newBlock = !propsForMutatingAction
-		? mutatingActionToExecute()?.(block) ?? block
-		: mutatingActionToExecute(propsForMutatingAction)?.(block) ?? block;
+	const newBlock = mutatingActionToExecute(propsForMutatingAction)?.(block) ?? block;
 
 	if (newChildren) {
 		newBlock.children = newChildren;

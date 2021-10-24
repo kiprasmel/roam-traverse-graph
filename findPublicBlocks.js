@@ -7,7 +7,7 @@ const { createLinkedReferences } = require("./util");
 /**
  * @type { import("./types").RemoveUnknownProperties }
  */
-const removeUnknownProperties = (block) =>
+const removeUnknownProperties = () => (block) =>
 	!block
 		? block
 		: ({
