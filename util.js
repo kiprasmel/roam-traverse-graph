@@ -47,7 +47,7 @@ function createLinkedReferences(str) {
 			origStr: str,
 			fullStr: "#" + str, //
 			kind: "#",
-			create: (newStr) => "#" + newStr,
+			create: (newStr) => "#[[" + newStr + "]]",
 		},
 		{
 			origStr: str,
