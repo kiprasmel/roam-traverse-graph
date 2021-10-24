@@ -46,35 +46,65 @@ export type LinkedReference = {
 	create: (newStr: string) => string;
 };
 
-export type TraverseBlockProps = {
-	currentBlock: Block /** uses */;
-
-	publicTag: string /** uses */;
-
-	isParentPublic: boolean /** uses */;
-};
-
 export type MutatingActionsToTakeProps = {
 	hasPublicTag: boolean;
 	isPublic: boolean;
 };
 
-export type MutatingActionToExecute = (props: MutatingActionsToTakeProps) => void;
+export type MutatingActionToExecute<Block, ExtraPropertiesForBlock> = (block: Block) => Block | ExtraPropertiesForBlock;
 
-export type TraverseBlockRecursively = (
-	props: TraverseBlockProps,
-	mutatingActionsToTake: MutatingActionToExecute
-) => /**
- * TODO CHANGE BACK TO `=> void`
- */
-Block;
+export type MutatingActionToExecuteWithProps<Props, Block, ExtraPropertiesForBlock = never> = {} extends Props
+	? () => /** no props */
+	  /** TODO: OR or AND (note how changes `never`) */
+	  MutatingActionToExecute<Block, ExtraPropertiesForBlock>
+	: (
+			props: Props /** yes props */
+	  ) => /** TODO: OR or AND (note how changes `never`) */
+	  MutatingActionToExecute<Block, ExtraPropertiesForBlock>;
 
-export type FindPublicBlocksProps = TraverseBlockProps & {
+export type TraverseBlockRecursively<
+	ExtraPropertiesForBlock extends Record<any, any> = Record<any, any>, //
+	Props = {}, // Record<any, any>,
+	MutationActionsToTakeWithProps extends MutatingActionToExecuteWithProps<
+		Props,
+		Block,
+		ExtraPropertiesForBlock
+	> = MutatingActionToExecuteWithProps<
+		Props,
+		Block, //
+		ExtraPropertiesForBlock
+	>
+> = {} extends Props
+	? (
+			mutatingActionsToTake: MutationActionsToTakeWithProps //
+	  ) => (block: Block) => Block & ExtraPropertiesForBlock
+	: (
+			mutatingActionsToTake: MutationActionsToTakeWithProps, //
+			props: Props // extends Record<any, any> | {} = {},
+	  ) => (block: Block) => Block & ExtraPropertiesForBlock;
+
+//
+
+export type RemoveUnknownPropertiesProps = {
+	//
+};
+export type RemoveUnknownProperties = MutatingActionToExecute<
+	Block, //
+	{}
+>;
+
+// (
+// 	props: RemoveUnknownPropertiesRecursivelyProps
+// ) => (block: Block) => Block;
+
+export type FindPublicBlocksProps = {
+	publicTag: string;
+	isParentPublic: boolean;
+
 	// parentBlock: Block | null;
 	rootParentPage: PageWithMetadata;
 	allPagesWithMetadata: PageWithMetadata[];
 	doNotHideTodoAndDone: boolean;
 	hiddenStringValue: string;
 };
-
-export type FindPublicBlocks = (props: FindPublicBlocksProps) => Block;
+export type FindPublicBlocks = (props: FindPublicBlocksProps) => (block: Block) => Block;

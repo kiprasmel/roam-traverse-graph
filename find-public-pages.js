@@ -9,7 +9,7 @@ const { findPublicPages } = require("./findPublicPages");
 const { readJsonSync, writeJsonSync } = require("./util");
 
 /** @type string */
-const pathToGraphFile = process.argv?.[2] || "./json/kipras-g1.json";
+const pathToGraphFile = process.argv?.[2] || "../notes/json/kipras-g1.json";
 
 /** @type string */
 const publicTag = process.argv?.[3] || defaultPublicTag;
@@ -39,10 +39,10 @@ const publicPagesWrappedWithMetadata = findPublicPages(allPages, {
 // );
 
 writeJsonSync(
-	"../kiprasmel.json",
+	"../kiprasmel.on.json",
 	publicPagesWrappedWithMetadata.map((p) => p.page)
 );
-writeJsonSync("../kiprasmelraw.json", publicPagesWrappedWithMetadata);
+writeJsonSync("../kiprasmelraw.on.json", publicPagesWrappedWithMetadata);
 
 console.log(
 	publicPagesWrappedWithMetadata
