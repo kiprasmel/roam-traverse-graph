@@ -1,52 +1,63 @@
+// @ts-check
+
+/* eslint-disable indent */
+
 /**
  * @type { import("./types").TraverseBlockRecursively }
  */
-function traverseBlockRecursively(
-	props, //
-	mutatingActionToExecute
-) {
-	const isSelfEmpty = !props.currentBlock.string || !props.currentBlock.string.trim();
-	const hasNoChildren = !props.currentBlock.children || !props.currentBlock.children.length;
+const traverseBlockRecursively = (mutatingActionToExecute, propsForMutatingAction) => (block) => {
+	if (!block) {
+		return block;
+	}
+
+	const isSelfEmpty = !block.string || !block.string.trim();
+	const hasNoChildren = !block.children || !block.children.length;
 
 	if (isSelfEmpty && hasNoChildren) {
 		// nothing to do here.
 		// TODO investigate what happens w/ linkedReferences when block is empty and not exited early here.
-		return props.currentBlock;
+		return block;
 	}
 
 	/**
-	 * @type { boolean }
+	 * here, this is a big optimization:
 	 *
-	 * TODO we'll likely need separate variables for `isPageFullyPublic`
-	 * and `isCurrenlBlockPublic` and `isCurrentBlockOrAnyParentsPublic`
+	 * 2 scenarios, when iterating thru block.children with .map:
+	 * a) assign the new value to block.children directly, or
+	 * b) assign the new value to a temporary variable, and only later assign this temporary variable to block.children.
 	 *
-	 * (and also minding the upwards tree, not necessarily straight from the root,
-	 * because we might have a #private tag that would affect this)
+	 * we obviously use B.
+	 *
+	 * previously, we used A, but then you couldn't get past
+	 * "RangeError: Maximum call stack size exceeded"
+	 * errors.
+	 *
+	 * TODO - explain why B is unbelievably better than A and how it works.
 	 *
 	 */
-	const hasPublicTag = props.currentBlock.string.includes(props.publicTag);
-	const isPublic = hasPublicTag || props.isParentPublic;
+	let newChildren;
 
-	mutatingActionToExecute({
-		hasPublicTag,
-		isPublic,
-	});
-
-	if (props.currentBlock.children) {
-		props.currentBlock.children = props.currentBlock.children.map((c) =>
-			traverseBlockRecursively(
-				{
-					...props,
-					currentBlock: c, //
-					// parentBlock: props.currentBlock,
-				},
-				mutatingActionToExecute
-			)
+	if (block.children && block.children.length) {
+		newChildren = block.children.map(
+			(propsForMutatingAction
+				? traverseBlockRecursively(
+						mutatingActionToExecute, //
+						propsForMutatingAction
+				  )
+				: traverseBlockRecursively(mutatingActionToExecute))
 		);
 	}
 
-	return props.currentBlock;
-}
+	const newBlock = propsForMutatingAction
+		? mutatingActionToExecute(propsForMutatingAction)(block)
+		: mutatingActionToExecute()(block);
+
+	if (newChildren) {
+		newBlock.children = newChildren;
+	}
+
+	return newBlock;
+};
 
 module.exports = {
 	traverseBlockRecursively,
