@@ -5,7 +5,8 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 
-const { findPublicBlocks } = require("./findPublicBlocks");
+const { traverseBlockRecursively } = require("./traverseBlockRecursively");
+const { removeUnknownProperties, markBlockPublic } = require("./findPublicBlocks");
 const { createLinkedReferences } = require("./util");
 const {
 	defaultPublicTag, //
@@ -109,23 +110,26 @@ const findPublicPages = (
 	/**
 	 * @type { import("./types").PageWithMetadata[] }
 	 */
-	const pagesWithParsedChildrenAndMetadata = latestPages.map(
-		(currentPageWithMeta) => (
-			("children" in currentPageWithMeta.page &&
-				(currentPageWithMeta.page.children = (currentPageWithMeta.page.children || []).map((block) =>
-					findPublicBlocks({
-						currentBlock: block, //
-						// parentBlock: null,
-						rootParentPage: currentPageWithMeta,
-						allPagesWithMetadata: latestPages,
-						publicTag,
-						isParentPublic: currentPageWithMeta.isFullyPublic,
-						doNotHideTodoAndDone,
-						hiddenStringValue,
-					})
-				)),
-			currentPageWithMeta)
-		)
+	const pagesWithParsedChildrenAndMetadata = latestPages.map((currentPageWithMeta) =>
+		(!("children" in currentPageWithMeta.page)
+			? currentPageWithMeta
+			: ((currentPageWithMeta.page.children = (currentPageWithMeta.page.children || [])
+					.map(traverseBlockRecursively(removeUnknownProperties))
+					.map(
+						traverseBlockRecursively(
+							markBlockPublic, //
+							{
+								// parentBlock: null,
+								rootParentPage: currentPageWithMeta,
+								allPagesWithMetadata: latestPages,
+								publicTag,
+								isParentPublic: currentPageWithMeta.isFullyPublic,
+								doNotHideTodoAndDone,
+								hiddenStringValue,
+							}
+						)
+					)),
+			  currentPageWithMeta))
 	);
 	latestPages = pagesWithParsedChildrenAndMetadata;
 
