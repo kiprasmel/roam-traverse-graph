@@ -23,7 +23,14 @@ const poolPromises = async (intervalMs, maxRequestsPerIntervalIncl, arrayOfPromi
 	while (arrayOfPromiseCreators.length > 0) {
 		const current = arrayOfPromiseCreators.splice(0, maxRequestsPerIntervalIncl + 1);
 
-		console.log("pool #", results.length, "current.length", current.length);
+		console.log(
+			"pool #", //
+			results.length,
+			"current.length",
+			current.length,
+			"remaining",
+			arrayOfPromiseCreators.length - results.length
+		);
 
 		const startTime = new Date().getTime();
 		const tmpResults = await Promise.all(current.map((promiseCreator) => promiseCreator()));
