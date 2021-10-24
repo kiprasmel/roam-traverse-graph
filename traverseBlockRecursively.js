@@ -2,50 +2,39 @@
  * @type { import("./types").TraverseBlockRecursively }
  */
 function traverseBlockRecursively(
-	props, //
+	block, //
 	mutatingActionToExecute
 ) {
-	const isSelfEmpty = !props.currentBlock.string || !props.currentBlock.string.trim();
-	const hasNoChildren = !props.currentBlock.children || !props.currentBlock.children.length;
+	if (!block) {
+		return block;
+	}
+
+	const isSelfEmpty = !block.string || !block.string.trim();
+	const hasNoChildren = !block.children || !block.children.length;
 
 	if (isSelfEmpty && hasNoChildren) {
 		// nothing to do here.
 		// TODO investigate what happens w/ linkedReferences when block is empty and not exited early here.
-		return props.currentBlock;
+		return block;
 	}
 
-	/**
-	 * @type { boolean }
-	 *
-	 * TODO we'll likely need separate variables for `isPageFullyPublic`
-	 * and `isCurrenlBlockPublic` and `isCurrentBlockOrAnyParentsPublic`
-	 *
-	 * (and also minding the upwards tree, not necessarily straight from the root,
-	 * because we might have a #private tag that would affect this)
-	 *
-	 */
-	const hasPublicTag = props.currentBlock.string.includes(props.publicTag);
-	const isPublic = hasPublicTag || props.isParentPublic;
+	const newBlock = mutatingActionToExecute();
 
-	mutatingActionToExecute({
-		hasPublicTag,
-		isPublic,
-	});
-
-	if (props.currentBlock.children) {
-		props.currentBlock.children = props.currentBlock.children.map((c) =>
+	if (newBlock.children && newBlock.children.length) {
+		newBlock.children = newBlock.children.map((childBlock) =>
 			traverseBlockRecursively(
-				{
-					...props,
-					currentBlock: c, //
-					// parentBlock: props.currentBlock,
-				},
+				childBlock,
+				// {
+				// 	...props,
+				// 	currentBlock: c, //
+				// 	// parentBlock: block,
+				// },
 				mutatingActionToExecute
 			)
 		);
 	}
 
-	return props.currentBlock;
+	return newBlock;
 }
 
 module.exports = {

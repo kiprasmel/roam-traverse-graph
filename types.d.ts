@@ -46,35 +46,37 @@ export type LinkedReference = {
 	create: (newStr: string) => string;
 };
 
-export type TraverseBlockProps = {
-	currentBlock: Block /** uses */;
-
-	publicTag: string /** uses */;
-
-	isParentPublic: boolean /** uses */;
-};
-
 export type MutatingActionsToTakeProps = {
 	hasPublicTag: boolean;
 	isPublic: boolean;
 };
 
-export type MutatingActionToExecute = (props: MutatingActionsToTakeProps) => void;
+export type MutatingActionToExecute<ExtendedBlock> = () => ExtendedBlock;
 
-export type TraverseBlockRecursively = (
-	props: TraverseBlockProps,
-	mutatingActionsToTake: MutatingActionToExecute
+export type TraverseBlockRecursively<ExtraPropertiesForBlock extends Record<any, any> = Record<any, any>> = (
+	block: Block,
+	mutatingActionsToTake: MutatingActionToExecute<Block & ExtraPropertiesForBlock>
 ) => /**
  * TODO CHANGE BACK TO `=> void`
  */
-Block;
+Block & ExtraPropertiesForBlock;
 
-export type FindPublicBlocksProps = TraverseBlockProps & {
+//
+
+export type RemoveUnknownPropertiesRecursivelyProps = {
+	block: Block;
+};
+export type RemoveUnknownPropertiesRecursively = (props: RemoveUnknownPropertiesRecursivelyProps) => Block;
+
+export type FindPublicBlocksProps = {
+	block: Block;
+	publicTag: string;
+	isParentPublic: boolean;
+
 	// parentBlock: Block | null;
 	rootParentPage: PageWithMetadata;
 	allPagesWithMetadata: PageWithMetadata[];
 	doNotHideTodoAndDone: boolean;
 	hiddenStringValue: string;
 };
-
 export type FindPublicBlocks = (props: FindPublicBlocksProps) => Block;
