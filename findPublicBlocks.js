@@ -62,6 +62,11 @@ function findPublicBlocks(
 	if (isMarketAsPublic) {
 		/**
 		 * TODO FIXME, very ugly work-around lmao
+		 *
+		 * tho, perhaps not so ugly; will see:
+		 * - was (& still is & will be) needed for priority;
+		 * - is needed for finding out which pages get mentioned in public pages
+		 *   and thus hiding them has no point so...
 		 */
 		rootParentPage.hasAtLeastOnePublicBlockAnywhereInTheHierarchy = true;
 	} else {
@@ -83,14 +88,16 @@ function findPublicBlocks(
 		}
 
 		/**
-		 * TODO optimize lmao
-		 *
-		 * pagesWithLinkedReferences
-		 *
 		 * @type { ({ metaPage: import("./types").PageWithMetadata, candidateLR: import("./types").LinkedReference }[]) }
 		 */
 		const linkedReferences = [];
 
+		/**
+		 * TODO - there's potential for optimization,
+		 * but perhaps w/ a cost of some loss of clarity
+		 * and it isn't an issue at all atm
+		 * so maybe sometime in the future, if even.
+		 */
 		for (const metaPage of allPagesWithMetadata) {
 			if (!metaPage.originalTitle) {
 				/* TODO should never happen */
@@ -103,23 +110,6 @@ function findPublicBlocks(
 				}
 			}
 		}
-
-		// const linkedReferences = allPagesWithMetadata
-		// 	.map(
-		// 		(metaPage) =>
-		// 			!metaPage.originalTitle
-		// 				? false /* TODO should never happen */
-		// 				: createLinkedReferences(metaPage.originalTitle)
-		// 						.map((candidateLR) =>
-		// 							currentBlock.string.includes(candidateLR.fullStr)
-		// 								? { metaPega: metaPage, candidateLR }
-		// 								: false
-		// 						)
-		// 						.filter((lr) => !!lr)
-		// 						.flat() // should only be 1 regardless
-		// 	)
-		// 	.filter((lr) => !!lr)
-		// 	.flat();
 
 		if (linkedReferences.length) {
 			/** @type { string } */
@@ -163,83 +153,6 @@ function findPublicBlocks(
 	}
 
 	return currentBlock;
-
-	// const childHasAtLeastOneLinkedReference = doesPageHaveAtLeastOneLinkedReference(currentBlock);
-
-	// if (currentBlock.string.includes(publicTag)) {
-	// 	/** boom, do not hide the string or any strings of it's children */
-
-	// 	return {
-	// 		page: currentBlock,
-	// 		hasPublicTag: true,
-	// 		isFullyPublic: false,
-	// 		isPublicTagInRootBlocks: false,
-	// 		hasAtLeastOnePublicBlockAnywhereInTheHierarchy: true,
-	// 		matchedLinkedReferences: "TODO RM", // matchedLinkedReferencesForChild,
-	// 		hasAtLeastOneLinkedReference: childHasAtLeastOneLinkedReference, //  childHasAtLeastOneLinkedReference, // TODO CHILDREN. EDIT NVM NO TODO, NO CHILDREN, ALL GOOD
-	// 	};
-	// } else {
-	// 	/**
-	// 	 *
-	// 	 *
-	// 	 * !!! hide the string !!!
-	// 	 *
-	// 	 *
-	// 	 *
-	// 	 * TODO find all hashtags, bi-directional references etc.
-	// 	 * and prepare them for either staying public,
-	// 	 * or replacement w/ hidden values
-	// 	 *
-	// 	 * (will need another round of parsing to figure out
-	// 	 * since we need to go through all pages 1st)
-	// 	 *
-	// 	 */
-
-	// 	if (currentBlock.string === "") {
-	// 		// do nothing
-	// 	} else if (doNotHideTodoAndDone) {
-	// 		if (currentBlock.string.includes("{{[[TODO]]}}")) {
-	// 			currentBlock.string = `{{[[TODO]]}} (${hiddenStringValue}) ${currentBlock.uid}`;
-	// 		} else if (currentBlock.string.includes("{{[[DONE]]}}")) {
-	// 			currentBlock.string = `{{[[DONE]]}} (${hiddenStringValue}) ${currentBlock.uid}`;
-	// 		} else {
-	// 			currentBlock.string = `(${hiddenStringValue}) ${currentBlock.uid}`;
-	// 		}
-	// 	} else {
-	// 		currentBlock.string = `(${hiddenStringValue}) ${currentBlock.uid}`;
-	// 	}
-
-	// 	/**
-	// 	 * search if any children are public and can be not hidden,
-	// 	 * and apply the same hiding mechanism for them too:
-	// 	 */
-	// 	const ret = findPublicBlocks(currentBlock.children, {
-	// 		...rest,
-	// 		publicTag,
-	// 		hiddenStringValue,
-	// 		makeThePublicTagPagePublic,
-	// 	});
-
-	// 	// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-	// 	// @ts-ignore
-	// 	currentBlock.children = ret.map((r) => r.page);
-
-	// 	return {
-	// 		page: currentBlock,
-	// 		hasPublicTag: false,
-	// 		isFullyPublic: false,
-	// 		isPublicTagInRootBlocks: false,
-	// 		hasAtLeastOnePublicBlockAnywhereInTheHierarchy: !!ret.filter(
-	// 			(cc) => cc.hasAtLeastOnePublicBlockAnywhereInTheHierarchy
-	// 		).length,
-	// 		matchedLinkedReferences: "TODO RM", // matchedLinkedReferencesForChild,
-	// 		hasAtLeastOneLinkedReference: childHasAtLeastOneLinkedReference, // childHasAtLeastOneLinkedReference
-	// 		// EXPLICITLY DISABLED - CHECK ONLY URSELF
-	// 		// || !!ret.find((cc) =>
-	// 		//		cc.hasAtLeastOneLinkedReference
-	// 		//		cc)
-	// 	};
-	// }
 }
 
 module.exports = {
