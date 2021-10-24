@@ -80,6 +80,7 @@ const _publicPagesHighPrio = filterPublicPagesForHighPrio(publicPagesRaw);
 Promise.resolve()
 	// DISABLED, DO NOT USE (NO NEED)
 	.then(() => api.logIn()) // bad, need more time pause lol
+	.then(() => api.gotoAllPages())
 	.then(() => api.beforeDeletePages())
 	.then(() => api.deleteBlocks(allBlocks))
 	.then(() =>
