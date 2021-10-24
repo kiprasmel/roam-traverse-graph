@@ -113,16 +113,16 @@ const findPublicPages = (
 		(currentPageWithMeta) => (
 			("children" in currentPageWithMeta.page &&
 				(currentPageWithMeta.page.children = (currentPageWithMeta.page.children || []).map((block) =>
-					findPublicBlocks(
-						block, //
-						null,
-						currentPageWithMeta,
-						latestPages,
+					findPublicBlocks({
+						currentBlock: block, //
+						// parentBlock: null,
+						rootParentPage: currentPageWithMeta,
+						allPagesWithMetadata: latestPages,
 						publicTag,
-						currentPageWithMeta.isFullyPublic,
+						isParentPublic: currentPageWithMeta.isFullyPublic,
 						doNotHideTodoAndDone,
-						hiddenStringValue
-					)
+						hiddenStringValue,
+					})
 				)),
 			currentPageWithMeta)
 		)

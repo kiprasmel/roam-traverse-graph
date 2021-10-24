@@ -1,4 +1,4 @@
-import { Page, LinkedReferenceKind } from "./roam";
+import { Page, LinkedReferenceKind, Block } from "./roam";
 
 export * from "./roam";
 
@@ -45,3 +45,36 @@ export type LinkedReference = {
 	kind: LinkedReferenceKind;
 	create: (newStr: string) => string;
 };
+
+export type TraverseBlockProps = {
+	currentBlock: Block /** uses */;
+
+	publicTag: string /** uses */;
+
+	isParentPublic: boolean /** uses */;
+};
+
+export type MutatingActionsToTakeProps = {
+	hasPublicTag: boolean;
+	isPublic: boolean;
+};
+
+export type MutatingActionToExecute = (props: MutatingActionsToTakeProps) => void;
+
+export type TraverseBlockRecursively = (
+	props: TraverseBlockProps,
+	mutatingActionsToTake: MutatingActionToExecute
+) => /**
+ * TODO CHANGE BACK TO `=> void`
+ */
+Block;
+
+export type FindPublicBlocksProps = TraverseBlockProps & {
+	// parentBlock: Block | null;
+	rootParentPage: PageWithMetadata;
+	allPagesWithMetadata: PageWithMetadata[];
+	doNotHideTodoAndDone: boolean;
+	hiddenStringValue: string;
+};
+
+export type FindPublicBlocks = (props: FindPublicBlocksProps) => Block;
