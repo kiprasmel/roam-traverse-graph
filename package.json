@@ -1,5 +1,5 @@
 {
-	"name": "roam-safe-public-pages",
+	"name": "roam-traverse-graph",
 	"version": "0.0.0",
 	"main": "index.js",
 	"types": "./types.d.ts",
