@@ -51,45 +51,116 @@ export type MutatingActionsToTakeProps = {
 	isPublic: boolean;
 };
 
-export type MutatingActionToExecute<Block, ExtraPropertiesForBlock> = (block: Block) => Block | ExtraPropertiesForBlock;
+// declare function MutatingActionToExecuteNoProps<
+// 	Props extends {} | never = {} | never, //
+// 	ExtendedBlock extends Block = Block,
+// 	ExtraPropertiesForBlock extends Record<any, any> = Record<any, any>
+// >(
+// 	props: {} extends Props ? never : Props //
+// ): (
+// 	block: ExtendedBlock //
+// ) => ExtendedBlock & ExtraPropertiesForBlock;
 
-export type MutatingActionToExecuteWithProps<Props, Block, ExtraPropertiesForBlock = never> = {} extends Props
-	? () => /** no props */
-	  /** TODO: OR or AND (note how changes `never`) */
-	  MutatingActionToExecute<Block, ExtraPropertiesForBlock>
-	: (
-			props: Props /** yes props */
-	  ) => /** TODO: OR or AND (note how changes `never`) */
-	  MutatingActionToExecute<Block, ExtraPropertiesForBlock>;
+// > = {} extends Props
+// 	? () => /*       */ (block: ExtendedBlock) => ExtendedBlock & ExtraPropertiesForBlock
+// 	: (props: Props) => (block: ExtendedBlock) => ExtendedBlock & ExtraPropertiesForBlock;
 
+export declare function MutatingActionToTake<
+	ExistingBlock extends Block, //
+	ExtraPropertiesForBlock extends Record<any, any>,
+	Props extends Record<any, any>
+>(
+	props: Props
+): (
+	block: ExistingBlock //
+) => {} extends ExtraPropertiesForBlock ? ExistingBlock : ExistingBlock & ExtraPropertiesForBlock; //
+
+export declare function MutatingActionToTake<
+	ExistingBlock extends Block, //
+	ExtraPropertiesForBlock extends Record<any, any>
+	/** no props */
+>(): // props?: never // TODO remove totally?
+(
+	block: ExistingBlock //
+) => {} extends ExtraPropertiesForBlock ? ExistingBlock : ExistingBlock & ExtraPropertiesForBlock; //
+
+export type MutatingAction<
+	ExistingBlock extends Block, //
+	ExtraPropertiesForBlock extends Record<any, any>,
+	Props extends Record<any, any> | never
+> = typeof MutatingActionToTake;
+
+// export declare function TraverseBlockRecursively<
 export type TraverseBlockRecursively<
-	ExtraPropertiesForBlock extends Record<any, any> = Record<any, any>, //
-	Props = {}, // Record<any, any>,
-	MutationActionsToTakeWithProps extends MutatingActionToExecuteWithProps<
-		Props,
-		Block,
-		ExtraPropertiesForBlock
-	> = MutatingActionToExecuteWithProps<
-		Props,
-		Block, //
-		ExtraPropertiesForBlock
-	>
-> = {} extends Props
-	? (
-			mutatingActionsToTake: MutationActionsToTakeWithProps //
-	  ) => (block: Block) => Block & ExtraPropertiesForBlock
-	: (
-			mutatingActionsToTake: MutationActionsToTakeWithProps, //
-			props: Props // extends Record<any, any> | {} = {},
-	  ) => (block: Block) => Block & ExtraPropertiesForBlock;
+	ExistingBlock extends Block = Block, //
+	ExtraPropertiesForBlock extends Record<any, any> = {}, //
+	Props extends Record<any, any> | never = Record<any, any> | never
+	// MutationActionsToTakeWithProps extends MutatingActionToExecute<
+	// 	Props,
+	// 	ExtendedBlock,
+	// 	ExtraPropertiesForBlock
+	// > = MutatingActionToExecute<
+	// 	Props,
+	// 	ExtendedBlock, //
+	// 	ExtraPropertiesForBlock
+	// >
+> = (
+	mutatingActionToTake: typeof MutatingActionToTake,
+	// mutatingActionToTake: MutatingAction<ExistingBlock, ExtraPropertiesForBlock, Props>,
+
+	// mutatingActionToTake: (
+	// 	props: Props //
+	// ) => (
+	// 	block: ExistingBlock //
+	// ) => ExistingBlock & ExtraPropertiesForBlock, //
+	propsForMutatingAction: Props
+) => (
+	block: ExistingBlock //
+) => ExistingBlock & ExtraPropertiesForBlock;
+
+// export declare function TraverseBlockRecursively<
+// 	ExistingBlock extends Block = Block, //
+// 	ExtraPropertiesForBlock extends Record<any, any> = {} //
+// 	// MutationActionsToTakeWithProps extends MutatingActionToExecute<
+// 	// 	Props,
+// 	// 	ExtendedBlock,
+// 	// 	ExtraPropertiesForBlock
+// 	// > = MutatingActionToExecute<
+// 	// 	Props,
+// 	// 	ExtendedBlock, //
+// 	// 	ExtraPropertiesForBlock
+// 	// >
+// >(
+// 	mutatingActionToTake: typeof MutatingActionToTake,
+// 	// mutatingActionToTake: MutatingAction<ExistingBlock, ExtraPropertiesForBlock>,
+
+// 	// mutatingActionToTake: (
+// 	// 	props?: {} | never //
+// 	// ) => (
+// 	// 	block: ExistingBlock //
+// 	// ) => ExistingBlock & ExtraPropertiesForBlock, //
+// 	propsForMutatingAction?: never
+// ): (
+// 	block: ExistingBlock //
+// ) => ExistingBlock & ExtraPropertiesForBlock;
+
+// > = {} extends Props
+// 	? (
+// 			mutatingActionToTake: MutationActionsToTakeWithProps //
+// 	  ) => (block: Block) => Block & ExtraPropertiesForBlock
+// 	: (
+// 			mutatingActionToTake: MutationActionsToTakeWithProps, //
+// 			propsForMutatingAction: Props // extends Record<any, any> | {} = {},
+// 	  ) => (block: Block) => Block & ExtraPropertiesForBlock;
 
 //
 
 export type RemoveUnknownPropertiesProps = {
 	//
 };
-export type RemoveUnknownProperties = MutatingActionToExecute<
+export type RemoveUnknownProperties = MutatingAction<
 	Block, //
+	{},
 	{}
 >;
 
