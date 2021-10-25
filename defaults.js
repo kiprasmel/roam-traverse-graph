@@ -1,12 +1,12 @@
 // @ts-check
 
 module.exports = {
-	/** @type { "#public" } */
+	/** @type { readonly string } */
 	defaultPublicTag: "#public",
-	/** @type { "hidden" } */
+	/** @type { readonly string } */
 	defaultHiddenStringValue: "hidden",
-	/** @type boolean */
+	/** @type { boolean } */
 	defaultMakeThePublicTagPagePublic: false,
-	/** @type boolean */
+	/** @type { boolean } */
 	defaultDoNotHideTodoAndDone: true,
 };
