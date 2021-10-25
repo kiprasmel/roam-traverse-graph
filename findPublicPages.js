@@ -114,7 +114,7 @@ const findPublicPages = (
 		(!("children" in currentPageWithMeta.page)
 			? currentPageWithMeta
 			: ((currentPageWithMeta.page.children = (currentPageWithMeta.page.children || [])
-					.map(traverseBlockRecursively(removeUnknownProperties))
+					.map(traverseBlockRecursively(removeUnknownProperties, {}))
 					.map(
 						traverseBlockRecursively(
 							markBlockPublic, //

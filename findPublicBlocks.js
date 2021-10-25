@@ -7,10 +7,10 @@ const { createLinkedReferences } = require("./util");
 /**
  * @type { import("./types").RemoveUnknownProperties }
  */
-const removeUnknownProperties = (block) =>
+const removeUnknownProperties = () => (block) =>
 	!block
 		? block
-		: ({
+		: {
 				string: block.string,
 				uid: block.uid,
 				heading: block.heading,
@@ -20,7 +20,7 @@ const removeUnknownProperties = (block) =>
 				"text-align": block["text-align"],
 				...("refs" in block ? { refs: block.refs } : {}),
 				...("children" in block ? { children: block.children } : {}),
-		  });
+		  };
 
 /**
  * @type { import("./types").FindPublicBlocks }
