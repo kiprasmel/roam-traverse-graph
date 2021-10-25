@@ -95,17 +95,17 @@ const findPublicPages = (
 	/**
 	 * @type { import("./types").PageWithMetadata[] }
 	 */
-	const pagesWithHiddenTitlesIfNotFullyPublic = latestPages.map((pageMeta) =>
-		pageMeta.isFullyPublic
-			? ((pageMeta.isTitleHidden = false), //
-			  (pageMeta.originalTitle = pageMeta.page.title),
-			  pageMeta)
-			: ((pageMeta.isTitleHidden = true), //
-			  (pageMeta.originalTitle = pageMeta.page.title),
-			  (pageMeta.page.title = `(${hiddenStringValue}) ${pageMeta.page.uid}`),
-			  pageMeta)
-	);
-	latestPages = pagesWithHiddenTitlesIfNotFullyPublic;
+	// const pagesWithHiddenTitlesIfNotFullyPublic = latestPages.map((pageMeta) =>
+	// 	pageMeta.isFullyPublic
+	// 		? ((pageMeta.isTitleHidden = false), //
+	// 		  (pageMeta.originalTitle = pageMeta.page.title),
+	// 		  pageMeta)
+	// 		: ((pageMeta.isTitleHidden = true), //
+	// 		  (pageMeta.originalTitle = pageMeta.page.title),
+	// 		  (pageMeta.page.title = `(${hiddenStringValue}) ${pageMeta.page.uid}`),
+	// 		  pageMeta)
+	// );
+	// latestPages = pagesWithHiddenTitlesIfNotFullyPublic;
 
 	/**
 	 * @type { import("./types").PageWithMetadata[] }
@@ -114,7 +114,7 @@ const findPublicPages = (
 		(!("children" in currentPageWithMeta.page)
 			? currentPageWithMeta
 			: ((currentPageWithMeta.page.children = (currentPageWithMeta.page.children || [])
-					.map(traverseBlockRecursively(removeUnknownProperties))
+					.map(traverseBlockRecursively(removeUnknownProperties, {}))
 					.map(
 						traverseBlockRecursively(
 							markBlockPublic, //
