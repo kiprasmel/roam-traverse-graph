@@ -11,5 +11,8 @@
 	},
 	"devDependencies": {
 		"@types/node": "^16.11.0"
+	},
+	"dependencies": {
+		"jsedn": "^0.4.1"
 	}
 }
