@@ -3,10 +3,9 @@
 // @ts-check
 /* eslint-disable @typescript-eslint/no-var-requires */
 
-const fs = require("fs");
 const path = require("path");
 
-const { readJsonSync, getAllBlocksFromPages, poolPromises } = require("./util");
+const { readJsonSync, startTimerMs, getAllBlocksFromPages, poolPromises } = require("./util");
 const { findPublicPages } = require("./findPublicPages");
 
 const publicPagesRaw = findPublicPages(readJsonSync(path.resolve(__dirname, "../notes/json/kipras-g1.json")), {
@@ -51,7 +50,7 @@ const api = new RoamPrivateApi(publicGraphToImportInto, secrets.email, secrets.p
 	// folder: "/tmp/",
 });
 
-const startTime = new Date();
+const getDeltaMs = startTimerMs();
 
 const allBlocks = getAllBlocksFromPages(publicPages); // .splice(0, 500); // TODO FIXME REMVOE
 
@@ -64,6 +63,10 @@ const allBlocks = getAllBlocksFromPages(publicPages); // .splice(0, 500); // TOD
 const minimumIntervalMsBetweenMaxRequests = 1000 * (60 + 2);
 const maxRequestsPerInterval = 300 - 5;
 
+/**
+ * @param { import("./types").PageWithMetadata[] } ppsRaw
+ * @returns { import("./types").Page[] }
+ */
 const filterPublicPagesForHighPrio = (ppsRaw) =>
 	ppsRaw
 		.filter((raw) => {
@@ -94,7 +97,7 @@ Promise.resolve()
 	.then(() => api.import(_publicPagesHighPrio))
 	.then(() => api.markSelectedPagesAsPubliclyReadable(_publicPagesHighPrio))
 	.then(() => api.import(publicPages.filter((pps) => !_publicPagesHighPrio.map((pp) => pp.uid).includes(pps.uid))))
-	.then(() => console.log("done", (new Date() - startTime) / 1000))
+	.then(() => console.log("done", getDeltaMs() / 1000))
 	.then(() => process.exit(0))
 	.catch((e) => {
 		console.error(e);
