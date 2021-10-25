@@ -1,9 +1,6 @@
 // @ts-check
 
 /* eslint-disable indent */
-/* eslint-disable no-inner-declarations */
-/* eslint-disable @typescript-eslint/no-var-requires */
-/* eslint-disable @typescript-eslint/explicit-function-return-type */
 
 const { traverseBlockRecursively } = require("./traverseBlockRecursively");
 const { removeUnknownProperties, markBlockPublic } = require("./findPublicBlocks");

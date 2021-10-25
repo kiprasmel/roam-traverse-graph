@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
 // @ts-check
-/* eslint-disable @typescript-eslint/no-var-requires */
 
 const path = require("path");
 
