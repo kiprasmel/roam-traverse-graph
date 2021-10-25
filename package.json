@@ -7,10 +7,37 @@
 	"license": "UNLICENSED",
 	"scripts": {
 		"ts": "npx tsc",
-		"tss": "npx tsc -w"
+		"tss": "npx tsc -w",
+		"lint": "eslint --ext js,jsx,ts,tsx .",
+		"lint:fix": "eslint --ext js,jsx,ts,tsx . --fix"
 	},
 	"devDependencies": {
 		"@types/node": "16.11.0",
+		"@typescript-eslint/eslint-plugin": "2.34.0",
+		"@typescript-eslint/parser": "2.34.0",
+		"babel-eslint": "10.1.0",
+		"eslint": "5.16.0",
+		"eslint-config-airbnb": "18.2.1",
+		"eslint-config-prettier": "6.7.0",
+		"eslint-config-sarpik": "0.2.14",
+		"eslint-plugin-clean-regex": "^0.5.1",
+		"eslint-plugin-flowtype": "4.7.0",
+		"eslint-plugin-html": "6.2.0",
+		"eslint-plugin-import": "2.25.2",
+		"eslint-plugin-jsx-a11y": "6.4.1",
+		"eslint-plugin-monorepo": "0.2.1",
+		"eslint-plugin-prettier": "3.4.1",
+		"eslint-plugin-react": "7.26.1",
+		"eslint-plugin-react-hooks": "2.5.1",
+		"esprima": "4.0.1",
+		"prettier": "1.19.1",
 		"typescript": "4.3.3"
+	},
+	"eslintConfig": {
+		"extends": "eslint-config-sarpik",
+		"rules": {
+			"@typescript-eslint/no-var-requires": 0,
+			"@typescript-eslint/explicit-function-return-type": 0
+		}
 	}
 }
