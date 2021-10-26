@@ -4,6 +4,8 @@ module.exports = {
 	/** @type { readonly string } */
 	defaultPublicTag: "#public",
 	/** @type { readonly string } */
+	defaultPrivateTag: "#private",
+	/** @type { readonly string } */
 	defaultHiddenStringValue: "hidden",
 	/** @type { boolean } */
 	defaultMakeThePublicTagPagePublic: false,

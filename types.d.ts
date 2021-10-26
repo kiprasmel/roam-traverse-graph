@@ -4,6 +4,7 @@ export * from "./roam";
 
 export type FindPublicPagesOptions = {
 	publicTag?: string;
+	privateTag?: string;
 	/**
 	 * TODO DEPRECATE - use the .uid instead! (will work for pages too to avoid merging them lol)
 	 * (or keep and concat w/ the .title / .string to make obvious it's hidden)
@@ -198,6 +199,7 @@ export type RemoveUnknownProperties = MutatingAction<
 
 export type FindPublicBlocksProps = {
 	publicTag: string;
+	privateTag: string;
 	isParentPublic: boolean;
 
 	// parentBlock: Block | null;
