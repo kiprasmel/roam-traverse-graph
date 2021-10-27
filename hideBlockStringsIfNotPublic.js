@@ -12,20 +12,16 @@ const hideBlockStringsIfNotPublic = ({
 	}
 
 	/** @type { string } */
-	let newString = `(${hiddenStringValue}) ${block.uid}`;
+	block.string = `(${hiddenStringValue}) ${block.uid}`;
 
 	if (doNotHideTodoAndDone) {
-		if (block.string.includes("{{[[TODO]]}}")) {
-			// currentBlock.string = `{{[[TODO]]}} (${hiddenStringValue}) ${currentBlock.uid}`;
-			newString = "{{[[TODO]]}}" + " " + newString;
-		} else if (block.string.includes("{{[[DONE]]}}")) {
-			// currentBlock.string = `{{[[DONE]]}} (${hiddenStringValue}) ${currentBlock.uid}`;
-			newString = "{{[[DONE]]}}" + " " + newString;
-		} else {
-			// currentBlock.string = `(${hiddenStringValue}) ${currentBlock.uid}`;
+		const TODOTag = "{{[[TODO]]}}";
+		const DONETag = "{{[[DONE]]}}";
+		if (block.string.includes(TODOTag)) {
+			block.string = TODOTag + " " + block.string;
+		} else if (block.string.includes(DONETag)) {
+			block.string = DONETag + " " + block.string;
 		}
-	} else {
-		// currentBlock.string = `(${hiddenStringValue}) ${currentBlock.uid}`;
 	}
 
 	const { linkedReferences } = block.metadata;
@@ -42,27 +38,18 @@ const hideBlockStringsIfNotPublic = ({
 			}
 			return true;
 		})
-		// .map((lr) => lr.candidateLR.create(lr.metaPage.page.title))
 		.map((lr) =>
 			lr.candidateLR.create(
 				(lr.metaPage.isFullyPublic || lr.metaPage.hasAtLeastOnePublicLinkedReference) // TODO YES/no? thinking about explicit #private tag...
 					? lr.metaPage.originalTitle
 					: lr.metaPage.hiddenTitle
 			)
-		) // TODO meta.hasAtleast1lr ? a : b
+		)
 		.join(" ");
 
-	newString += " " + linkedRefs;
+	block.string += " " + linkedRefs;
 
 	block.refs = linkedReferences.map((lr) => ({ uid: lr.metaPage.page.uid }));
-
-	// console.log({
-	// 	block: currentBlock.string,
-	// 	newBlock: newString,
-	// 	// linkedReferences: linkedReferences.flatMap((lr) => [lr.originalTitle, lr.page.title]),
-	// });
-
-	block.string = newString;
 
 	return block;
 };

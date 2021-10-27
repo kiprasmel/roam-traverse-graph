@@ -17,7 +17,7 @@ const publicPagesRaw = findPublicPages(readJsonSync(path.resolve(__dirname, "../
 		].includes(raw.page.uid)
 );
 
-const publicPages = publicPagesRaw.map((p) => p.page);
+let publicPages = publicPagesRaw.map((p) => p.page);
 
 // fs.writeFileSync("public-pages.json", JSON.stringify(publicPages, null, 2), { encoding: "utf-8" });
 
@@ -79,23 +79,35 @@ const filterPublicPagesForHighPrio = (ppsRaw) =>
 // TODO FIXME TEMP
 const _publicPagesHighPrio = filterPublicPagesForHighPrio(publicPagesRaw);
 
+publicPages = publicPages.filter((pps) => !_publicPagesHighPrio.map((pp) => pp.uid).includes(pps.uid));
+
+const secondHighPrio = publicPagesRaw.filter((p) => p.hasAtLeastOneMentionOfAPublicLinkedReference).map((p) => p.page);
+
+publicPages = publicPages.filter((pps) => !secondHighPrio.map((pp) => pp.uid).includes(pps.uid));
+
+console.log(_publicPagesHighPrio.length, secondHighPrio.length, publicPages.length);
+
 Promise.resolve()
 	// DISABLED, DO NOT USE (NO NEED)
 	.then(() => api.logIn()) // bad, need more time pause lol
 	.then(() => api.gotoAllPages())
-	.then(() => api.beforeDeletePages())
-	.then(() => api.deleteBlocks(allBlocks))
-	.then(() =>
-		poolPromises(
-			minimumIntervalMsBetweenMaxRequests,
-			maxRequestsPerInterval,
-			publicPages.map((page) => async () => await api.deletePage(page.uid))
-		)
-	)
-	.then(() => api.afterDeletePages())
+	/**
+	 * TODO - just use the empty graph to nuke existing one into oblivion emptyness state
+	 */
+	// .then(() => api.beforeDeletePages())
+	// .then(() => api.deleteBlocks(allBlocks))
+	// .then(() =>
+	// 	poolPromises(
+	// 		minimumIntervalMsBetweenMaxRequests,
+	// 		maxRequestsPerInterval,
+	// 		publicPages.map((page) => async () => await api.deletePage(page.uid))
+	// 	)
+	// )
+	// .then(() => api.afterDeletePages())
 	.then(() => api.import(_publicPagesHighPrio))
 	.then(() => api.markSelectedPagesAsPubliclyReadable(_publicPagesHighPrio))
-	.then(() => api.import(publicPages.filter((pps) => !_publicPagesHighPrio.map((pp) => pp.uid).includes(pps.uid))))
+	.then(() => api.import(secondHighPrio))
+	.then(() => api.import(publicPages))
 	.then(() => console.log("done", getDeltaMs() / 1000))
 	.then(() => process.exit(0))
 	.catch((e) => {

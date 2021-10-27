@@ -29,6 +29,10 @@ export type PageWithMetadata = {
 	isFullyPublic: boolean;
 	hasAtLeastOnePublicBlockAnywhereInTheHierarchy: boolean;
 	hasAtLeastOnePublicLinkedReference: boolean;
+	/**
+	 * when a block links to a public linked reference
+	 */
+	hasAtLeastOneMentionOfAPublicLinkedReference: boolean;
 
 	//
 	isTitleHidden?: boolean;
@@ -66,6 +70,8 @@ export type MutatingActionsToTakeProps = {
 // > = {} extends Props
 // 	? () => /*       */ (block: ExtendedBlock) => ExtendedBlock & ExtraPropertiesForBlock
 // 	: (props: Props) => (block: ExtendedBlock) => ExtendedBlock & ExtraPropertiesForBlock;
+
+export type ShouldContinueTraversal = boolean;
 
 export declare function MutatingActionToTake<
 	ExistingBlock extends Block, //
@@ -118,7 +124,8 @@ export type MutatingAction<
 	parentBlock?: ExistingBlock
 ) => (
 	block: ExistingBlock //
-) => {} extends ExtraPropertiesForBlock ? ExistingBlock : ExistingBlock & ExtraPropertiesForBlock;
+) => {} extends ExtraPropertiesForBlock ? ExistingBlock : ExistingBlock & ExtraPropertiesForBlock |
+	[{} extends ExtraPropertiesForBlock ? ExistingBlock : ExistingBlock & ExtraPropertiesForBlock , ShouldContinueTraversal]
 
 // export declare function TraverseBlockRecursively<
 export type TraverseBlockRecursively =
@@ -231,6 +238,7 @@ export type LinkedRef = {
 
 export type FindLinkedReferencesProps = {
 	allPagesWithMetadata: PageWithMetadata[];
+	rootParentPage: PageWithMetadata;
 };
 export type WithLinkedReferences = WithIsPublic &
 	WithMetadata<{
