@@ -33,9 +33,11 @@ const delay = (timeoutMs = 0) => new Promise((r) => setTimeout(r, timeoutMs));
 /**
  * returns a `getTimeDeltaMs` function
  *
- * @type { (startTime?: number) => (endTime?: number) => number }
+ * @param { { startTime?: number, divider?: number } } options
+ * @returns { (endTime?: number) => number }
  */
-const startTimerMs = (startTime = new Date().getTime()) => (endTime = new Date().getTime()) => endTime - startTime;
+const startTimerMs = ({ startTime = new Date().getTime(), divider = 1 } = {}) => (endTime = new Date().getTime()) =>
+	(endTime - startTime) / divider;
 
 /**
  * @template T
