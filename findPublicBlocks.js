@@ -30,6 +30,7 @@ const markBlockPublic = ({
 	rootParentPage,
 	allPagesWithMetadata,
 	publicTag,
+	privateTag,
 	isParentPublic,
 	doNotHideTodoAndDone,
 	hiddenStringValue,
@@ -45,11 +46,12 @@ const markBlockPublic = ({
 	 *
 	 */
 	const hasPublicTag = block.string.includes(publicTag);
+	const hasPrivateTag = block.string.includes(privateTag);
 
 	/**
 	 * @type { boolean }
 	 */
-	const isPublic = hasPublicTag || isParentPublic;
+	const isPublic = (hasPublicTag || isParentPublic) && !hasPrivateTag;
 
 	if (isPublic) {
 		/**

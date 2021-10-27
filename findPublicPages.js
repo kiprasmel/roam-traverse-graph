@@ -7,6 +7,7 @@ const { removeUnknownProperties, markBlockPublic } = require("./findPublicBlocks
 const { createLinkedReferences } = require("./util");
 const {
 	defaultPublicTag, //
+	defaultPrivateTag,
 	defaultHiddenStringValue,
 	defaultMakeThePublicTagPagePublic,
 	defaultDoNotHideTodoAndDone,
@@ -29,6 +30,7 @@ const findPublicPages = (
 		 * TODO: allow providing `oldPublicTagsForDeletion` array to remove the pages
 		 */
 		publicTag = defaultPublicTag, //
+		privateTag = defaultPrivateTag,
 		hiddenStringValue = defaultHiddenStringValue,
 		makeThePublicTagPagePublic = defaultMakeThePublicTagPagePublic,
 		doNotHideTodoAndDone = defaultDoNotHideTodoAndDone,
@@ -120,6 +122,7 @@ const findPublicPages = (
 								rootParentPage: currentPageWithMeta,
 								allPagesWithMetadata: latestPages,
 								publicTag,
+								privateTag,
 								isParentPublic: currentPageWithMeta.isFullyPublic,
 								doNotHideTodoAndDone,
 								hiddenStringValue,
