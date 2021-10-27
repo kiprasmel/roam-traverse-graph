@@ -66,53 +66,21 @@ const findPublicPages = (
 	/**
 	 * @type { import("./types").PageWithMetadata[] }
 	 */
-	let latestPages;
+	const latestPages = somePages
+		.map((page) => {
+			const isThePublicTagPageAndShouldBePublic =
+				(makeThePublicTagPagePublic && titleIsPublicTag(page, publicTag));
 
-	/**
-	 * @type { import("./types").PageWithMetadata[] }
-	 */
-	const pagesWithMetadata = somePages.map((page) => {
-		const isThePublicTagPageAndShouldBePublic = (makeThePublicTagPagePublic && titleIsPublicTag(page, publicTag));
+			if (isThePublicTagPageAndShouldBePublic || isMarkedAsFullyPublic(page, publicTag)) {
+				return toFullyPublicPage(page);
+			} else {
+				return toPotentiallyPartiallyPublicPage(page);
+			}
+		})
 
-		if (isThePublicTagPageAndShouldBePublic || isMarkedAsFullyPublic(page, publicTag)) {
-			return toFullyPublicPage(page);
-		} else {
-			return toPotentiallyPartiallyPublicPage(page);
-		}
-	});
-	latestPages = pagesWithMetadata;
-
-	/**
-	 * TODO think about how we want to implement the hiding of page title's
-	 * if we allow an option to NOT hide them IF at least 1 child anywhere in hierarchy
-	 * has the public tag
-	 *
-	 * will need 2 passes through the hieararchy prolly
-	 *
-	 */
-
-	/**
-	 * @type { import("./types").PageWithMetadata[] }
-	 */
-	const pagesWithHiddenTitlesIfNotFullyPublic = latestPages.map((pageMeta) =>
-		pageMeta.isFullyPublic
-			? ((pageMeta.isTitleHidden = false), //
-			  (pageMeta.originalTitle = pageMeta.page.title),
-			  pageMeta)
-			: ((pageMeta.isTitleHidden = true), //
-			  (pageMeta.originalTitle = pageMeta.page.title),
-			  (pageMeta.page.title = `(${hiddenStringValue}) ${pageMeta.page.uid}`),
-			  pageMeta)
-	);
-	latestPages = pagesWithHiddenTitlesIfNotFullyPublic;
-
-	/**
-	 * @type { import("./types").PageWithMetadata[] }
-	 */
-	const pagesWithParsedChildrenAndMetadata = latestPages.map((currentPageWithMeta) =>
-		(!("children" in currentPageWithMeta.page)
-			? currentPageWithMeta
-			: ((currentPageWithMeta.page.children = (currentPageWithMeta.page.children || [])
+		.map(
+			(currentPageWithMeta, _index, currentPagesWithMetadata) => (
+				((currentPageWithMeta.page.children = (currentPageWithMeta.page.children || [])
 					.map(traverseBlockRecursively(removeUnknownProperties, {}))
 					.map(
 						traverseBlockRecursively(
@@ -120,7 +88,7 @@ const findPublicPages = (
 							{
 								// parentBlock: null,
 								rootParentPage: currentPageWithMeta,
-								allPagesWithMetadata: latestPages,
+								allPagesWithMetadata: currentPagesWithMetadata,
 								publicTag,
 								privateTag,
 								isParentPublic: currentPageWithMeta.isFullyPublic,
@@ -129,26 +97,41 @@ const findPublicPages = (
 							}
 						)
 					)),
-			  currentPageWithMeta))
-	);
-	latestPages = pagesWithParsedChildrenAndMetadata;
+				currentPageWithMeta)
+			)
+		)
 
-	/**
-	 * @type { import("./types").PageWithMetadata[] }
-	 */
-	const sorted = latestPages.sort((A, B) =>
-		/** public tag itself first, then public pages, then all other ones */
-		titleIsPublicTag(A.page, publicTag)
-			? -1
-			: titleIsPublicTag(B.page, publicTag)
-			? 1
-			: A.hasAtLeastOnePublicBlockAnywhereInTheHierarchy
-			? -1
-			: B.hasAtLeastOnePublicBlockAnywhereInTheHierarchy
-			? 1
-			: 0
-	);
-	latestPages = sorted;
+		/**
+		 * TODO think about how we want to implement the hiding of page title's
+		 * if we allow an option to NOT hide them IF at least 1 child anywhere in hierarchy
+		 * has the public tag
+		 *
+		 * will need 2 passes through the hieararchy prolly
+		 *
+		 */
+		.map((pageMeta) =>
+			pageMeta.isFullyPublic || pageMeta.hasAtLeastOnePublicLinkedReference
+				? ((pageMeta.isTitleHidden = false), //
+				  pageMeta)
+				: ((pageMeta.isTitleHidden = true), //
+				  (pageMeta.page.title = `(${hiddenStringValue}) ${pageMeta.page.uid}`),
+				  pageMeta)
+		)
+
+		.map((p) => ((!p.page.children?.length && delete p.page.children, p)))
+
+		.sort((A, B) =>
+			/** public tag itself first, then public pages, then all other ones */
+			titleIsPublicTag(A.page, publicTag)
+				? -1
+				: titleIsPublicTag(B.page, publicTag)
+				? 1
+				: A.hasAtLeastOnePublicBlockAnywhereInTheHierarchy
+				? -1
+				: B.hasAtLeastOnePublicBlockAnywhereInTheHierarchy
+				? 1
+				: 0
+		);
 
 	return latestPages;
 };
@@ -234,11 +217,12 @@ function isMarkedAsFullyPublic(page, publicTag) {
 function toFullyPublicPage(page) {
 	return {
 		page, //
+		originalTitle: page.title,
 		hasPublicTag: true,
 		isPublicTagInRootBlocks: true,
 		isFullyPublic: true,
 		hasAtLeastOnePublicBlockAnywhereInTheHierarchy: true,
-		hasAtLeastOneLinkedReference: true, // TODO, fine for now
+		hasAtLeastOnePublicLinkedReference: false, // until found out otherwise
 	};
 }
 
@@ -249,11 +233,12 @@ function toFullyPublicPage(page) {
 function toPotentiallyPartiallyPublicPage(page) {
 	return {
 		page, //
+		originalTitle: page.title,
 		hasPublicTag: false,
 		isPublicTagInRootBlocks: false,
 		isFullyPublic: false,
 		hasAtLeastOnePublicBlockAnywhereInTheHierarchy: false, // CHANGEABLE LATER
-		hasAtLeastOneLinkedReference: false, // CHANGEABLE LATER
+		hasAtLeastOnePublicLinkedReference: false, // CHANGEABLE LATER
 	};
 }
 
