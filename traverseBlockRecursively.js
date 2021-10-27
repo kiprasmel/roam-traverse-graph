@@ -23,6 +23,22 @@ const traverseBlockRecursively = (
 		return block;
 	}
 
+	const _newBlock =
+		mutatingActionToExecute(initialAndNonChangingPropsForMutatingAction, parentBlock)?.(block) ?? block;
+
+	let newBlock;
+	let shouldContinueTraversal = true;
+	if (Array.isArray(_newBlock)) {
+		newBlock = _newBlock[0];
+		shouldContinueTraversal = _newBlock[1];
+	} else {
+		newBlock = _newBlock;
+	}
+
+	if (!shouldContinueTraversal) {
+		return newBlock;
+	}
+
 	/**
 	 * here, this is a big optimization:
 	 *
@@ -50,10 +66,6 @@ const traverseBlockRecursively = (
 			)
 		);
 	}
-
-	const newBlock =
-		mutatingActionToExecute(initialAndNonChangingPropsForMutatingAction, parentBlock)?.(block) ?? block;
-
 	if (newChildren) {
 		newBlock.children = newChildren;
 	}
