@@ -110,6 +110,38 @@ const findPublicPages = (
 						)
 					)
 					.map(
+						traverseBlockRecursively(
+							({ rootParentPage, allPagesWithMetadata }) => (b) => {
+								const { linkedReferences } = b.metadata;
+
+								if (!linkedReferences.length) {
+									return b;
+								}
+
+								const yay = !!linkedReferences.find(
+									(lr) =>
+										!!allPagesWithMetadata.find(
+											(pageMeta) =>
+												lr.metaPage.page.uid === pageMeta.page.uid &&
+												pageMeta.hasAtLeastOnePublicLinkedReference
+										)
+								);
+
+								if (yay) {
+									rootParentPage.hasAtLeastOneMentionOfAPublicLinkedReference = true;
+
+									return [b, false];
+								}
+
+								return b;
+							},
+							{
+								rootParentPage: currentPageWithMeta,
+								allPagesWithMetadata: currentPagesWithMetadata,
+							}
+						)
+					)
+					.map(
 						traverseBlockRecursively(hideBlockStringsIfNotPublic, {
 							doNotHideTodoAndDone,
 							hiddenStringValue,
