@@ -2,8 +2,6 @@
 
 /* eslint-disable indent */
 
-const { createLinkedReferences } = require("./util");
-
 /**
  * @type { import("./types").RemoveUnknownProperties }
  */
@@ -20,21 +18,21 @@ const removeUnknownProperties = () => (block) =>
 				"text-align": block["text-align"],
 				...("refs" in block ? { refs: block.refs } : {}),
 				...("children" in block ? { children: block.children } : {}),
+				metadata: {},
 		  };
 
 /**
  * @type { import("./types").FindPublicBlocks }
  */
-const markBlockPublic = ({
-	// parentBlock,
-	rootParentPage,
-	allPagesWithMetadata,
-	publicTag,
-	privateTag,
-	isParentPublic,
-	doNotHideTodoAndDone,
-	hiddenStringValue,
-}) => (block) => {
+const markBlockPublic = (
+	{
+		// parentBlock,
+		rootParentPage,
+		publicTag,
+		privateTag,
+	},
+	parentBlock
+) => (block) => {
 	/**
 	 * @type { boolean }
 	 *
@@ -51,7 +49,16 @@ const markBlockPublic = ({
 	/**
 	 * @type { boolean }
 	 */
-	const isPublic = (hasPublicTag || isParentPublic) && !hasPrivateTag;
+	const isPublic = !!(
+		(rootParentPage.isFullyPublic || //
+			hasPublicTag ||
+			parentBlock?.metadata.isPublic) &&
+		!hasPrivateTag
+	);
+
+	block.metadata.isPublic = isPublic;
+	block.metadata.hasPublicTag = hasPublicTag;
+	block.metadata.hasPrivateTag = hasPrivateTag;
 
 	if (isPublic) {
 		/**
@@ -63,72 +70,6 @@ const markBlockPublic = ({
 		 *   and thus hiding them has no point so...
 		 */
 		rootParentPage.hasAtLeastOnePublicBlockAnywhereInTheHierarchy = true;
-	} else {
-		/** @type { string } */
-		let newString = `(${hiddenStringValue}) ${block.uid}`;
-
-		if (doNotHideTodoAndDone) {
-			if (block.string.includes("{{[[TODO]]}}")) {
-				// currentBlock.string = `{{[[TODO]]}} (${hiddenStringValue}) ${currentBlock.uid}`;
-				newString = "{{[[TODO]]}}" + " " + newString;
-			} else if (block.string.includes("{{[[DONE]]}}")) {
-				// currentBlock.string = `{{[[DONE]]}} (${hiddenStringValue}) ${currentBlock.uid}`;
-				newString = "{{[[DONE]]}}" + " " + newString;
-			} else {
-				// currentBlock.string = `(${hiddenStringValue}) ${currentBlock.uid}`;
-			}
-		} else {
-			// currentBlock.string = `(${hiddenStringValue}) ${currentBlock.uid}`;
-		}
-
-		/**
-		 * @type { ({ metaPage: import("./types").PageWithMetadata, candidateLR: import("./types").LinkedReference }[]) }
-		 */
-		const linkedReferences = [];
-
-		/**
-		 * TODO - there's potential for optimization,
-		 * but perhaps w/ a cost of some loss of clarity
-		 * and it isn't an issue at all atm
-		 * so maybe sometime in the future, if even.
-		 */
-		for (const metaPage of allPagesWithMetadata) {
-			if (!metaPage.originalTitle) {
-				/* TODO should never happen */
-				continue;
-			}
-
-			for (const candidateLR of createLinkedReferences(metaPage.originalTitle)) {
-				if (block.string.includes(candidateLR.fullStr)) {
-					linkedReferences.push({ metaPage, candidateLR });
-				}
-			}
-		}
-
-		if (linkedReferences.length) {
-			/** @type { string } */
-			const linkedRefs = linkedReferences
-				.filter((lr) => {
-					if (doNotHideTodoAndDone) {
-						return !["TODO", "DONE"].includes(lr.candidateLR.origStr);
-					}
-					return true;
-				})
-				.map((lr) => lr.candidateLR.create(lr.metaPage.page.title))
-				.join(" ");
-
-			newString += " " + linkedRefs;
-
-			block.refs = linkedReferences.map((lr) => ({ uid: lr.metaPage.page.uid }));
-		}
-
-		// console.log({
-		// 	block: currentBlock.string,
-		// 	newBlock: newString,
-		// 	// linkedReferences: linkedReferences.flatMap((lr) => [lr.originalTitle, lr.page.title]),
-		// });
-
-		block.string = newString;
 	}
 
 	return block;

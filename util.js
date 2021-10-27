@@ -101,6 +101,12 @@ function createLinkedReferences(str) {
 		},
 		{
 			origStr: str,
+			fullStr: "#[[" + str + "]]", //
+			kind: "#[[]]",
+			create: (newStr) => "#[[" + newStr + "]]",
+		},
+		{
+			origStr: str,
 			fullStr: "[[" + str + "]]", //
 			kind: "[[]]",
 			create: (newStr) => "[[" + newStr + "]]",
@@ -114,6 +120,19 @@ function createLinkedReferences(str) {
 	];
 }
 
+/**
+ * @type { import("./types").WithMeta }
+ */
+function withMeta(block, key, val) {
+	return {
+		...block,
+		metadata: {
+			...block.metadata,
+			[key]: val,
+		},
+	};
+}
+
 //
 module.exports = {
 	readJsonSync, //
@@ -123,4 +142,5 @@ module.exports = {
 	startTimerMs,
 	poolPromises,
 	createLinkedReferences,
+	withMeta,
 };

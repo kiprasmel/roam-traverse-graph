@@ -5,7 +5,11 @@
 /**
  * @type { import("./types").TraverseBlockRecursively }
  */
-const traverseBlockRecursively = (mutatingActionToExecute, propsForMutatingAction) => (block) => {
+const traverseBlockRecursively = (
+	mutatingActionToExecute, //
+	initialAndNonChangingPropsForMutatingAction,
+	parentBlock = undefined
+) => (block) => {
 	if (!block) {
 		return block;
 	}
@@ -41,12 +45,14 @@ const traverseBlockRecursively = (mutatingActionToExecute, propsForMutatingActio
 		newChildren = block.children.map(
 			traverseBlockRecursively(
 				mutatingActionToExecute, //
-				propsForMutatingAction
+				initialAndNonChangingPropsForMutatingAction,
+				block
 			)
 		);
 	}
 
-	const newBlock = mutatingActionToExecute(propsForMutatingAction)?.(block) ?? block;
+	const newBlock =
+		mutatingActionToExecute(initialAndNonChangingPropsForMutatingAction, parentBlock)?.(block) ?? block;
 
 	if (newChildren) {
 		newBlock.children = newChildren;
