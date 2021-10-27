@@ -4,6 +4,9 @@
 
 const { traverseBlockRecursively } = require("./traverseBlockRecursively");
 const { removeUnknownProperties, markBlockPublic } = require("./findPublicBlocks");
+const { findIfPagesHavePublicLinkedReferences } = require("./findLinkedReferencesOfABlock");
+const { hideBlockStringsIfNotPublic } = require("./hideBlockStringsIfNotPublic");
+
 const { createLinkedReferences } = require("./util");
 const {
 	defaultPublicTag, //
@@ -72,9 +75,9 @@ const findPublicPages = (
 				(makeThePublicTagPagePublic && titleIsPublicTag(page, publicTag));
 
 			if (isThePublicTagPageAndShouldBePublic || isMarkedAsFullyPublic(page, publicTag)) {
-				return toFullyPublicPage(page);
+				return toFullyPublicPage(page, hiddenStringValue);
 			} else {
-				return toPotentiallyPartiallyPublicPage(page);
+				return toPotentiallyPartiallyPublicPage(page, hiddenStringValue);
 			}
 		})
 
@@ -82,21 +85,37 @@ const findPublicPages = (
 			(currentPageWithMeta, _index, currentPagesWithMetadata) => (
 				((currentPageWithMeta.page.children = (currentPageWithMeta.page.children || [])
 					.map(traverseBlockRecursively(removeUnknownProperties, {}))
+					.filter((block) => !!block)
 					.map(
 						traverseBlockRecursively(
 							markBlockPublic, //
 							{
-								// parentBlock: null,
+								rootParentPage: currentPageWithMeta,
+								publicTag,
+								privateTag,
+							}
+						)
+					)
+					.map(
+						traverseBlockRecursively(
+							findIfPagesHavePublicLinkedReferences, //
+							{
 								rootParentPage: currentPageWithMeta,
 								allPagesWithMetadata: currentPagesWithMetadata,
 								publicTag,
 								privateTag,
-								isParentPublic: currentPageWithMeta.isFullyPublic,
 								doNotHideTodoAndDone,
 								hiddenStringValue,
 							}
 						)
-					)),
+					)
+					.map(
+						traverseBlockRecursively(hideBlockStringsIfNotPublic, {
+							doNotHideTodoAndDone,
+							hiddenStringValue,
+						})
+					)
+					.map(traverseBlockRecursively(() => ({ metadata: _metadata, ...block }) => block, {}))),
 				currentPageWithMeta)
 			)
 		)
@@ -212,12 +231,14 @@ function isMarkedAsFullyPublic(page, publicTag) {
 
 /**
  * @param { import("./types").Page } page
+ * @param { string } hiddenStringValue
  * @returns { import("./types").PageWithMetadata }
  */
-function toFullyPublicPage(page) {
+function toFullyPublicPage(page, hiddenStringValue) {
 	return {
 		page, //
 		originalTitle: page.title,
+		hiddenTitle: `(${hiddenStringValue}) ${page.uid}`,
 		hasPublicTag: true,
 		isPublicTagInRootBlocks: true,
 		isFullyPublic: true,
@@ -228,12 +249,14 @@ function toFullyPublicPage(page) {
 
 /**
  * @param { import("./types").Page } page
+ * @param { string } hiddenStringValue
  * @returns { import("./types").PageWithMetadata }
  */
-function toPotentiallyPartiallyPublicPage(page) {
+function toPotentiallyPartiallyPublicPage(page, hiddenStringValue) {
 	return {
 		page, //
 		originalTitle: page.title,
+		hiddenTitle: `(${hiddenStringValue}) ${page.uid}`,
 		hasPublicTag: false,
 		isPublicTagInRootBlocks: false,
 		isFullyPublic: false,

@@ -32,4 +32,4 @@ export type Page = EntityBase & {
 	title: string;
 };
 
-export type LinkedReferenceKind = "#" | "[[]]" | "::";
+export type LinkedReferenceKind = "#" | "#[[]]" | "[[]]" | "::";

@@ -28,11 +28,12 @@ export type PageWithMetadata = {
 	isPublicTagInRootBlocks: boolean;
 	isFullyPublic: boolean;
 	hasAtLeastOnePublicBlockAnywhereInTheHierarchy: boolean;
-	hasAtLeastOneLinkedReference: boolean;
+	hasAtLeastOnePublicLinkedReference: boolean;
 
 	//
 	isTitleHidden?: boolean;
-	originalTitle?: string;
+	originalTitle: string;
+	hiddenTitle: string;
 };
 
 export type FindPublicPages = (
@@ -113,13 +114,14 @@ export type MutatingAction<
 	Props extends Record<any, any>
 > = (
 	// ...props: {} extends Props ? [] : [Props] // TODO - conditional optional parameter
-	props: Props
+	props: Props,
+	parentBlock?: ExistingBlock
 ) => (
 	block: ExistingBlock //
 ) => {} extends ExtraPropertiesForBlock ? ExistingBlock : ExistingBlock & ExtraPropertiesForBlock;
 
 // export declare function TraverseBlockRecursively<
-export type TraverseBlockRecursively
+export type TraverseBlockRecursively =
 	// 	Props,
 	// 	ExtendedBlock,
 	// 	ExtraPropertiesForBlock
@@ -128,24 +130,21 @@ export type TraverseBlockRecursively
 	// 	ExtendedBlock, //
 	// 	ExtraPropertiesForBlock
 	// >
- = <
-	Props,
-	ExistingBlock extends Block,
-	ExtraPropertiesForBlock extends Record<any, any>
->(
-	mutatingActionToTake: MutatingAction<ExistingBlock, ExtraPropertiesForBlock, Props>,
-	// mutatingActionToTake: typeof MutatingActionToTake,
-	// mutatingActionToTake: MutatingAction<ExistingBlock, ExtraPropertiesForBlock, Props>,
+	<Props, ExistingBlock extends Block, ExtraPropertiesForBlock extends Record<any, any>>(
+		mutatingActionToTake: MutatingAction<ExistingBlock, ExtraPropertiesForBlock, Props>,
+		// mutatingActionToTake: typeof MutatingActionToTake,
+		// mutatingActionToTake: MutatingAction<ExistingBlock, ExtraPropertiesForBlock, Props>,
 
-	// mutatingActionToTake: (
-	// 	props: Props //
-	// ) => (
-	// 	block: ExistingBlock //
-	// ) => ExistingBlock & ExtraPropertiesForBlock, //
-	propsForMutatingAction: Props
-) => (
-	block: ExistingBlock //
-) => ExistingBlock & ExtraPropertiesForBlock;
+		// mutatingActionToTake: (
+		// 	props: Props //
+		// ) => (
+		// 	block: ExistingBlock //
+		// ) => ExistingBlock & ExtraPropertiesForBlock, //
+		initialAndNonChangingPropsForMutatingAction: Props,
+		previousBlock?: ExistingBlock
+	) => (
+		block: ExistingBlock //
+	) => ExistingBlock & ExtraPropertiesForBlock;
 
 // export declare function TraverseBlockRecursively<
 // 	ExistingBlock extends Block = Block, //
@@ -187,11 +186,20 @@ export type TraverseBlockRecursively
 export type RemoveUnknownPropertiesProps = {
 	//
 };
+export type WithMetadata<M extends {} = {}> = {
+	metadata: M;
+};
 export type RemoveUnknownProperties = MutatingAction<
 	Block, //
-	{},
+	WithMetadata,
 	{}
 >;
+
+export type WithMeta = <M, B extends Block & WithMetadata<M>, K extends string | number | symbol = any, V = any>(
+	block: B,
+	key: K,
+	value: V
+) => { block: B } & WithMetadata<{ [key in K]: V }>;
 
 // (
 // 	props: RemoveUnknownPropertiesRecursivelyProps
@@ -200,17 +208,46 @@ export type RemoveUnknownProperties = MutatingAction<
 export type FindPublicBlocksProps = {
 	publicTag: string;
 	privateTag: string;
-	isParentPublic: boolean;
 
 	// parentBlock: Block | null;
 	rootParentPage: PageWithMetadata;
+};
+export type WithIsPublic = WithMetadata<{
+	isPublic: boolean; //
+	hasPublicTag: boolean;
+	hasPrivateTag: boolean;
+}>;
+// export type FindPublicBlocks = (props: FindPublicBlocksProps) => (block: Block) => Block;
+export type FindPublicBlocks = MutatingAction<
+	Block & WithMetadata, //
+	WithIsPublic,
+	FindPublicBlocksProps
+>;
+
+export type LinkedRef = {
+	metaPage: import("./types").PageWithMetadata;
+	candidateLR: import("./types").LinkedReference;
+};
+
+export type FindLinkedReferencesProps = {
 	allPagesWithMetadata: PageWithMetadata[];
+};
+export type WithLinkedReferences = WithIsPublic &
+	WithMetadata<{
+		linkedReferences: LinkedRef[];
+	}>;
+export type FindLinkedReferences = MutatingAction<
+	Block & WithIsPublic,
+	WithLinkedReferences,
+	FindLinkedReferencesProps
+>;
+
+export type HideBlockStringsIfNotPublicProps = {
 	doNotHideTodoAndDone: boolean;
 	hiddenStringValue: string;
 };
-// export type FindPublicBlocks = (props: FindPublicBlocksProps) => (block: Block) => Block;
-export type FindPublicBlocks = MutatingAction<
-	Block, //
+export type HideBlockStringsIfNotPublic = MutatingAction<
+	Block & WithIsPublic & WithLinkedReferences,
 	{},
-	FindPublicBlocksProps
+	HideBlockStringsIfNotPublicProps
 >;
