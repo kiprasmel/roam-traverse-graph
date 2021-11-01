@@ -7,6 +7,7 @@ export * from "./roam";
 
 export type FindPublicPagesOptions = {
 	publicTag?: string;
+	publicOnlyTags?: string[]
 	privateTag?: string;
 	/**
 	 * TODO DEPRECATE - use the .uid instead! (will work for pages too to avoid merging them lol)
@@ -262,6 +263,7 @@ export type WithMeta
 
 export type FindPublicBlocksProps = {
 	publicTag: string;
+	publicOnlyTags: string[];
 	privateTag: string;
 
 	// parentBlock: Block | null;
@@ -269,6 +271,7 @@ export type FindPublicBlocksProps = {
 };
 export type WithIsPublic = WithMetadata<{
 	isPublic: boolean; //
+	isPublicOnly: boolean;
 	hasPublicTag: boolean;
 	hasPrivateTag: boolean;
 }>;
