@@ -7,9 +7,19 @@ const path = require("path");
 const { readJsonSync, startTimerMs, getAllBlocksFromPages, poolPromises } = require("./util");
 const { findPublicPages } = require("./findPublicPages");
 
-let publicPagesRaw = findPublicPages(readJsonSync(path.resolve(__dirname, "../notes/json/kipras-g1.json")), {
-	publicTag: "#public", // custom for testing
-}).filter(
+console.log({ PATH_TO_ROAM_GRAPH: process.env.PATH_TO_ROAM_GRAPH });
+
+let publicPagesRaw = findPublicPages(
+	readJsonSync(
+		path.resolve(
+			__dirname, //
+			process.env.PATH_TO_ROAM_GRAPH || "../notes/json/kipras-g1.json"
+		)
+	),
+	{
+		publicTag: "#public", // custom for testing
+	}
+).filter(
 	(raw) =>
 		![
 			"PmdJYvQ1i" /* anon */, //
