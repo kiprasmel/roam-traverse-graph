@@ -7,7 +7,7 @@ const hideBlockStringsIfNotPublic = ({
 	hiddenStringValue, //
 	doNotHideTodoAndDone,
 }) => (block) => {
-	if (block.metadata.isPublic) {
+	if (block.metadata.isPublic || block.metadata.isPublicOnly) {
 		return block;
 	}
 

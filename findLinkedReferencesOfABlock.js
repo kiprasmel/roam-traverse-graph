@@ -13,7 +13,7 @@ const findIfPagesHavePublicLinkedReferences = ({
 	 */
 	const linkedReferences = findMatchingLinkedReferences(block.string, allPagesWithMetadata);
 
-	if (block.metadata.isPublic) {
+	if (block.metadata.isPublic || block.metadata.isPublicOnly) {
 		/**
 		 * mark the metaPage's that they have at least 1 linked ref.
 		 * will be used to NOT hide their titles.

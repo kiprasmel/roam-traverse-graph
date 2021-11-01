@@ -10,6 +10,7 @@ const { hideBlockStringsIfNotPublic } = require("./hideBlockStringsIfNotPublic")
 const { createLinkedReferences } = require("./util");
 const {
 	defaultPublicTag, //
+	defaultPublicOnlyTags,
 	defaultPrivateTag,
 	defaultHiddenStringValue,
 	defaultMakeThePublicTagPagePublic,
@@ -33,6 +34,7 @@ const findPublicPages = (
 		 * TODO: allow providing `oldPublicTagsForDeletion` array to remove the pages
 		 */
 		publicTag = defaultPublicTag, //
+		publicOnlyTags = defaultPublicOnlyTags,
 		privateTag = defaultPrivateTag,
 		hiddenStringValue = defaultHiddenStringValue,
 		makeThePublicTagPagePublic = defaultMakeThePublicTagPagePublic,
@@ -60,6 +62,8 @@ const findPublicPages = (
 
 	console.log({
 		publicTag, //
+		publicOnlyTags,
+		privateTag,
 		hiddenStringValue,
 		makeThePublicTagPagePublic,
 		doNotHideTodoAndDone,
@@ -92,6 +96,7 @@ const findPublicPages = (
 							{
 								rootParentPage: currentPageWithMeta,
 								publicTag,
+								publicOnlyTags,
 								privateTag,
 							}
 						)

@@ -7,7 +7,14 @@ const path = require("path");
 const { readJsonSync, startTimerMs, getAllBlocksFromPages, poolPromises } = require("./util");
 const { findPublicPages } = require("./findPublicPages");
 
+const { defaultPublicTag, defaultPrivateTag, defaultPublicOnlyTags } = require("./defaults");
+
 console.log({ PATH_TO_ROAM_GRAPH: process.env.PATH_TO_ROAM_GRAPH });
+
+let publicOnlyTags = (process.env.ROAM_PUBLIC_ONLY_TAGS || "").split(",").filter((po) => !!po);
+if (!publicOnlyTags.length) {
+	publicOnlyTags = defaultPublicOnlyTags;
+}
 
 let publicPagesRaw = findPublicPages(
 	readJsonSync(
@@ -17,7 +24,9 @@ let publicPagesRaw = findPublicPages(
 		)
 	),
 	{
-		publicTag: "#public", // custom for testing
+		publicTag: process.env.ROAM_PUBLIC_TAG || defaultPublicTag, // custom for testing
+		privateTag: process.env.ROAM_PRIVATE_TAG || defaultPrivateTag,
+		publicOnlyTags,
 	}
 ).filter(
 	(raw) =>

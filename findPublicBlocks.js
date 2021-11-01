@@ -29,6 +29,7 @@ const markBlockPublic = (
 		// parentBlock,
 		rootParentPage,
 		publicTag,
+		publicOnlyTags,
 		privateTag,
 	},
 	parentBlock
@@ -44,7 +45,10 @@ const markBlockPublic = (
 	 *
 	 */
 	const hasPublicTag = block.string.includes(publicTag);
+	const hasPublicOnlyTag = publicOnlyTags.some((publicOnlyTag) => block.string.includes(publicOnlyTag));
 	const hasPrivateTag = block.string.includes(privateTag);
+
+	const isPublicOnly = hasPublicOnlyTag && !hasPrivateTag && !parentBlock?.metadata.hasPrivateTag;
 
 	/**
 	 * @type { boolean }
@@ -53,14 +57,16 @@ const markBlockPublic = (
 		(rootParentPage.isFullyPublic || //
 			hasPublicTag ||
 			parentBlock?.metadata.isPublic) &&
-		!hasPrivateTag
+		!hasPrivateTag &&
+		!isPublicOnly
 	);
 
+	block.metadata.isPublicOnly = isPublicOnly;
 	block.metadata.isPublic = isPublic;
 	block.metadata.hasPublicTag = hasPublicTag;
 	block.metadata.hasPrivateTag = hasPrivateTag;
 
-	if (isPublic) {
+	if (isPublic || hasPublicOnlyTag) {
 		/**
 		 * TODO FIXME, very ugly work-around lmao
 		 *
