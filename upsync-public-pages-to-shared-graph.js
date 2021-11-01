@@ -7,7 +7,7 @@ const path = require("path");
 const { readJsonSync, startTimerMs, getAllBlocksFromPages, poolPromises } = require("./util");
 const { findPublicPages } = require("./findPublicPages");
 
-const publicPagesRaw = findPublicPages(readJsonSync(path.resolve(__dirname, "../notes/json/kipras-g1.json")), {
+let publicPagesRaw = findPublicPages(readJsonSync(path.resolve(__dirname, "../notes/json/kipras-g1.json")), {
 	publicTag: "#public", // custom for testing
 }).filter(
 	(raw) =>
@@ -17,7 +17,9 @@ const publicPagesRaw = findPublicPages(readJsonSync(path.resolve(__dirname, "../
 		].includes(raw.page.uid)
 );
 
-const publicPages = publicPagesRaw.map((p) => p.page);
+const origRawLen = publicPagesRaw.length;
+
+let publicPages = publicPagesRaw.map((p) => p.page);
 
 // fs.writeFileSync("public-pages.json", JSON.stringify(publicPages, null, 2), { encoding: "utf-8" });
 
@@ -49,7 +51,7 @@ const api = new RoamPrivateApi(publicGraphToImportInto, secrets.email, secrets.p
 	// folder: "/tmp/",
 });
 
-const getDeltaMs = startTimerMs();
+const getDeltaSec = startTimerMs({ divider: 1000 });
 
 const allBlocks = getAllBlocksFromPages(publicPages); // .splice(0, 500); // TODO FIXME REMVOE
 
@@ -62,41 +64,56 @@ const allBlocks = getAllBlocksFromPages(publicPages); // .splice(0, 500); // TOD
 const minimumIntervalMsBetweenMaxRequests = 1000 * (60 + 2);
 const maxRequestsPerInterval = 300 - 5;
 
-/**
- * @param { import("./types").PageWithMetadata[] } ppsRaw
- * @returns { import("./types").Page[] }
- */
-const filterPublicPagesForHighPrio = (ppsRaw) =>
-	ppsRaw
-		.filter((raw) => {
-			if (!raw) {
-				return false;
-			}
-			return !!raw.isFullyPublic || !!raw.hasAtLeastOnePublicBlockAnywhereInTheHierarchy;
-		})
-		.map((raw) => raw.page);
-
 // TODO FIXME TEMP
-const _publicPagesHighPrio = filterPublicPagesForHighPrio(publicPagesRaw);
+const publicPagesHighPrio = publicPagesRaw
+	.filter((raw) => {
+		if (!raw) return false;
+		return !!raw.isFullyPublic || !!raw.hasAtLeastOnePublicBlockAnywhereInTheHierarchy;
+	})
+	.map((raw) => raw.page);
+
+publicPagesRaw = publicPagesRaw.filter((pps) => !publicPagesHighPrio.map((pp) => pp.uid).includes(pps.page.uid));
+
+const secondHighPrio = publicPagesRaw.filter((p) => p.hasAtLeastOneMentionOfAPublicLinkedReference).map((p) => p.page);
+
+publicPagesRaw = publicPagesRaw.filter((pps) => !secondHighPrio.map((pp) => pp.uid).includes(pps.page.uid));
+
+publicPages = publicPagesRaw
+	.filter((pps) => !secondHighPrio.map((pp) => pp.uid).includes(pps.page.uid))
+	.map((p) => p.page);
+
+const len1 = publicPagesHighPrio.length,
+	len2 = secondHighPrio.length,
+	len3 = publicPages.length,
+	sum = len1 + len2 + len3;
+
+console.log(len1, len2, len3, sum, origRawLen, sum === origRawLen /** should be true */);
 
 Promise.resolve()
 	// DISABLED, DO NOT USE (NO NEED)
 	.then(() => api.logIn()) // bad, need more time pause lol
 	.then(() => api.gotoAllPages())
-	.then(() => api.beforeDeletePages())
-	.then(() => api.deleteBlocks(allBlocks))
-	.then(() =>
-		poolPromises(
-			minimumIntervalMsBetweenMaxRequests,
-			maxRequestsPerInterval,
-			publicPages.map((page) => async () => await api.deletePage(page.uid))
-		)
-	)
-	.then(() => api.afterDeletePages())
-	.then(() => api.import(_publicPagesHighPrio))
-	.then(() => api.markSelectedPagesAsPubliclyReadable(_publicPagesHighPrio))
-	.then(() => api.import(publicPages.filter((pps) => !_publicPagesHighPrio.map((pp) => pp.uid).includes(pps.uid))))
-	.then(() => console.log("done", getDeltaMs() / 1000))
+	/**
+	 * TODO - just use the empty graph to nuke existing one into oblivion emptyness state
+	 */
+	// .then(() => api.beforeDeletePages())
+	// .then(() => api.deleteBlocks(allBlocks))
+	// .then(() =>
+	// 	poolPromises(
+	// 		minimumIntervalMsBetweenMaxRequests,
+	// 		maxRequestsPerInterval,
+	// 		publicPages.map((page) => async () => await api.deletePage(page.uid))
+	// 	)
+	// )
+	// .then(() => api.afterDeletePages())
+	.then(() => console.log("begin stage 1"))
+	.then(() => api.import(publicPagesHighPrio))
+	.then(() => api.markSelectedPagesAsPubliclyReadable(publicPagesHighPrio))
+	.then(() => console.log("end stage 1", getDeltaSec(), "begin stage 2"))
+	.then(() => api.import(secondHighPrio))
+	.then(() => console.log("end stage 2", getDeltaSec(), "begin stage 3"))
+	.then(() => api.import(publicPages))
+	.then(() => console.log("done", getDeltaSec()))
 	.then(() => process.exit(0))
 	.catch((e) => {
 		console.error(e);
