@@ -1,3 +1,6 @@
+// import { Merge } from "type-fest";
+import { Assign } from "utility-types";
+
 import { Page, LinkedReferenceKind, Block } from "./roam";
 
 export * from "./roam";
@@ -29,6 +32,10 @@ export type PageWithMetadata = {
 	isFullyPublic: boolean;
 	hasAtLeastOnePublicBlockAnywhereInTheHierarchy: boolean;
 	hasAtLeastOnePublicLinkedReference: boolean;
+	/**
+	 * when a block links to a public linked reference
+	 */
+	hasAtLeastOneMentionOfAPublicLinkedReference: boolean;
 
 	//
 	isTitleHidden?: boolean;
@@ -67,6 +74,8 @@ export type MutatingActionsToTakeProps = {
 // 	? () => /*       */ (block: ExtendedBlock) => ExtendedBlock & ExtraPropertiesForBlock
 // 	: (props: Props) => (block: ExtendedBlock) => ExtendedBlock & ExtraPropertiesForBlock;
 
+export type ShouldContinueTraversal = boolean;
+
 export declare function MutatingActionToTake<
 	ExistingBlock extends Block, //
 	ExtraPropertiesForBlock extends Record<any, any>,
@@ -77,6 +86,7 @@ export declare function MutatingActionToTake<
 	block: ExistingBlock //
 ) => {} extends ExtraPropertiesForBlock ? ExistingBlock : ExistingBlock & ExtraPropertiesForBlock; //
 
+// TODO RM
 export declare function MutatingActionToTake<
 	ExistingBlock extends Block, //
 	ExtraPropertiesForBlock extends Record<any, any>
@@ -118,7 +128,8 @@ export type MutatingAction<
 	parentBlock?: ExistingBlock
 ) => (
 	block: ExistingBlock //
-) => {} extends ExtraPropertiesForBlock ? ExistingBlock : ExistingBlock & ExtraPropertiesForBlock;
+) =>  ExistingBlock & ExtraPropertiesForBlock |
+	[ExistingBlock & ExtraPropertiesForBlock , ShouldContinueTraversal]
 
 // export declare function TraverseBlockRecursively<
 export type TraverseBlockRecursively =
@@ -195,11 +206,55 @@ export type RemoveUnknownProperties = MutatingAction<
 	{}
 >;
 
-export type WithMeta = <M, B extends Block & WithMetadata<M>, K extends string | number | symbol = any, V = any>(
+type KV = { [key: string]: unknown }
+
+// // export type WithMeta <X = any, B extends Block & WithMetadata<X> = Block & WithMetadata<X>, Y = any, M extends WithMetadata<Y> = WithMetadata<Y>> = (
+// export type WithMeta <X extends KV = {}, B extends Block | Block & WithMetadata<X> = Block | Block & WithMetadata<X>, K extends string  = string, V = any> = (
+// 	block: B,
+// 	key: K,
+// 	value: V,
+// // ) => Merge<B, { metadata: M }>;
+// // ) => B & { metadata: {[Key in K]: V} }
+// ) => Merge<B, { metadata: {[Key in K]: V} }>
+
+// export type WithMeta <X extends KV = {}, B extends Block | Block & WithMetadata<X> = Block | Block & WithMetadata<X>, K extends string  = string, V = any> = (
+// export type WithMeta <X extends KV = {}, B extends Block | Block & WithMetadata<X> = Block | Block & WithMetadata<X>, _M = readonly {}> = <M extends _M>(
+export type WithMeta 
+<
+	X extends Record<any, any> = {}, //
+	// B extends Block | (Block & WithMetadata<X>) = Block | (Block & WithMetadata<X>),
+	B extends (Block & WithMetadata<X>) = (Block & WithMetadata<X>),
+	M extends {} = {},
+>
+
+	=
+
+// <
+// 	M = any,
+// > 
+// <	
+// >
+(
 	block: B,
-	key: K,
-	value: V
-) => { block: B } & WithMetadata<{ [key in K]: V }>;
+	// meta: {[Key in K]: V}
+	// meta: Record<any, any>
+	// meta: _M extends KV ? KV extends M ? _M : never : never,
+	// meta: Record<any, any>
+	meta: M
+	// meta: any,
+
+// ) => typeof meta extends KV ? Merge<B, { metadata: typeof meta }> : never
+// ) => B & { metadata: M }
+// ) => Merge<B , { metadata: M }>
+// ) => Assign<B, { metadata: typeof meta }>
+// ) => B & { metadata: typeof meta }
+
+// ) => typeof meta extends { [key in infer K]: infer V } ? B & { metadata: { [key in K]: V } }:  never;
+// ) => typeof meta extends { } ? B & { metadata: typeof meta  }:  never;
+) => B & { metadata: Assign<B["metadata"], M> }
+
+
+// type A = 
 
 // (
 // 	props: RemoveUnknownPropertiesRecursivelyProps
@@ -231,6 +286,7 @@ export type LinkedRef = {
 
 export type FindLinkedReferencesProps = {
 	allPagesWithMetadata: PageWithMetadata[];
+	rootParentPage: PageWithMetadata;
 };
 export type WithLinkedReferences = WithIsPublic &
 	WithMetadata<{
