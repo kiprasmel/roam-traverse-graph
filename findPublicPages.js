@@ -229,35 +229,18 @@ function titleIsPublicTag(page, publicTag) {
  * @returns { boolean }
  */
 function isMarkedAsFullyPublic(page, publicTag) {
-	const rootLevelParagraphsWithPublicTag = page.children && page.children.filter((c) => c.string.includes(publicTag));
-
-	if (!rootLevelParagraphsWithPublicTag || !rootLevelParagraphsWithPublicTag.length) {
-		return false;
-	}
-
-	/** @type { boolean } */
-	const doPublicTagParagraphsOnlyWithPublicTagAndWithoutAnyChildrenExist = !!rootLevelParagraphsWithPublicTag
-		.filter((c) => !c.children || !c.children.length)
-
-		/**
-		 * whole page should be public.
-		 *
-		 * TODO consider if the block itself should be empty except the publicTag itself
-		 * -> probably yes, just for security concerns.
-		 *
-		 */
-		.filter(
-			(c) => ("string" in c && c.string.trim() === publicTag)
-			// disabled because c is children === Block and block don't have title,
-			// it probably doesn't make sense to check Page's title anyway
-			/* || ("title" in c && c.title === publicTag) */
-		).length;
-
-	if (doPublicTagParagraphsOnlyWithPublicTagAndWithoutAnyChildrenExist) {
-		return true;
-	}
-
-	return false;
+	/**
+	 * the page is fully public IF AND ONLY IF:
+	 * 1. the publicTag is inside the top-most level block,
+	 * 2. the block has no children blocks inside it,
+	 * 3. the block's content (string) is equivalent to the publicTag string without any exceptions
+	 *    (even additional spaces inside the block make the power of the publicTag void - all intentional).
+	 */
+	return !!(
+		page.children && //
+		page.children.length &&
+		page.children.some((block) => !block.children && block.string === publicTag)
+	);
 }
 
 /**
