@@ -15,6 +15,7 @@ const {
 	defaultHiddenStringValue,
 	defaultMakeThePublicTagPagePublic,
 	defaultDoNotHideTodoAndDone,
+	defaultKeepMetadata,
 } = require("./defaults");
 
 /**
@@ -39,6 +40,7 @@ const findPublicPages = (
 		hiddenStringValue = defaultHiddenStringValue,
 		makeThePublicTagPagePublic = defaultMakeThePublicTagPagePublic,
 		doNotHideTodoAndDone = defaultDoNotHideTodoAndDone,
+		keepMetadata = defaultKeepMetadata,
 		...rest
 	} = {}
 ) => {
@@ -152,7 +154,11 @@ const findPublicPages = (
 							hiddenStringValue,
 						})
 					)
-					.map(traverseBlockRecursively(() => ({ metadata: _metadata, ...block }) => block, {}))),
+					.map((b) =>
+						keepMetadata
+							? b
+							: traverseBlockRecursively(() => (block) => (delete block.metadata, block), {})(b)
+					)),
 				currentPageWithMeta)
 			)
 		)

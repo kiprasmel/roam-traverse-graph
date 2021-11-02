@@ -31,6 +31,7 @@ const allPages = readJsonSync(path.resolve(__dirname, pathToGraphFile));
 const publicPagesWrappedWithMetadata = findPublicPages(allPages, {
 	publicTag,
 	publicOnlyTags,
+	keepMetadata: true,
 });
 
 // fs.writeFileSync(

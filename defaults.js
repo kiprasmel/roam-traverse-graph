@@ -13,4 +13,6 @@ module.exports = {
 	defaultMakeThePublicTagPagePublic: false,
 	/** @type { boolean } */
 	defaultDoNotHideTodoAndDone: true,
+	/** @type { boolean } */
+	defaultKeepMetadata: false,
 };

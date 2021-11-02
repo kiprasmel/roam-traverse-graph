@@ -24,6 +24,11 @@ export type FindPublicPagesOptions = {
 	 * and show a visual indicator, thus we have a special case for them
 	 */
 	doNotHideTodoAndDone?: boolean;
+
+	/**
+	 * currently blocks', will later apply to pages as well once we implement it properly
+	 */
+	keepMetadata?: boolean;
 };
 
 export type PageWithMetadata = {
