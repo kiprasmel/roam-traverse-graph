@@ -8,15 +8,7 @@ const { findIfPagesHavePublicLinkedReferences } = require("./findLinkedReference
 const { hideBlockStringsIfNotPublic } = require("./hideBlockStringsIfNotPublic");
 
 const { createLinkedReferences } = require("./util");
-const {
-	defaultPublicTag, //
-	defaultPublicOnlyTags,
-	defaultPrivateTag,
-	defaultHiddenStringValue,
-	defaultMakeThePublicTagPagePublic,
-	defaultDoNotHideTodoAndDone,
-	defaultKeepMetadata,
-} = require("./defaults");
+const defaults = require("./defaults");
 
 /**
  * @type { import("./types").FindPublicPages }
@@ -30,20 +22,26 @@ const findPublicPages = (
 	 *
 	 */
 	somePages = [], //
-	{
+	settings = {}
+) => {
+	const {
 		/**
 		 * TODO: allow providing `oldPublicTagsForDeletion` array to remove the pages
 		 */
-		publicTag = defaultPublicTag, //
-		publicOnlyTags = defaultPublicOnlyTags,
-		privateTag = defaultPrivateTag,
-		hiddenStringValue = defaultHiddenStringValue,
-		makeThePublicTagPagePublic = defaultMakeThePublicTagPagePublic,
-		doNotHideTodoAndDone = defaultDoNotHideTodoAndDone,
-		keepMetadata = defaultKeepMetadata,
-		...rest
-	} = {}
-) => {
+		publicTag = defaults.publicTag, //
+		publicOnlyTags = defaults.publicOnlyTags,
+		privateTag = defaults.privateTag,
+		hiddenStringValue = defaults.hiddenStringValue,
+		makeThePublicTagPagePublic = defaults.makeThePublicTagPagePublic,
+		doNotHideTodoAndDone = defaults.doNotHideTodoAndDone,
+		keepMetadata = defaults.keepMetadata,
+	} = settings;
+
+	console.log({
+		settings,
+		merged: { ...defaults, ...settings },
+	});
+
 	if (!somePages || !somePages.length) {
 		return [];
 	}
@@ -61,16 +59,6 @@ const findPublicPages = (
 	 */
 	// eslint-disable-next-line no-param-reassign
 	somePages = somePages.map(keepOnlyKnownPropertiesOfPage);
-
-	console.log({
-		publicTag, //
-		publicOnlyTags,
-		privateTag,
-		hiddenStringValue,
-		makeThePublicTagPagePublic,
-		doNotHideTodoAndDone,
-		...rest,
-	});
 
 	/**
 	 * @type { import("./types").PageWithMetadata[] }
