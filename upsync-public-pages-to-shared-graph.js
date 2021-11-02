@@ -112,6 +112,7 @@ Promise.resolve()
 	// DISABLED, DO NOT USE (NO NEED)
 	.then(() => api.logIn()) // bad, need more time pause lol
 	.then(() => api.gotoAllPages())
+	.then(() => api.restoreGraphFromEDNByDefaultToEmpty())
 	/**
 	 * TODO - just use the empty graph to nuke existing one into oblivion emptyness state
 	 */
