@@ -2,17 +2,17 @@
 
 module.exports = {
 	/** @type { readonly string } */
-	defaultPublicTag: "#public",
+	publicTag: "#public",
 	/** @type { string[] } */
-	defaultPublicOnlyTags: [],
+	publicOnlyTags: [],
 	/** @type { readonly string } */
-	defaultPrivateTag: "#private",
+	privateTag: "#private",
 	/** @type { readonly string } */
-	defaultHiddenStringValue: "hidden",
+	hiddenStringValue: "hidden",
 	/** @type { boolean } */
-	defaultMakeThePublicTagPagePublic: false,
+	makeThePublicTagPagePublic: false,
 	/** @type { boolean } */
-	defaultDoNotHideTodoAndDone: true,
+	doNotHideTodoAndDone: true,
 	/** @type { boolean } */
-	defaultKeepMetadata: false,
+	keepMetadata: false,
 };
