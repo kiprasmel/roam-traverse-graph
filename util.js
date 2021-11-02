@@ -13,7 +13,11 @@ const readJsonSync = (pathToFile) => JSON.parse(fs.readFileSync(path.resolve(pat
  * @param { Parameters<typeof JSON.stringify>[0] } json
  */
 const writeJsonSync = (pathToFile, json) =>
-	fs.writeFileSync(path.resolve(pathToFile), JSON.stringify(json, null, 2), { encoding: "utf-8" });
+	fs.writeFileSync(
+		path.resolve(pathToFile),
+		JSON.stringify(json, (key, value) => (["metaPage"].includes(key) ? "[circular]" : value), 2),
+		{ encoding: "utf-8" }
+	);
 
 /**
  * @typedef { { uid: string, children?: MinimalPageOrBlock[] } } MinimalPageOrBlock
