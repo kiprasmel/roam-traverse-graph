@@ -64,7 +64,7 @@ const secrets = require("./secrets.json"); // TODO FIXME
 const publicGraphToImportInto = "kiprasmel";
 
 const api = new RoamPrivateApi(publicGraphToImportInto, secrets.email, secrets.password, {
-	headless: !!process.env.ROAM_BROWSER_NOT_HEADLESS || false,
+	headless: !!process.env.ROAM_BROWSER_HEADLESS || false,
 	// @ts-expect-error
 	folder: ".",
 	// folder: "/tmp/",
