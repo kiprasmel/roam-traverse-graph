@@ -7,6 +7,8 @@ const { removeUnknownProperties, markBlockPublic } = require("./findPublicBlocks
 const { findIfPagesHavePublicLinkedReferences } = require("./findLinkedReferencesOfABlock");
 const { hideBlockStringsIfNotPublic } = require("./hideBlockStringsIfNotPublic");
 
+const { parseRoamTraverseGraphSettingsFromRoamPage } = require("./util/parseSettingsFromRoamPage");
+const { shallowMergeIncludingArrayValues } = require("./util/shallowMergeIncludingArayValues");
 const { createLinkedReferences } = require("./util");
 const defaults = require("./defaults");
 
@@ -22,25 +24,36 @@ const findPublicPages = (
 	 *
 	 */
 	somePages = [], //
-	settings = {}
+	settingsOrig = {}
 ) => {
-	const {
-		/**
-		 * TODO: allow providing `oldPublicTagsForDeletion` array to remove the pages
-		 */
-		publicTag = defaults.publicTag, //
-		publicOnlyTags = defaults.publicOnlyTags,
-		privateTag = defaults.privateTag,
-		hiddenStringValue = defaults.hiddenStringValue,
-		makeThePublicTagPagePublic = defaults.makeThePublicTagPagePublic,
-		doNotHideTodoAndDone = defaults.doNotHideTodoAndDone,
-		keepMetadata = defaults.keepMetadata,
-	} = settings;
+	/**
+	 * TODO: allow providing `oldPublicTagsForDeletion` array to remove the pages
+	 */
+
+	const settingsFromSettingsPage = parseRoamTraverseGraphSettingsFromRoamPage(somePages);
+
+	const settings = shallowMergeIncludingArrayValues({}, [
+		defaults, //
+		settingsOrig,
+		settingsFromSettingsPage,
+	]);
 
 	console.log({
-		settings,
-		merged: { ...defaults, ...settings },
+		defaults,
+		settingsOrig,
+		settingsFromSettingsPage,
+		merged: settings,
 	});
+
+	const {
+		doNotHideTodoAndDone,
+		hiddenStringValue,
+		keepMetadata,
+		makeThePublicTagPagePublic,
+		privateTag,
+		publicOnlyTags,
+		publicTag,
+	} = settings;
 
 	if (!somePages || !somePages.length) {
 		return [];
