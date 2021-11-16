@@ -18,7 +18,7 @@ const removeUnknownProperties = () => (block) =>
 				"text-align": block["text-align"],
 				...("refs" in block ? { refs: block.refs } : {}),
 				...("children" in block ? { children: block.children } : {}),
-				metadata: {},
+				metadata: block.metadata || {},
 		  };
 
 /**
@@ -28,7 +28,7 @@ const markBlockPublic = (
 	{
 		// parentBlock,
 		rootParentPage,
-		publicTag,
+		publicTags,
 		publicOnlyTags,
 		privateTag,
 	},
@@ -44,11 +44,19 @@ const markBlockPublic = (
 	 * because we might have a #private tag that would affect this)
 	 *
 	 */
-	const hasPublicTag = block.string.includes(publicTag);
-	const hasPublicOnlyTag = publicOnlyTags.some((publicOnlyTag) => block.string.includes(publicOnlyTag));
-	const hasPrivateTag = block.string.includes(privateTag);
+	const hasPublicTag =
+		!block.metadata.hasCodeBlock && (publicTags.some((publicTag) => block.string.includes(publicTag)));
 
-	const isPublicOnly = hasPublicOnlyTag && !hasPrivateTag && !parentBlock?.metadata.hasPrivateTag;
+	const hasPublicOnlyTag =
+		!block.metadata.hasCodeBlock && (publicOnlyTags.some((publicOnlyTag) => block.string.includes(publicOnlyTag)));
+
+	const hasPrivateTag = !block.metadata.hasCodeBlock && (block.string.includes(privateTag));
+
+	/**
+	 * ---
+	 */
+
+	const isPublicOnly = (hasPublicOnlyTag && !hasPrivateTag && !parentBlock?.metadata.hasPrivateTag);
 
 	/**
 	 * @type { boolean }

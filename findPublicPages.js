@@ -24,41 +24,32 @@ const findPublicPages = (
 	 *
 	 */
 	somePages = [], //
-	settingsOrig = {}
-) => {
+	optionsOrig = { publicTags: [], publicOnlyTags: [] },
+	settingsFromSettingsPage = parseRoamTraverseGraphSettingsFromRoamPage(somePages),
 	/**
-	 * TODO: allow providing `oldPublicTagsForDeletion` array to remove the pages
+	 * @type { import("./types").FindPublicPagesOptions }
 	 */
-
-	const settingsFromSettingsPage = parseRoamTraverseGraphSettingsFromRoamPage(somePages);
-
-	const settings = shallowMergeIncludingArrayValues({}, [
+	settings = shallowMergeIncludingArrayValues({}, [
 		defaults, //
-		settingsOrig,
+		optionsOrig,
 		settingsFromSettingsPage,
-	]);
-
-	console.log({
-		defaults,
-		settingsOrig,
-		settingsFromSettingsPage,
-		merged: settings,
-	});
-
-	const {
+	]),
+	{
 		doNotHideTodoAndDone,
 		hiddenStringValue,
 		keepMetadata,
 		makeThePublicTagPagePublic,
 		privateTag,
 		publicOnlyTags,
-		publicTag,
-	} = settings;
-
-	if (!somePages || !somePages.length) {
-		return [];
-	}
-
+		publicTags,
+	} = settings
+) => (
+	(console.log({
+		defaults,
+		optionsOrig,
+		settingsFromSettingsPage,
+		merged: settings,
+	}),
 	/**
 	 * TODO: move page.children into some temporary page._children or similar
 	 * to make sure we delete it at the end,
@@ -70,27 +61,49 @@ const findPublicPages = (
 	 * same w/ the `title` / `string` as well
 	 *
 	 */
-	// eslint-disable-next-line no-param-reassign
-	somePages = somePages.map(keepOnlyKnownPropertiesOfPage);
 
 	/**
 	 * @type { import("./types").PageWithMetadata[] }
 	 */
-	const latestPages = somePages
+	((somePages || [])
+		.map(keepOnlyKnownPropertiesOfPage)
+
+		.map(
+			(page) => (
+				(page.children = (page.children || []).map(
+					traverseBlockRecursively(() => (block) => ((block.metadata = block.metadata || {}), block), {})
+				)),
+				page
+			)
+		)
+		.map(
+			(page) => (
+				(page.children = (page.children || []).map(
+					traverseBlockRecursively(
+						() => (block) => (
+							(block.metadata.hasCodeBlock = !!block?.string?.includes?.("```")), //
+							block
+						),
+						{}
+					)
+				)),
+				page
+			)
+		)
+
 		.map((page) => {
 			const isThePublicTagPageAndShouldBePublic =
-				(makeThePublicTagPagePublic && titleIsPublicTag(page, publicTag));
+				makeThePublicTagPagePublic && publicTags.some((publicTag) => titleIsPublicTag(page, publicTag));
 
-			if (isThePublicTagPageAndShouldBePublic || isMarkedAsFullyPublic(page, publicTag)) {
-				return toFullyPublicPage(page, hiddenStringValue);
-			} else {
-				return toPotentiallyPartiallyPublicPage(page, hiddenStringValue);
-			}
+			return isThePublicTagPageAndShouldBePublic || //
+				publicTags.some((publicTag) => isMarkedAsFullyPublic(page, publicTag))
+				? toFullyPublicPage(page, hiddenStringValue)
+				: toPotentiallyPartiallyPublicPage(page, hiddenStringValue);
 		})
 
 		.map(
 			(currentPageWithMeta, _index, currentPagesWithMetadata) => (
-				((currentPageWithMeta.page.children = (currentPageWithMeta.page.children || [])
+				(currentPageWithMeta.page.children = (currentPageWithMeta.page.children || [])
 					.map(traverseBlockRecursively(removeUnknownProperties, {}))
 					.filter((block) => !!block)
 					.map(
@@ -98,7 +111,7 @@ const findPublicPages = (
 							markBlockPublic, //
 							{
 								rootParentPage: currentPageWithMeta,
-								publicTag,
+								publicTags, // TODO CONFIRM
 								publicOnlyTags,
 								privateTag,
 							}
@@ -110,7 +123,7 @@ const findPublicPages = (
 							{
 								rootParentPage: currentPageWithMeta,
 								allPagesWithMetadata: currentPagesWithMetadata,
-								publicTag,
+								// publicTag, // TODO CONFIRM
 								privateTag,
 								doNotHideTodoAndDone,
 								hiddenStringValue,
@@ -160,7 +173,7 @@ const findPublicPages = (
 							? b
 							: traverseBlockRecursively(() => (block) => (delete block.metadata, block), {})(b)
 					)),
-				currentPageWithMeta)
+				currentPageWithMeta
 			)
 		)
 
@@ -181,23 +194,21 @@ const findPublicPages = (
 				  pageMeta)
 		)
 
-		.map((p) => ((!p.page.children?.length && delete p.page.children, p)))
+		.map((p) => (!p.page.children?.length && delete p.page.children, p))
 
 		.sort((A, B) =>
 			/** public tag itself first, then public pages, then all other ones */
-			titleIsPublicTag(A.page, publicTag)
+			publicTags.some((publicTag) => titleIsPublicTag(A.page, publicTag))
 				? -1
-				: titleIsPublicTag(B.page, publicTag)
+				: publicTags.some((publicTag) => titleIsPublicTag(B.page, publicTag))
 				? 1
 				: A.hasAtLeastOnePublicBlockAnywhereInTheHierarchy
 				? -1
 				: B.hasAtLeastOnePublicBlockAnywhereInTheHierarchy
 				? 1
 				: 0
-		);
-
-	return latestPages;
-};
+		)))
+);
 
 /**
  * security et al -- in case upstream adds something potentially private
@@ -252,7 +263,7 @@ function isMarkedAsFullyPublic(page, publicTag) {
 	return !!(
 		page.children && //
 		page.children.length &&
-		page.children.some((block) => !block.children && block.string === publicTag)
+		page.children.some((block) => !block.children && block.string === publicTag && !block.metadata.hasCodeBlock)
 	);
 }
 

@@ -16,7 +16,7 @@ const hideBlockStringsIfNotPublic = ({
 
 	block.string = `(${hiddenStringValue}) ${block.uid}`;
 
-	if (doNotHideTodoAndDone) {
+	if (doNotHideTodoAndDone && !block.metadata.hasCodeBlock) {
 		const TODOTag = "{{[[TODO]]}}";
 		const DONETag = "{{[[DONE]]}}";
 		if (tmp.includes(TODOTag)) {
