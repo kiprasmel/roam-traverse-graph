@@ -118,8 +118,11 @@ console.log({
 Promise.resolve()
 	// DISABLED, DO NOT USE (NO NEED)
 	.then(() => api.logIn()) // bad, need more time pause lol
+	.then(() => console.log("logged in"))
 	.then(() => api.gotoAllPages())
+	.then(() => console.log("went to page"))
 	.then(() => api.restoreGraphFromEDNByDefaultToEmpty())
+	.then(() => console.log("restored graph to empty from edn"))
 	/**
 	 * TODO - just use the empty graph to nuke existing one into oblivion emptyness state
 	 */
