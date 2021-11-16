@@ -61,7 +61,7 @@ const secrets = require("./secrets.json"); // TODO FIXME
  *     if no: all good, continue
  *
  */
-const publicGraphToImportInto = "kiprasmel";
+const publicGraphToImportInto = process.env.PUBLIC_GRAPH_TO_IMPORT_TO || "kiprasmel";
 
 const api = new RoamPrivateApi(publicGraphToImportInto, secrets.email, secrets.password, {
 	headless: !!process.env.ROAM_BROWSER_HEADLESS || false,
