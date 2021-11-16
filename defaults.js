@@ -1,8 +1,8 @@
 // @ts-check
 
 module.exports = {
-	/** @type { readonly string } */
-	publicTag: "#public",
+	/** @type { Exclude<import("./types").FindPublicPagesOptions["publicTags"], undefined> } */
+	publicTags: ["#public"],
 	/** @type { string[] } */
 	publicOnlyTags: [],
 	/** @type { readonly string } */
