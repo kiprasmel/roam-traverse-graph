@@ -4,15 +4,15 @@
 
 const path = require("path");
 
-const { defaultPublicTag, defaultPublicOnlyTags } = require("./defaults");
+const { publicTags: defaultPublicTag, publicOnlyTags: defaultPublicOnlyTags } = require("./defaults");
 const { findPublicPages } = require("./findPublicPages");
 const { readJsonSync, writeJsonSync } = require("./util");
 
 /** @type string */
 const pathToGraphFile = process.argv?.[2] || "../notes/json/kipras-g1.json";
 
-/** @type string */
-const publicTag = process.argv?.[3] || defaultPublicTag;
+/** @type string[] */
+const publicTags = process.argv?.[3]?.split?.(",") || defaultPublicTag;
 
 /** @type string[] */
 let publicOnlyTags = (process.argv?.[4] || "").split(",").filter((po) => !!po);
@@ -29,9 +29,10 @@ const allPages = readJsonSync(path.resolve(__dirname, pathToGraphFile));
  * @type { import("./types").PageWithMetadata[] }
  */
 const publicPagesWrappedWithMetadata = findPublicPages(allPages, {
-	publicTag,
+	publicTags,
 	publicOnlyTags,
 	keepMetadata: true,
+	makeThePublicTagPagePublic: true, // TODO testing
 });
 
 // fs.writeFileSync(
@@ -47,10 +48,10 @@ const publicPagesWrappedWithMetadata = findPublicPages(allPages, {
 // );
 
 writeJsonSync(
-	"../kiprasmel.on.json",
+	"../graph.json",
 	publicPagesWrappedWithMetadata.map((p) => p.page)
 );
-writeJsonSync("../kiprasmelraw.on.json", publicPagesWrappedWithMetadata);
+writeJsonSync("../graphraw.json", publicPagesWrappedWithMetadata);
 
 console.log(
 	publicPagesWrappedWithMetadata

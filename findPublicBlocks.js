@@ -28,7 +28,7 @@ const markBlockPublic = (
 	{
 		// parentBlock,
 		rootParentPage,
-		publicTag,
+		publicTags,
 		publicOnlyTags,
 		privateTag,
 	},
@@ -44,7 +44,7 @@ const markBlockPublic = (
 	 * because we might have a #private tag that would affect this)
 	 *
 	 */
-	const hasPublicTag = block.string.includes(publicTag);
+	const hasPublicTag = publicTags.some((publicTag) => block.string.includes(publicTag));
 	const hasPublicOnlyTag = publicOnlyTags.some((publicOnlyTag) => block.string.includes(publicOnlyTag));
 	const hasPrivateTag = block.string.includes(privateTag);
 
