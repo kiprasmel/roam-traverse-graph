@@ -11,7 +11,9 @@ const findIfPagesHavePublicLinkedReferences = ({
 	/**
 	 * @type { import("./types").LinkedRef[] }
 	 */
-	const linkedReferences = findMatchingLinkedReferences(block.string, allPagesWithMetadata);
+	const linkedReferences = block.metadata.hasCodeBlock
+		? []
+		: findMatchingLinkedReferences(block.string, allPagesWithMetadata);
 
 	if (block.metadata.isPublic || block.metadata.isPublicOnly) {
 		/**

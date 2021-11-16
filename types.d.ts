@@ -6,8 +6,8 @@ import { Page, LinkedReferenceKind, Block } from "./roam";
 export * from "./roam";
 
 export type FindPublicPagesOptions = {
-	publicTag?: string;
-	publicOnlyTags?: string[]
+	publicTags: string[];
+	publicOnlyTags: string[];
 	privateTag?: string;
 	/**
 	 * TODO DEPRECATE - use the .uid instead! (will work for pages too to avoid merging them lol)
@@ -267,7 +267,7 @@ export type WithMeta
 // ) => (block: Block) => Block;
 
 export type FindPublicBlocksProps = {
-	publicTag: string;
+	publicTags: string[];
 	publicOnlyTags: string[];
 	privateTag: string;
 

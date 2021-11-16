@@ -27,7 +27,7 @@ const shallowMergeIncludingArrayValues = (dest, srcs = [], log = false) => {
 
 		if (Array.isArray(dest[k])) {
 			if (!Array.isArray(src[k])) {
-				throw new Error("dest[k] was an array; src[k] was not: " + dest[k] + " " + src[k] + ".");
+				throw new Error("dest[k] was an array; src[k] was not: " + dest[k] + "; " + src[k] + ".");
 			}
 
 			let tmp;
@@ -41,7 +41,7 @@ const shallowMergeIncludingArrayValues = (dest, srcs = [], log = false) => {
 		}
 	});
 
-	return shallowMergeIncludingArrayValues(dest, srcs);
+	return shallowMergeIncludingArrayValues(dest, srcs, log);
 };
 
 module.exports = {
