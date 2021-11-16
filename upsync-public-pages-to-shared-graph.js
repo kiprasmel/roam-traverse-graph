@@ -106,7 +106,14 @@ const len1 = publicPagesHighPrio.length,
 	len3 = publicPages.length,
 	sum = len1 + len2 + len3;
 
-console.log(len1, len2, len3, sum, origRawLen, sum === origRawLen /** should be true */);
+console.log({
+	publicPagesHighPrio: len1, //
+	pagesWithAtLeast1MentionOfLinkedRefExclPrev: len2,
+	remainingPages: len3,
+	sum,
+	origRawLen,
+	sumEqOrigRawLen: sum === origRawLen /** should be true */,
+});
 
 Promise.resolve()
 	// DISABLED, DO NOT USE (NO NEED)
@@ -133,7 +140,7 @@ Promise.resolve()
 	.then(() => console.log("end stage 1", getDeltaSec(), "begin stage 2"))
 	.then(() => api.import(secondHighPrio))
 	.then(() => console.log("end stage 2", getDeltaSec(), "begin stage 3"))
-	.then(() => api.import(publicPages))
+	// .then(() => api.import(publicPages)) // TODO configurable
 	.then(() => console.log("done", getDeltaSec()))
 	.then(() => process.exit(0))
 	.catch((e) => {
