@@ -21,10 +21,6 @@ const shallowMergeIncludingArrayValues = (dest, srcs = [], log = false) => {
 	}
 
 	Object.keys(src).forEach((k) => {
-		if (src[k] === undefined) {
-			return;
-		}
-
 		if (Array.isArray(dest[k])) {
 			if (!Array.isArray(src[k])) {
 				throw new Error("dest[k] was an array; src[k] was not: " + dest[k] + "; " + src[k] + ".");
