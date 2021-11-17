@@ -8,7 +8,7 @@ const { findIfPagesHavePublicLinkedReferences } = require("./findLinkedReference
 const { hideBlockStringsIfNotPublic } = require("./hideBlockStringsIfNotPublic");
 
 const { parseRoamTraverseGraphSettingsFromRoamPage } = require("./util/parseSettingsFromRoamPage");
-const { shallowMergeIncludingArrayValues } = require("./util/shallowMergeIncludingArayValues");
+const { shallowMergeIncludingArrayValues } = require("./util/shallowMergeIncludingArrayValues");
 const { createLinkedReferences } = require("./util");
 const defaults = require("./defaults");
 
