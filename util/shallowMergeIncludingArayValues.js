@@ -20,8 +20,8 @@ const shallowMergeIncludingArrayValues = (dest, srcs = [], log = false) => {
 		console.log({ dest, src });
 	}
 
-	Object.keys({ ...dest, ...src }).forEach((k) => {
-		if (!(k in src) || src[k] === undefined) {
+	Object.keys(src).forEach((k) => {
+		if (src[k] === undefined) {
 			return;
 		}
 
