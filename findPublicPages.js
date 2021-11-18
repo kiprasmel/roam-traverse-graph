@@ -196,23 +196,30 @@ const findPublicPages = (
 
 		.map((p) => (!p.page.children?.length && delete p.page.children, p))
 
-		.sort((A, B) =>
-			/** public tag itself first, then public pages, then all other ones */
-			publicTags.some((publicTag) => titleIsPublicTag(A.page, publicTag))
-				? -1
-				: publicTags.some((publicTag) => titleIsPublicTag(B.page, publicTag))
-				? 1
-				: A.linkedMentions && B.linkedMentions
-				? B.linkedMentions.length - A.linkedMentions.length
-				: A.linkedMentions
-				? -1
-				: B.linkedMentions
-				? 1
-				: A.hasAtLeastOnePublicBlockAnywhereInTheHierarchy
-				? -1
-				: B.hasAtLeastOnePublicBlockAnywhereInTheHierarchy
-				? 1
-				: 0
+		.sort(
+			(A, B) => (
+				/** public tag itself first, then public pages, then all other ones */
+				(sort = {
+					AHEAD: -1,
+					BEHIND: 1,
+					EVEN: 0,
+				}),
+				publicTags.some((publicTag) => titleIsPublicTag(A.page, publicTag))
+					? sort["AHEAD"]
+					: publicTags.some((publicTag) => titleIsPublicTag(B.page, publicTag))
+					? sort["BEHIND"]
+					: A.linkedMentions && B.linkedMentions
+					? B.linkedMentions.length - A.linkedMentions.length
+					: A.linkedMentions
+					? sort["AHEAD"]
+					: B.linkedMentions
+					? sort["BEHIND"]
+					: A.hasAtLeastOnePublicBlockAnywhereInTheHierarchy
+					? sort["AHEAD"]
+					: B.hasAtLeastOnePublicBlockAnywhereInTheHierarchy
+					? sort["BEHIND"]
+					: sort["EVEN"]
+			)
 		)))
 );
 
