@@ -12,6 +12,12 @@ const { shallowMergeIncludingArrayValues } = require("./util/shallowMergeIncludi
 const { createLinkedReferences } = require("./util");
 const defaults = require("./defaults");
 
+const sort = {
+	AHEAD: -1,
+	BEHIND: 1,
+	EVEN: 0,
+};
+
 /**
  * @type { import("./types").FindPublicPages }
  */
@@ -200,20 +206,20 @@ const findPublicPages = (
 		.sort((A, B) =>
 			/** public tag itself first, then public pages, then all other ones */
 			publicTags.some((publicTag) => titleIsPublicTag(A.page, publicTag))
-				? -1
+				? sort["AHEAD"]
 				: publicTags.some((publicTag) => titleIsPublicTag(B.page, publicTag))
-				? 1
+				? sort["BEHIND"]
 				: A.linkedMentions && B.linkedMentions
 				? B.linkedMentions.length - A.linkedMentions.length
 				: A.linkedMentions
-				? -1
+				? sort["AHEAD"]
 				: B.linkedMentions
-				? 1
+				? sort["BEHIND"]
 				: A.hasAtLeastOnePublicBlockAnywhereInTheHierarchy
-				? -1
+				? sort["AHEAD"]
 				: B.hasAtLeastOnePublicBlockAnywhereInTheHierarchy
-				? 1
-				: 0
+				? sort["BEHIND"]
+				: sort["EVEN"]
 		)))
 );
 
