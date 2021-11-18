@@ -31,7 +31,7 @@ const allPages = readJsonSync(path.resolve(__dirname, pathToGraphFile));
 const publicPagesWrappedWithMetadata = findPublicPages(allPages, {
 	publicTags,
 	publicOnlyTags,
-	keepMetadata: true,
+	keepMetadata: !process.env.CI, // TODO testing
 	makeThePublicTagPagePublic: true, // TODO testing
 });
 
