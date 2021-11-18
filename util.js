@@ -1,5 +1,7 @@
 // @ts-check
 
+/* eslint-disable indent */
+
 const fs = require("fs");
 const path = require("path");
 
@@ -12,10 +14,32 @@ const readJsonSync = (pathToFile) => JSON.parse(fs.readFileSync(path.resolve(pat
  * @param { string } pathToFile
  * @param { Parameters<typeof JSON.stringify>[0] } json
  */
-const writeJsonSync = (pathToFile, json) =>
+const writeJsonSync = (pathToFile, json /*, pageContainingBlockSeenMap = new Map() */) =>
 	fs.writeFileSync(
 		path.resolve(pathToFile),
-		JSON.stringify(json, (key, value) => (["metaPage"].includes(key) ? "[circular]" : value), 2),
+		JSON.stringify(
+			json,
+			(key, value) =>
+				["metaPage"].includes(key)
+					? "[circular]"
+					: key === "pageContainingBlock"
+					? "[dangerous, highly likely circular if at least 1 cross-referencing in a cycle]"
+					: // : key === "refOfPageContainingBlock"
+					  // ? (({ linkedReferences, ...rest } = value), rest)
+					  // : key === "linkedMentions"
+					  // ? "[linkedMentions]"
+
+					  // : key === "pageContainingBlock"
+					  // ? pageContainingBlockSeenMap.has(`${key}--${value.originalTitle}`)
+					  // 	? `[circular, cross-referencing pages, value.orig: ${
+					  // 			value.originalTitle
+					  // 	  }, seenMap.value.orig: ${
+					  // 			pageContainingBlockSeenMap.get(key + "--" + value.originalTitle).originalTitle
+					  // 	  }]`
+					  // 	: (pageContainingBlockSeenMap.set(`${key}--${value.originalTitle}`, value), value)
+					  value,
+			2
+		),
 		{ encoding: "utf-8" }
 	);
 

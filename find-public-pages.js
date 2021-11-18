@@ -62,6 +62,17 @@ console.log(
 			title: page.title,
 			/** inside array to print `page: [ [Object] ]` instead of the whole */
 			page: [page],
-		})),
-	publicPagesWrappedWithMetadata.length
+		}))
+		.map((p) => p.title),
+	{
+		hasAtLeastOnePublicBlock: publicPagesWrappedWithMetadata.filter(
+			(p) => p.hasAtLeastOnePublicBlockAnywhereInTheHierarchy
+		).length,
+		hasAtLeastOneMentionOfAPublicLinkedRef: publicPagesWrappedWithMetadata.filter(
+			(p) => p.hasAtLeastOneMentionOfAPublicLinkedReference
+		).length,
+		hasAtLeastOneLinkedRef: publicPagesWrappedWithMetadata.filter((p) => p.hasAtLeastOnePublicLinkedReference)
+			.length,
+		pages: publicPagesWrappedWithMetadata.length,
+	}
 );

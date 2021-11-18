@@ -32,12 +32,21 @@ const findIfPagesHavePublicLinkedReferencesAndLinkThemAsMentions = ({
 			lr.metaPage.linkedMentions.push({
 				blockUid: block.uid,
 				isBlockPublic,
+				blockString: block.string,
+				uidOfPageContainingBlock: rootParentPage.page.uid,
+				originalTitleOfPageContainingBlock: rootParentPage.originalTitle,
+				pageContainingBlock: rootParentPage,
+
 				/**
 				 * TODO ENABLE, fix circular deps @ JSON.stringify:
+				 *
+				 * both-each-other-referencing blocks/pages create a circle
+				 * & JSON.stringify errors.
+				 *
 				 */
 				// block,
-				// pageContainingBlock: rootParentPage,
-				unhiddenTitleOfPageContainingBlock: rootParentPage.originalTitle,
+				// pageContainingBlock:
+				// 	rootParentPage.page.uid === lr.metaPage.page.uid ? "[circular, self reference]" : rootParentPage,
 			}))
 		)
 	);
