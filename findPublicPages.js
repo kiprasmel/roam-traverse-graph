@@ -4,7 +4,7 @@
 
 const { traverseBlockRecursively } = require("./traverseBlockRecursively");
 const { removeUnknownProperties, markBlockPublic } = require("./findPublicBlocks");
-const { findIfPagesHavePublicLinkedReferences } = require("./findLinkedReferencesOfABlock");
+const { findIfPagesHavePublicLinkedReferencesAndLinkThemAsMentions } = require("./findLinkedReferencesOfABlock");
 const { hideBlockStringsIfNotPublic } = require("./hideBlockStringsIfNotPublic");
 
 const { parseRoamTraverseGraphSettingsFromRoamPage } = require("./util/parseSettingsFromRoamPage");
@@ -120,7 +120,7 @@ const findPublicPages = (
 					)
 					.map(
 						traverseBlockRecursively(
-							findIfPagesHavePublicLinkedReferences, //
+							findIfPagesHavePublicLinkedReferencesAndLinkThemAsMentions, //
 							{
 								rootParentPage: currentPageWithMeta,
 								allPagesWithMetadata: currentPagesWithMetadata,
@@ -202,6 +202,12 @@ const findPublicPages = (
 			publicTags.some((publicTag) => titleIsPublicTag(A.page, publicTag))
 				? -1
 				: publicTags.some((publicTag) => titleIsPublicTag(B.page, publicTag))
+				? 1
+				: A.linkedMentions && B.linkedMentions
+				? B.linkedMentions.length - A.linkedMentions.length
+				: A.linkedMentions
+				? -1
+				: B.linkedMentions
 				? 1
 				: A.hasAtLeastOnePublicBlockAnywhereInTheHierarchy
 				? -1
