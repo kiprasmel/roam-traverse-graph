@@ -5,8 +5,9 @@ const { createLinkedReferences } = require("./util");
 /**
  * @type { import("./types").FindLinkedReferences }
  */
-const findIfPagesHavePublicLinkedReferences = ({
+const findIfPagesHavePublicLinkedReferencesAndLinkThemAsMentions = ({
 	allPagesWithMetadata, //
+	rootParentPage,
 }) => (block) => {
 	/**
 	 * @type { import("./types").LinkedRef[] }
@@ -15,13 +16,31 @@ const findIfPagesHavePublicLinkedReferences = ({
 		? []
 		: findMatchingLinkedReferences(block.string, allPagesWithMetadata);
 
-	if (block.metadata.isPublic || block.metadata.isPublicOnly) {
+	const isBlockPublic = block.metadata.isPublic || block.metadata.isPublicOnly;
+
+	if (isBlockPublic) {
 		/**
 		 * mark the metaPage's that they have at least 1 linked ref.
 		 * will be used to NOT hide their titles.
 		 */
 		linkedReferences.forEach((lr) => (lr.metaPage.hasAtLeastOnePublicLinkedReference = true));
 	}
+
+	linkedReferences.forEach(
+		(lr) => (
+			((lr.metaPage.linkedMentions = lr.metaPage.linkedMentions || []),
+			lr.metaPage.linkedMentions.push({
+				blockUid: block.uid,
+				isBlockPublic,
+				/**
+				 * TODO ENABLE, fix circular deps @ JSON.stringify:
+				 */
+				// block,
+				// pageContainingBlock: rootParentPage,
+				unhiddenTitleOfPageContainingBlock: rootParentPage.originalTitle,
+			}))
+		)
+	);
 
 	// Object.assign(block.metadata, { linkedReferences });
 
@@ -68,5 +87,5 @@ function findMatchingLinkedReferences(blockString, allPagesWithMetadata) {
 }
 
 module.exports = {
-	findIfPagesHavePublicLinkedReferences,
+	findIfPagesHavePublicLinkedReferencesAndLinkThemAsMentions,
 };
