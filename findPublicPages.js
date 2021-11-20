@@ -102,6 +102,18 @@ const findPublicPages = (
 		})
 
 		.map(
+			(pageMeta) => (
+				(pageMeta.isDailyNotesPage = [
+					/^\d{2}-\d{2}-\d{4}$/, //
+					/^\d{4}-\d{2}-\d{2}$/, // prolly won't happen ever, but...
+				].some((
+					reg //
+				) => reg.test(pageMeta.page.uid))), //
+				pageMeta
+			)
+		)
+
+		.map(
 			(currentPageWithMeta, _index, currentPagesWithMetadata) => (
 				(currentPageWithMeta.page.children = (currentPageWithMeta.page.children || [])
 					.map(traverseBlockRecursively(removeUnknownProperties, {}))
@@ -186,7 +198,7 @@ const findPublicPages = (
 		 *
 		 */
 		.map((pageMeta) =>
-			pageMeta.isFullyPublic || pageMeta.hasAtLeastOnePublicLinkedReference
+			pageMeta.isFullyPublic || pageMeta.hasAtLeastOnePublicLinkedReference || pageMeta.isDailyNotesPage
 				? ((pageMeta.isTitleHidden = false), //
 				  pageMeta)
 				: ((pageMeta.isTitleHidden = true), //
