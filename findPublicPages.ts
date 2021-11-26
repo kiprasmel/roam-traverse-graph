@@ -41,11 +41,20 @@ import { withMetadata } from "./util/withMetadata";
 
 // bbbb.metadata.hasCodeBlock;
 
-const mapChildren = <M1 extends RO, M0 extends RO>(
+const mapChildren = <
+	/**
+	 * NB!
+	 * M1 comes first here, and M0 - second
+	 * (opposite to everywhere else)
+	 *
+	 */
+	M1 extends RO, //
+	M0 extends RO = {}
+>(
 	// pred: (block: Block<M0> & WithMetadata<ToReadonlyObject<M0>>) => typeof block & WithMetadata<ToReadonlyObject<M1>>,
-	pred: (block: Block<ToReadonlyObject<M0>>) => Block<ToReadonlyObject<M0> & ToReadonlyObject<M1>>,
+	pred: (block: Block<M0, {}>) => Block<M0, M1>,
 	newChildren: ReturnType<typeof pred>[] = []
-) => (page: Page<M0>): Page<M0 & M1> => (
+) => (page: Page<M0, {}>): Page<M0, M1> => (
 	// ) => (page: Page<M0>): Page<M0> & Page<M1> => (
 	// eslint-disable-next-line no-param-reassign
 	(newChildren = page.children.map(pred)), //
@@ -113,8 +122,8 @@ export const findPublicPages = <M0 extends RO, M1 extends RO>(
 			)
 		)
 		.map(
-			mapChildren(
-				traverseBlockRecursively<{ hasCodeBlock: boolean }>(
+			mapChildren<{ hasCodeBlock: boolean }>(
+				traverseBlockRecursively(
 					() => (block) =>
 						// eslint-disable-next-line no-param-reassign
 						withMetadata(block, { hasCodeBlock: !!block?.string?.includes?.("```") }),

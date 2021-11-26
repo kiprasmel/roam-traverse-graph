@@ -8,12 +8,7 @@ import { Block, RO, ToReadonlyObject, WithMetadata } from "../types";
 export function withMetadata<
 	M0 extends RO = RO, //
 	M1 extends RO = RO
->(
-	block: Block<M0> & WithMetadata<ToReadonlyObject<M0>>,
-	meta: M1
-): Block<M0> & //
-	WithMetadata<ToReadonlyObject<M0>> &
-	WithMetadata<ToReadonlyObject<M1>> {
+>(block: Block<M0, {}>, meta: M1): Block<M0, M1> {
 	/**
 	 * runtime check.
 	 *
@@ -29,6 +24,10 @@ export function withMetadata<
 
 	return {
 		...block,
-		metadata: Object.assign({}, block.metadata, meta),
+		// metadata: Object.assign({}, block.metadata, meta),
+		metadata: {
+			...block.metadata,
+			...meta,
+		},
 	};
 }

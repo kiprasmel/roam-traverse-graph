@@ -2,7 +2,7 @@
 
 /* eslint-disable flowtype/space-after-type-colon */
 
-import { Block, RO, ToReadonlyObject, WithMetadata } from "./types";
+import { Block, RO } from "./types";
 
 export const traverseBlockRecursively = <
 	// ExistingBlock extends Block,
@@ -15,13 +15,13 @@ export const traverseBlockRecursively = <
 		settings: InitialSettings, //
 		parentBlockInside: typeof parentBlock
 	) => (
-		currentBlock: Block<M0> & WithMetadata<ToReadonlyObject<M0>> //
+		currentBlock: Block<M0, {}> //
 	) => // ) => Omit<typeof parentBlock, undefined>,
 	// typeof parentBlock,
 (typeof parentBlock | [typeof parentBlock, boolean]),
 	initialAndNonChangingPropsForMutatingAction: InitialSettings,
 		parentBlock: // | undefined // TODO undefined
-	Block<M0> & WithMetadata<ToReadonlyObject<M0>> & WithMetadata<ToReadonlyObject<M1>> = undefined,
+	Block<M0, M1> = undefined,
 ) => (
 	block: Parameters<ReturnType<typeof mutatingActionToExecute>>[0]
 	// block: Block<M0> & WithMetadata<ToReadonlyObject<M0>>
