@@ -137,6 +137,7 @@ export const findPublicPages = <M0 extends RO>(
 				? toFullyPublicPage(page, hiddenStringValue)
 				: toPotentiallyPartiallyPublicPage(page, hiddenStringValue);
 		})
+		// .map(pm => pm.page.children?.[0].metadata.)
 
 		.map(
 			(pageMeta) => (
@@ -149,8 +150,11 @@ export const findPublicPages = <M0 extends RO>(
 				pageMeta
 			)
 		)
+		// .map(pm => pm.page.children?.[0].metadata.)
 
 		.map(
+			// mapChildren((currentPageWithMeta, _index, currentPagesWithMetadata) => (
+
 			(currentPageWithMeta, _index, currentPagesWithMetadata) => (
 				(currentPageWithMeta.page.children = (currentPageWithMeta.page.children || [])
 					.map(traverseBlockRecursively(removeUnknownProperties, {}))
@@ -175,20 +179,16 @@ export const findPublicPages = <M0 extends RO>(
 							}
 						)
 					)
-					.map((b) => withMetadata(b, { foo: "bar" }))
-					.map(b => b.metadata.)
+					// .map((b) => withMetadata(b, { foo: "bar" }))
 					// .map(b => b.metadata.)
 					// .map(traverseBlockRecursively<{}>(() => (b) => b.metadata, {}))
 					.map(
-						traverseBlockRecursively<{}, { linkedReferences: LinkedRef[] }>(
+						traverseBlockRecursively(
+							// <{}, { linkedReferences: LinkedRef[] }>
 							findIfPagesHavePublicLinkedReferencesAndLinkThemAsMentions, //
 							{
 								rootParentPage: currentPageWithMeta,
 								allPagesWithMetadata: currentPagesWithMetadata,
-								// publicTag, // TODO CONFIRM
-								privateTag,
-								doNotHideTodoAndDone,
-								hiddenStringValue,
 							}
 						)
 					)
@@ -246,6 +246,7 @@ export const findPublicPages = <M0 extends RO>(
 				currentPageWithMeta
 			)
 		)
+		// .map(pm => pm.page.children?.[0].metadata.)
 
 		/**
 		 * TODO think about how we want to implement the hiding of page title's
@@ -344,7 +345,7 @@ function isMarkedAsFullyPublic<M0 extends RO & { hasCodeBlock: boolean }, M1 ext
 function toFullyPublicPage<M0 extends RO, M1 extends RO>(
 	page: Page<M0, M1>,
 	hiddenStringValue: string
-): PageWithMetadata<M0, M1> {
+): PageWithMetadata<M0 & M1, M1> {
 	return {
 		page, //
 		originalTitle: page.title,
@@ -362,7 +363,7 @@ function toFullyPublicPage<M0 extends RO, M1 extends RO>(
 function toPotentiallyPartiallyPublicPage<M0 extends RO, M1 extends RO>(
 	page: Page<M0, M1>, //
 	hiddenStringValue: string
-): PageWithMetadata<M0, M1> {
+): PageWithMetadata<M0 & M1, M1> {
 	return {
 		page, //
 		originalTitle: page.title,

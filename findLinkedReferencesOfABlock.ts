@@ -1,8 +1,13 @@
-import { FindLinkedReferences, LinkedRef } from "./types";
+import { MutatingActionToExecute } from "./traverseBlockRecursively";
+import { LinkedRef, PageWithMetadata } from "./types";
+import { withMetadata } from "./util/withMetadata";
 
 const { createLinkedReferences } = require("./util");
 
-export const findIfPagesHavePublicLinkedReferencesAndLinkThemAsMentions: FindLinkedReferences = ({
+export const findIfPagesHavePublicLinkedReferencesAndLinkThemAsMentions: MutatingActionToExecute<{
+	rootParentPage: PageWithMetadata<{}, {}>; // TODO FIXME
+	allPagesWithMetadata: PageWithMetadata<{}, {}>[];
+}> = ({
 	allPagesWithMetadata, //
 	rootParentPage,
 }) => (block) => {
@@ -47,13 +52,17 @@ export const findIfPagesHavePublicLinkedReferencesAndLinkThemAsMentions: FindLin
 
 	// Object.assign(block.metadata, { linkedReferences });
 
-	return {
-		...block,
-		metadata: {
-			...block.metadata,
-			linkedReferences,
-		},
-	};
+	return withMetadata(block, {
+		linkedReferences,
+	});
+
+	// return {
+	// 	...block,
+	// 	metadata: {
+	// 		...block.metadata,
+	// 		linkedReferences,
+	// 	},
+	// };
 };
 
 /**

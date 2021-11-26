@@ -9,8 +9,8 @@ export type MutatingActionToExecute  	< InitialSettings extends RO, M1 extends R
 	) => (
 		//
 		currentBlock: Block<M0, {}>,
-		parentBlockInside: Block<M0, M1> | undefined // TODO FIXME
-	) => (Block<M0, M1> | [Block<M0, M1>, boolean]); // TODO ESLINT
+		parentBlockInside: Block<M0 & M1, M1> | undefined // TODO FIXME
+	) => (Block<M0 & M1, M1> | [Block<M0 & M1, M1>, boolean]); // TODO ESLINT
 
 export const traverseBlockRecursively = <
 	// ExistingBlock extends Block,
@@ -22,7 +22,7 @@ export const traverseBlockRecursively = <
 	// mutatingActionToExecute: MutatingActionToExecute<InitialSettings, M0, M1>,
 	mutatingActionToExecute: MutatingActionToExecute<InitialSettings, M1, M0>,
 	initialAndNonChangingPropsForMutatingAction: InitialSettings,
-		parentBlock: Block<M0, M1> | undefined = undefined
+		parentBlock: Block<M0 & M1, M1> | undefined = undefined
 ) =>
 (
 	block: Block<M0, {}>
@@ -30,7 +30,7 @@ export const traverseBlockRecursively = <
 	// ): Block<M0> & WithMetadata<ToReadonlyObject<M0>> & WithMetadata<ToReadonlyObject<M1>> => {
 
 	// ): Omit<typeof parentBlock, undefined> => { // TODO undefined
-): Block<M0, M1> => {
+): Block<M0 & M1, M1> => {
 	/**
 	 * BEGIN TODO VERIFY
 	 */
@@ -54,7 +54,7 @@ export const traverseBlockRecursively = <
 
 	// const _newBlock: Block<M0> & WithMetadata<ToReadonlyObject<M0>> & WithMetadata<ToReadonlyObject<M1>> =
 
-	type B =Block<M0, M1>
+	type B =Block<M0 & M1, M1>
 
 	// const _newBlock: Omit<typeof parentBlock, undefined> = // TODO undefined
 	const _newBlock: B | [B, boolean] = mutatingActionToExecute(

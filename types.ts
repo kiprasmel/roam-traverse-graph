@@ -111,7 +111,7 @@ export type ToReadonlyObject<O extends {}> = {
 	readonly [key in keyof O]: O[key]; //
 };
 
-export type WithMetadata<M extends RO = RO> = {
+export type WithMetadata<M extends RO> = {
 	metadata: M;
 };
 
