@@ -1,30 +1,65 @@
 /* eslint-disable indent */
 
-/**
- * @type { import("./types").TraverseBlockRecursively }
- */
-const traverseBlockRecursively = (
-	mutatingActionToExecute, //
-	initialAndNonChangingPropsForMutatingAction,
-	parentBlock = undefined
-) => (block) => {
-	if (!block) {
-		return block;
-	}
+/* eslint-disable flowtype/space-after-type-colon */
 
-	const isSelfEmpty = !block.string || !block.string.trim();
-	const hasNoChildren = !block.children || !block.children.length;
+import { Block, RO, ToReadonlyObject, WithMetadata } from "./types";
 
-	if (isSelfEmpty && hasNoChildren) {
-		// nothing to do here.
-		// TODO investigate what happens w/ linkedReferences when block is empty and not exited early here.
-		return block;
-	}
+export const traverseBlockRecursively = <
+	// ExistingBlock extends Block,
+	// ExtraPropertiesForBlock extends Record<any, any>,
+	M1 extends RO = RO, // TODO VERIFY
+	M0 extends RO = RO, // TODO VERIFY
+	InitialSettings = unknown //
+>(
+	mutatingActionToExecute: (
+		settings: InitialSettings, //
+		parentBlockInside: typeof parentBlock
+	) => (
+		currentBlock: Block<M0> & WithMetadata<ToReadonlyObject<M0>> //
+	) => // ) => Omit<typeof parentBlock, undefined>,
+	// typeof parentBlock,
+(typeof parentBlock | [typeof parentBlock, boolean]),
+	initialAndNonChangingPropsForMutatingAction: InitialSettings,
+		parentBlock: // | undefined // TODO undefined
+	Block<M0> & WithMetadata<ToReadonlyObject<M0>> & WithMetadata<ToReadonlyObject<M1>> = undefined,
+) => (
+	block: Parameters<ReturnType<typeof mutatingActionToExecute>>[0]
+	// block: Block<M0> & WithMetadata<ToReadonlyObject<M0>>
+	// ): Block<M0> & WithMetadata<ToReadonlyObject<M0>> & WithMetadata<ToReadonlyObject<M1>> => {
 
-	const _newBlock =
-		mutatingActionToExecute(initialAndNonChangingPropsForMutatingAction, parentBlock)?.(block) ?? block;
+	// ): Omit<typeof parentBlock, undefined> => { // TODO undefined
+): typeof parentBlock => {
+	/**
+	 * BEGIN TODO VERIFY
+	 */
 
-	let newBlock;
+	// if (!block) {
+	// 	return block;
+	// }
+
+	// const isSelfEmpty = !block.string || !block.string.trim();
+	// const hasNoChildren = !block.children || !block.children.length;
+
+	// if (isSelfEmpty && hasNoChildren) {
+	// 	// nothing to do here.
+	// 	// TODO investigate what happens w/ linkedReferences when block is empty and not exited early here.
+	// 	return block;
+	// }
+
+	/**
+	 * BEGIN TODO VERIFY
+	 */
+
+	// const _newBlock: Block<M0> & WithMetadata<ToReadonlyObject<M0>> & WithMetadata<ToReadonlyObject<M1>> =
+
+	// const _newBlock: Omit<typeof parentBlock, undefined> = // TODO undefined
+	const _newBlock: typeof parentBlock | [typeof parentBlock, boolean] = mutatingActionToExecute(
+		initialAndNonChangingPropsForMutatingAction, //
+		parentBlock
+	)(block);
+
+	let newBlock: typeof parentBlock;
+
 	let shouldContinueTraversal = true;
 	if (Array.isArray(_newBlock)) {
 		newBlock = _newBlock[0];
@@ -60,17 +95,15 @@ const traverseBlockRecursively = (
 			traverseBlockRecursively(
 				mutatingActionToExecute, //
 				initialAndNonChangingPropsForMutatingAction,
-				block
+				// block,
+				newBlock, // TODO VERIFY  // TODO TEST PERFORMANCE
 			)
 		);
 	}
+
 	if (newChildren) {
 		newBlock.children = newChildren;
 	}
 
 	return newBlock;
-};
-
-module.exports = {
-	traverseBlockRecursively,
 };

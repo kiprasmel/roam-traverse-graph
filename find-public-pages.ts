@@ -1,32 +1,24 @@
 #!/usr/bin/env ts-node-dev
 
-const path = require("path");
+import path from "path";
 
-const { publicTags: defaultPublicTags, publicOnlyTags: defaultPublicOnlyTags } = require("./defaults");
-const { findPublicPages } = require("./findPublicPages");
-const { readJsonSync, writeJsonSync } = require("./util");
+import { Page, PageWithMetadata, RO } from "./types";
+import defaults from "./defaults";
+import { findPublicPages } from "./findPublicPages";
+import { readJsonSync, writeJsonSync } from "./util";
 
-/** @type string */
-const pathToGraphFile = process.argv?.[2] || "../notes/json/kipras-g1.json";
+const pathToGraphFile: string = process.argv?.[2] || "../notes/json/kipras-g1.json";
 
-/** @type string[] */
-const publicTags = process.argv?.[3]?.split?.(",") || defaultPublicTags;
+const publicTags: string[] = process.argv?.[3]?.split?.(",") || defaults.publicTags;
 
-/** @type string[] */
-let publicOnlyTags = (process.argv?.[4] || "").split(",").filter((po) => !!po);
+let publicOnlyTags: string[] = (process.argv?.[4] || "").split(",").filter((po) => !!po);
 if (!publicOnlyTags.length) {
-	publicOnlyTags = defaultPublicOnlyTags;
+	publicOnlyTags = defaults.publicOnlyTags;
 }
 
-/**
- * @type { import("./types").Page[] }
- */
-const allPages = readJsonSync(path.resolve(__dirname, pathToGraphFile));
+const allPages: Page<RO>[] = readJsonSync(path.resolve(__dirname, pathToGraphFile));
 
-/**
- * @type { import("./types").PageWithMetadata[] }
- */
-const publicPagesWrappedWithMetadata = findPublicPages(allPages, {
+const publicPagesWrappedWithMetadata: PageWithMetadata<RO>[] = findPublicPages(allPages, {
 	publicTags,
 	publicOnlyTags,
 	keepMetadata: !process.env.CI, // TODO testing

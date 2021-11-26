@@ -1,5 +1,8 @@
 #!/usr/bin/env ts-node-dev
 
+import { Page } from "../roam";
+import { SettingsForPluginFindPublicPages, RO } from "../types";
+
 /**
  * TODO error handling
  * TODO fail & exit if unknown settings detected (to avoid typos causing miss-configurations)
@@ -8,7 +11,7 @@
  * @param { string } rawStringOfSettingsBlock
  * @returns { Partial<import("../types").FindPublicPagesOptions> }
  */
-const parseSettingsFromRawString = (
+export const parseSettingsFromRawString = (
 	rawStringOfSettingsBlock = '```javascript\nmodule.exports = () => {\n  return {\n    settingsVersion: "0"}\n}```', // TODO cleanup / remove
 	parsedSettings = [rawStringOfSettingsBlock]
 		.map((str) => str.replace(/^```[^\n]+/, ""))
@@ -21,26 +24,17 @@ const parseSettingsFromRawString = (
 		.map((settings) => (console.log({ stringified: JSON.stringify(settings) }), settings))[0]
 ) => parsedSettings;
 
-const defaultRoamSettingsPageTitle = "roam-traverse-graph-settings";
+export const defaultRoamSettingsPageTitle = "roam-traverse-graph-settings";
 
-const parseRoamTraverseGraphSettingsFromRoamPage = (
-	somePages = [], //
-	roamSettingsPageTitle = defaultRoamSettingsPageTitle,
-	settingsPage = somePages.find((page) => page.title === roamSettingsPageTitle),
-	settingsFromSettingsPage = !settingsPage || //
-	!settingsPage.children ||
-	!settingsPage.children.length ||
-	!settingsPage.children[0].string ||
-	!settingsPage.children[0].string.includes("```")
-		? {}
-		: parseSettingsFromRawString(settingsPage.children[0].string)
-) => settingsFromSettingsPage;
-
-module.exports = {
-	parseSettingsFromRawString,
-	defaultRoamSettingsPageTitle,
-	parseRoamTraverseGraphSettingsFromRoamPage,
-};
+export const parseRoamTraverseGraphSettingsFromRoamPage = <M extends RO>(
+	somePages: Page<M>[] = [], //
+	roamSettingsPageTitle: string = defaultRoamSettingsPageTitle,
+	settingsPage: Page<M> | undefined = somePages.find((page) => page.title === roamSettingsPageTitle),
+	hasCodeBlock: boolean = settingsPage?.children?.[0]?.string?.includes?.("```"),
+	settingsFromSettingsPage = hasCodeBlock
+		? parseSettingsFromRawString(settingsPage.children[0].string) //
+		: {}
+): Partial<SettingsForPluginFindPublicPages> => settingsFromSettingsPage;
 
 if (!module.parent) {
 	parseSettingsFromRawString();

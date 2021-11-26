@@ -3,7 +3,7 @@
 /**
  * @type { import("./types").RemoveUnknownProperties }
  */
-const removeUnknownProperties = () => (block) =>
+export const removeUnknownProperties = () => (block) =>
 	!block
 		? block
 		: {
@@ -22,7 +22,7 @@ const removeUnknownProperties = () => (block) =>
 /**
  * @type { import("./types").FindPublicBlocks }
  */
-const markBlockPublic = (
+export const markBlockPublic = (
 	{
 		// parentBlock,
 		rootParentPage,
@@ -85,9 +85,4 @@ const markBlockPublic = (
 	}
 
 	return block;
-};
-
-module.exports = {
-	removeUnknownProperties,
-	markBlockPublic,
 };

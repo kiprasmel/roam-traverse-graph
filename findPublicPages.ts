@@ -2,20 +2,60 @@
 
 /* eslint-disable indent */
 
-const { traverseBlockRecursively } = require("./traverseBlockRecursively");
-const { removeUnknownProperties, markBlockPublic } = require("./findPublicBlocks");
-const { findIfPagesHavePublicLinkedReferencesAndLinkThemAsMentions } = require("./findLinkedReferencesOfABlock");
-const { hideBlockStringsIfNotPublic } = require("./hideBlockStringsIfNotPublic");
+import { traverseBlockRecursively } from "./traverseBlockRecursively";
+import { removeUnknownProperties, markBlockPublic } from "./findPublicBlocks";
+import { findIfPagesHavePublicLinkedReferencesAndLinkThemAsMentions } from "./findLinkedReferencesOfABlock";
+import { hideBlockStringsIfNotPublic } from "./hideBlockStringsIfNotPublic";
+import { parseRoamTraverseGraphSettingsFromRoamPage } from "./util/parseSettingsFromRoamPage";
+import { shallowMergeIncludingArrayValues } from "./util/shallowMergeIncludingArrayValues";
+import { createLinkedReferences } from "./util";
+import defaults from "./defaults";
 
-const { parseRoamTraverseGraphSettingsFromRoamPage } = require("./util/parseSettingsFromRoamPage");
-const { shallowMergeIncludingArrayValues } = require("./util/shallowMergeIncludingArrayValues");
-const { createLinkedReferences } = require("./util");
-const defaults = require("./defaults");
+import {
+	SettingsForPluginFindPublicPages, //
+	Page,
+	PageWithMetadata,
+	RO,
+	Block,
+	WithMetadata,
+	ToReadonlyObject,
+} from "./types";
 
-/**
- * @type { import("./types").FindPublicPages }
- */
-const findPublicPages = (
+import { withMetadata } from "./util/withMetadata";
+
+// const blockBase = {
+// 	"create-time": 69,
+// 	"edit-email": "",
+// 	"edit-time": 1,
+// 	string: "1",
+// 	uid: "69",
+// 	//
+// } as const;
+
+// const bbbb = traverseBlockRecursively(
+// 	() => (block) =>
+// 		// eslint-disable-next-line no-param-reassign
+// 		withMetadata(block, { hasCodeBlock: !!block?.string?.includes?.("```") }),
+// 	{}
+// )({ ...blockBase, metadata: {} });
+
+// bbbb.metadata.hasCodeBlock;
+
+const mapChildren = <M1 extends RO, M0 extends RO>(
+	// pred: (block: Block<M0> & WithMetadata<ToReadonlyObject<M0>>) => typeof block & WithMetadata<ToReadonlyObject<M1>>,
+	pred: (block: Block<ToReadonlyObject<M0>>) => Block<ToReadonlyObject<M0> & ToReadonlyObject<M1>>,
+	newChildren: ReturnType<typeof pred>[] = []
+) => (page: Page<M0>): Page<M0 & M1> => (
+	// ) => (page: Page<M0>): Page<M0> & Page<M1> => (
+	// eslint-disable-next-line no-param-reassign
+	(newChildren = page.children.map(pred)), //
+	{
+		...page,
+		children: newChildren,
+	}
+);
+
+export const findPublicPages = <M0 extends RO, M1 extends RO>(
 	/**
 	 * TODO consider single vs array
 	 *
@@ -23,15 +63,13 @@ const findPublicPages = (
 	 * before we can parse the children tho..
 	 *
 	 */
-	somePages = [], //
-	optionsOrig = { publicTags: [], publicOnlyTags: [] },
-	settingsFromSettingsPage = parseRoamTraverseGraphSettingsFromRoamPage(somePages),
-	/**
-	 * @type { import("./types").FindPublicPagesOptions }
-	 */
-	settings = shallowMergeIncludingArrayValues({}, [
-		defaults, //
-		optionsOrig,
+	somePages: Page<M0>[] = [], //
+	optionsOrig: SettingsForPluginFindPublicPages = { publicTags: [], publicOnlyTags: [] },
+	settingsFromSettingsPage: Partial<SettingsForPluginFindPublicPages> = parseRoamTraverseGraphSettingsFromRoamPage(
+		somePages
+	),
+	settings: SettingsForPluginFindPublicPages = shallowMergeIncludingArrayValues(defaults, [
+		optionsOrig, //
 		settingsFromSettingsPage,
 	]),
 	{
@@ -43,7 +81,8 @@ const findPublicPages = (
 		publicOnlyTags,
 		publicTags,
 	} = settings
-) => (
+	// ): PageWithMetadata<M0 & M1>[] => ( // TODO FIXME
+): PageWithMetadata<RO>[] => ( // TODO FIXME
 	console.log({
 		defaults,
 		optionsOrig,
@@ -62,11 +101,8 @@ const findPublicPages = (
 	 *
 	 */
 
-	/**
-	 * @type { import("./types").PageWithMetadata[] }
-	 */
 	(somePages || [])
-		.map(keepOnlyKnownPropertiesOfPage)
+		.map((p) => keepOnlyKnownPropertiesOfPage<M0>(p))
 
 		.map(
 			(page) => (
@@ -77,19 +113,29 @@ const findPublicPages = (
 			)
 		)
 		.map(
-			(page) => (
-				(page.children = (page.children || []).map(
-					traverseBlockRecursively(
-						() => (block) => (
-							(block.metadata.hasCodeBlock = !!block?.string?.includes?.("```")), //
-							block
-						),
-						{}
-					)
-				)),
-				page
+			mapChildren(
+				traverseBlockRecursively<{ hasCodeBlock: boolean }>(
+					() => (block) =>
+						// eslint-disable-next-line no-param-reassign
+						withMetadata(block, { hasCodeBlock: !!block?.string?.includes?.("```") }),
+					{}
+				)
 			)
 		)
+
+		// .map(
+		// 	(page) => (
+		// 		(page.children = (page.children || []).map(
+		// 			traverseBlockRecursively<{ hasCodeBlock: boolean }>(
+		// 				() => (block) =>
+		// 					// eslint-disable-next-line no-param-reassign
+		// 					withMetadata(block, { hasCodeBlock: !!block?.string?.includes?.("```") }),
+		// 				{}
+		// 			)
+		// 		)),
+		// 		page
+		// 	)
+		// )
 
 		.map((page) => {
 			const isThePublicTagPageAndShouldBePublic =
@@ -237,11 +283,8 @@ const findPublicPages = (
 /**
  * security et al -- in case upstream adds something potentially private
  * and we don't immediately update to remove it (very plausible)
- *
- * @param { import("./types").Page | Record<any, any> } page
- * @return { import("./types").Page } page
  */
-function keepOnlyKnownPropertiesOfPage(page) {
+function keepOnlyKnownPropertiesOfPage<M extends RO>(page: Page<M> & Record<any, any>): Page {
 	return {
 		title: page.title,
 		uid: page.uid,
@@ -253,12 +296,7 @@ function keepOnlyKnownPropertiesOfPage(page) {
 	};
 }
 
-/**
- * @param { import("./types").Page } page
- * @param { string } publicTag
- * @returns { boolean }
- */
-function titleIsPublicTag(page, publicTag) {
+function titleIsPublicTag<M extends RO>(page: Page<M>, publicTag: string): boolean {
 	if (!page.title) {
 		return false;
 	}
@@ -271,12 +309,7 @@ function titleIsPublicTag(page, publicTag) {
 	].includes(publicTag);
 }
 
-/**
- * @param { import("./types").Page } page
- * @param { string } publicTag
- * @returns { boolean }
- */
-function isMarkedAsFullyPublic(page, publicTag) {
+function isMarkedAsFullyPublic<M extends RO>(page: Page<M & { hasCodeBlock: boolean }>, publicTag: string): boolean {
 	/**
 	 * the page is fully public IF AND ONLY IF:
 	 * 1. the publicTag is inside the top-most level block,
@@ -291,12 +324,7 @@ function isMarkedAsFullyPublic(page, publicTag) {
 	);
 }
 
-/**
- * @param { import("./types").Page } page
- * @param { string } hiddenStringValue
- * @returns { import("./types").PageWithMetadata }
- */
-function toFullyPublicPage(page, hiddenStringValue) {
+function toFullyPublicPage<M extends RO = RO>(page: Page<M>, hiddenStringValue: string): PageWithMetadata<M> {
 	return {
 		page, //
 		originalTitle: page.title,
@@ -306,15 +334,15 @@ function toFullyPublicPage(page, hiddenStringValue) {
 		isFullyPublic: true,
 		hasAtLeastOnePublicBlockAnywhereInTheHierarchy: true,
 		hasAtLeastOnePublicLinkedReference: false, // until found out otherwise
+		hasAtLeastOneMentionOfAPublicLinkedReference: false, // CHANGEABLE LATER
+		isTitleHidden: false, // CHANGEABLE LATER
 	};
 }
 
-/**
- * @param { import("./types").Page } page
- * @param { string } hiddenStringValue
- * @returns { import("./types").PageWithMetadata }
- */
-function toPotentiallyPartiallyPublicPage(page, hiddenStringValue) {
+function toPotentiallyPartiallyPublicPage<M extends RO = RO>(
+	page: Page<M>, //
+	hiddenStringValue: string
+): PageWithMetadata<M> {
 	return {
 		page, //
 		originalTitle: page.title,
@@ -324,6 +352,8 @@ function toPotentiallyPartiallyPublicPage(page, hiddenStringValue) {
 		isFullyPublic: false,
 		hasAtLeastOnePublicBlockAnywhereInTheHierarchy: false, // CHANGEABLE LATER
 		hasAtLeastOnePublicLinkedReference: false, // CHANGEABLE LATER
+		hasAtLeastOneMentionOfAPublicLinkedReference: false, // CHANGEABLE LATER // TODO VERIFY
+		isTitleHidden: false, // CHANGEABLE LATER // TODO VERIFY
 	};
 }
 

@@ -1,7 +1,7 @@
 /**
  * @type { import("./types").HideBlockStringsIfNotPublic }
  */
-const hideBlockStringsIfNotPublic = ({
+export const hideBlockStringsIfNotPublic = ({
 	hiddenStringValue, //
 	doNotHideTodoAndDone,
 }) => (block) => {
@@ -52,8 +52,4 @@ const hideBlockStringsIfNotPublic = ({
 	block.refs = linkedReferences.map((lr) => ({ uid: lr.metaPage.page.uid }));
 
 	return block;
-};
-
-module.exports = {
-	hideBlockStringsIfNotPublic,
 };
