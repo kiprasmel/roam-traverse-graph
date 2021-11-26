@@ -17,6 +17,8 @@ import {
 	PageWithMetadata,
 	RO,
 	Block,
+	LinkedRef,
+	ToReadonlyObject,
 } from "./types";
 
 import { withMetadata } from "./util/withMetadata";
@@ -40,29 +42,26 @@ import { withMetadata } from "./util/withMetadata";
 // bbbb.metadata.hasCodeBlock;
 
 const mapChildren = <
-	/**
-	 * NB!
-	 * M1 comes first here, and M0 - second
-	 * (opposite to everywhere else)
-	 *
-	 */
-	M1 extends RO, //
-	M0 extends RO = {}
+	M0 extends RO,
+	M1 extends RO //
 >(
 	// pred: (block: Block<M0> & WithMetadata<ToReadonlyObject<M0>>) => typeof block & WithMetadata<ToReadonlyObject<M1>>,
-	pred: (block: Block<M0, {}>) => Block<M0, M1>,
+	pred: (block: Block<M0, {}>, index?: number, array?: Block<M0, {}>[]) => Block<M0, M1>,
 	newChildren: ReturnType<typeof pred>[] = []
 ) => (page: Page<M0, {}>): Page<M0, M1> => (
 	// ) => (page: Page<M0>): Page<M0> & Page<M1> => (
 	// eslint-disable-next-line no-param-reassign
-	(newChildren = page.children.map(pred)), //
+	(newChildren = (page.children || []).map(pred)), //
 	{
 		...page,
 		children: newChildren,
 	}
 );
 
-export const findPublicPages = <M0 extends RO, M1 extends RO>(
+// TODO
+// type MFinal = ToReadonlyObject<{ hasCodeBlock: boolean }>;
+
+export const findPublicPages = <M0 extends RO>(
 	/**
 	 * TODO consider single vs array
 	 *
@@ -70,7 +69,7 @@ export const findPublicPages = <M0 extends RO, M1 extends RO>(
 	 * before we can parse the children tho..
 	 *
 	 */
-	somePages: Page<M0, never>[] = [], //
+	somePages: Page<M0, {}>[] = [], //
 	optionsOrig: SettingsForPluginFindPublicPages = { publicTags: [], publicOnlyTags: [] },
 	settingsFromSettingsPage: Partial<SettingsForPluginFindPublicPages> = parseRoamTraverseGraphSettingsFromRoamPage(
 		somePages
@@ -89,7 +88,8 @@ export const findPublicPages = <M0 extends RO, M1 extends RO>(
 		publicTags,
 	} = settings
 	// ): PageWithMetadata<M0 & M1>[] => ( // TODO FIXME
-): PageWithMetadata<RO>[] => ( // TODO FIXME
+	// ): PageWithMetadata<M0, MFinal>[] => ( // TODO FIXME // TODO FIXME
+) => (
 	console.log({
 		defaults,
 		optionsOrig,
@@ -111,39 +111,23 @@ export const findPublicPages = <M0 extends RO, M1 extends RO>(
 	(somePages || [])
 		.map((p) => keepOnlyKnownPropertiesOfPage<M0>(p))
 
+		// .map(
+		// 	mapChildren(
+		// 		traverseBlockRecursively(() => (block) => ((block.metadata = block.metadata || ({} as M0)), block), {})
+		// 	)
+		// )
 		.map(
-			(page) => (
-				(page.children = (page.children || []).map(
-					traverseBlockRecursively(() => (block) => ((block.metadata = block.metadata || {}), block), {})
-				)),
-				page
-			)
-		)
-		.map(
-			mapChildren<{ hasCodeBlock: boolean }>(
-				traverseBlockRecursively(
+			mapChildren(
+				traverseBlockRecursively<{}, { hasCodeBlock: boolean }>(
 					() => (block) =>
 						// eslint-disable-next-line no-param-reassign
-						withMetadata(block, { hasCodeBlock: !!block?.string?.includes?.("```") }),
+						withMetadata(block, {
+							hasCodeBlock: !!block?.string?.includes?.("```"),
+						}),
 					{}
 				)
 			)
 		)
-
-		// .map(
-		// 	(page) => (
-		// 		(page.children = (page.children || []).map(
-		// 			traverseBlockRecursively<{ hasCodeBlock: boolean }>(
-		// 				() => (block) =>
-		// 					// eslint-disable-next-line no-param-reassign
-		// 					withMetadata(block, { hasCodeBlock: !!block?.string?.includes?.("```") }),
-		// 				{}
-		// 			)
-		// 		)),
-		// 		page
-		// 	)
-		// )
-
 		.map((page) => {
 			const isThePublicTagPageAndShouldBePublic =
 				makeThePublicTagPagePublic && publicTags.some((publicTag) => titleIsPublicTag(page, publicTag));
@@ -173,6 +157,15 @@ export const findPublicPages = <M0 extends RO, M1 extends RO>(
 					.filter((block) => !!block)
 					.map(
 						traverseBlockRecursively(
+							// <
+							// 	{},
+							// 	{
+							// 		isPublicOnly: boolean;
+							// 		isPublic: boolean;
+							// 		hasPublicTag: boolean;
+							// 		hasPrivateTag: boolean;
+							// 	}
+							// >
 							markBlockPublic, //
 							{
 								rootParentPage: currentPageWithMeta,
@@ -182,8 +175,12 @@ export const findPublicPages = <M0 extends RO, M1 extends RO>(
 							}
 						)
 					)
+					.map((b) => withMetadata(b, { foo: "bar" }))
+					.map(b => b.metadata.)
+					// .map(b => b.metadata.)
+					// .map(traverseBlockRecursively<{}>(() => (b) => b.metadata, {}))
 					.map(
-						traverseBlockRecursively(
+						traverseBlockRecursively<{}, { linkedReferences: LinkedRef[] }>(
 							findIfPagesHavePublicLinkedReferencesAndLinkThemAsMentions, //
 							{
 								rootParentPage: currentPageWithMeta,
@@ -195,8 +192,16 @@ export const findPublicPages = <M0 extends RO, M1 extends RO>(
 							}
 						)
 					)
+					// .map(b => b.metadata.)
 					.map(
-						traverseBlockRecursively(
+						traverseBlockRecursively<
+							{ linkedReferences: LinkedRef[] },
+							{},
+							{
+								rootParentPage: PageWithMetadata<{}, {}>; // TODO FIXME
+								allPagesWithMetadata: PageWithMetadata<{}, {}>[];
+							}
+						>(
 							({ rootParentPage, allPagesWithMetadata }) => (b) => {
 								const { linkedReferences } = b.metadata;
 
@@ -291,7 +296,9 @@ export const findPublicPages = <M0 extends RO, M1 extends RO>(
  * security et al -- in case upstream adds something potentially private
  * and we don't immediately update to remove it (very plausible)
  */
-function keepOnlyKnownPropertiesOfPage<M extends RO>(page: Page<M> & Record<any, any>): Page {
+function keepOnlyKnownPropertiesOfPage<M0 extends RO>(
+	page: Page<M0, {}> & Record<any, any> //
+): Page<M0, {}> {
 	return {
 		title: page.title,
 		uid: page.uid,
@@ -303,7 +310,7 @@ function keepOnlyKnownPropertiesOfPage<M extends RO>(page: Page<M> & Record<any,
 	};
 }
 
-function titleIsPublicTag<M extends RO>(page: Page<M>, publicTag: string): boolean {
+function titleIsPublicTag<M0 extends RO, M1 extends RO>(page: Page<M0, M1>, publicTag: string): boolean {
 	if (!page.title) {
 		return false;
 	}
@@ -316,7 +323,10 @@ function titleIsPublicTag<M extends RO>(page: Page<M>, publicTag: string): boole
 	].includes(publicTag);
 }
 
-function isMarkedAsFullyPublic<M extends RO>(page: Page<M & { hasCodeBlock: boolean }>, publicTag: string): boolean {
+function isMarkedAsFullyPublic<M0 extends RO & { hasCodeBlock: boolean }, M1 extends RO>(
+	page: Page<M0, M1>,
+	publicTag: string
+): boolean {
 	/**
 	 * the page is fully public IF AND ONLY IF:
 	 * 1. the publicTag is inside the top-most level block,
@@ -331,7 +341,10 @@ function isMarkedAsFullyPublic<M extends RO>(page: Page<M & { hasCodeBlock: bool
 	);
 }
 
-function toFullyPublicPage<M extends RO = RO>(page: Page<M>, hiddenStringValue: string): PageWithMetadata<M> {
+function toFullyPublicPage<M0 extends RO, M1 extends RO>(
+	page: Page<M0, M1>,
+	hiddenStringValue: string
+): PageWithMetadata<M0, M1> {
 	return {
 		page, //
 		originalTitle: page.title,
@@ -346,10 +359,10 @@ function toFullyPublicPage<M extends RO = RO>(page: Page<M>, hiddenStringValue: 
 	};
 }
 
-function toPotentiallyPartiallyPublicPage<M extends RO = RO>(
-	page: Page<M>, //
+function toPotentiallyPartiallyPublicPage<M0 extends RO, M1 extends RO>(
+	page: Page<M0, M1>, //
 	hiddenStringValue: string
-): PageWithMetadata<M> {
+): PageWithMetadata<M0, M1> {
 	return {
 		page, //
 		originalTitle: page.title,

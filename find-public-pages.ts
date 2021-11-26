@@ -16,9 +16,9 @@ if (!publicOnlyTags.length) {
 	publicOnlyTags = defaults.publicOnlyTags;
 }
 
-const allPages: Page<RO>[] = readJsonSync(path.resolve(__dirname, pathToGraphFile));
+const allPages: Page<RO, RO>[] = readJsonSync(path.resolve(__dirname, pathToGraphFile));
 
-const publicPagesWrappedWithMetadata: PageWithMetadata<RO>[] = findPublicPages(allPages, {
+const publicPagesWrappedWithMetadata: PageWithMetadata<RO, RO>[] = findPublicPages(allPages, {
 	publicTags,
 	publicOnlyTags,
 	keepMetadata: !process.env.CI, // TODO testing

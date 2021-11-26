@@ -1,16 +1,12 @@
+import { FindLinkedReferences, LinkedRef } from "./types";
+
 const { createLinkedReferences } = require("./util");
 
-/**
- * @type { import("./types").FindLinkedReferences }
- */
-export const findIfPagesHavePublicLinkedReferencesAndLinkThemAsMentions = ({
+export const findIfPagesHavePublicLinkedReferencesAndLinkThemAsMentions: FindLinkedReferences = ({
 	allPagesWithMetadata, //
 	rootParentPage,
 }) => (block) => {
-	/**
-	 * @type { import("./types").LinkedRef[] }
-	 */
-	const linkedReferences = block.metadata.hasCodeBlock
+	const linkedReferences: LinkedRef[] = block.metadata.hasCodeBlock
 		? []
 		: findMatchingLinkedReferences(block.string, allPagesWithMetadata);
 

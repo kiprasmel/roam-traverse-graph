@@ -4,31 +4,33 @@
 
 import { Block, RO } from "./types";
 
+export type MutatingActionToExecute  	< InitialSettings extends RO, M1 extends RO = RO, M0 extends RO = RO> = (
+		settings: InitialSettings, //
+	) => (
+		//
+		currentBlock: Block<M0, {}>,
+		parentBlockInside: Block<M0, M1> | undefined // TODO FIXME
+	) => (Block<M0, M1> | [Block<M0, M1>, boolean]); // TODO ESLINT
+
 export const traverseBlockRecursively = <
 	// ExistingBlock extends Block,
 	// ExtraPropertiesForBlock extends Record<any, any>,
-	M1 extends RO = RO, // TODO VERIFY
 	M0 extends RO = RO, // TODO VERIFY
-	InitialSettings = unknown //
+	M1 extends RO = RO, // TODO VERIFY
+	InitialSettings extends RO = {},//
 >(
-	mutatingActionToExecute: (
-		settings: InitialSettings, //
-		parentBlockInside: typeof parentBlock
-	) => (
-		currentBlock: Block<M0, {}> //
-	) => // ) => Omit<typeof parentBlock, undefined>,
-	// typeof parentBlock,
-(typeof parentBlock | [typeof parentBlock, boolean]),
+	// mutatingActionToExecute: MutatingActionToExecute<InitialSettings, M0, M1>,
+	mutatingActionToExecute: MutatingActionToExecute<InitialSettings, M1, M0>,
 	initialAndNonChangingPropsForMutatingAction: InitialSettings,
-		parentBlock: // | undefined // TODO undefined
-	Block<M0, M1> = undefined,
-) => (
-	block: Parameters<ReturnType<typeof mutatingActionToExecute>>[0]
+		parentBlock: Block<M0, M1> | undefined = undefined
+) =>
+(
+	block: Block<M0, {}>
 	// block: Block<M0> & WithMetadata<ToReadonlyObject<M0>>
 	// ): Block<M0> & WithMetadata<ToReadonlyObject<M0>> & WithMetadata<ToReadonlyObject<M1>> => {
 
 	// ): Omit<typeof parentBlock, undefined> => { // TODO undefined
-): typeof parentBlock => {
+): Block<M0, M1> => {
 	/**
 	 * BEGIN TODO VERIFY
 	 */
@@ -52,13 +54,14 @@ export const traverseBlockRecursively = <
 
 	// const _newBlock: Block<M0> & WithMetadata<ToReadonlyObject<M0>> & WithMetadata<ToReadonlyObject<M1>> =
 
-	// const _newBlock: Omit<typeof parentBlock, undefined> = // TODO undefined
-	const _newBlock: typeof parentBlock | [typeof parentBlock, boolean] = mutatingActionToExecute(
-		initialAndNonChangingPropsForMutatingAction, //
-		parentBlock
-	)(block);
+	type B =Block<M0, M1>
 
-	let newBlock: typeof parentBlock;
+	// const _newBlock: Omit<typeof parentBlock, undefined> = // TODO undefined
+	const _newBlock: B | [B, boolean] = mutatingActionToExecute(
+		initialAndNonChangingPropsForMutatingAction, //
+	)(block, 		parentBlock);
+
+	let newBlock: B
 
 	let shouldContinueTraversal = true;
 	if (Array.isArray(_newBlock)) {
@@ -92,11 +95,11 @@ export const traverseBlockRecursively = <
 
 	if (block.children && block.children.length) {
 		newChildren = block.children.map(
-			traverseBlockRecursively(
+			traverseBlockRecursively<M0, M1, InitialSettings>(
 				mutatingActionToExecute, //
 				initialAndNonChangingPropsForMutatingAction,
 				// block,
-				newBlock, // TODO VERIFY  // TODO TEST PERFORMANCE
+				newBlock, // TODO VERIFY  // TODO TEST PERFORMANCE // TODO PARENT
 			)
 		);
 	}

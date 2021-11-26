@@ -27,6 +27,8 @@ export type Block<M0 extends RO, M1 extends RO> = EntityBase<M0, M1> & {
 	heading?: Heading;
 	"text-align"?: TextAlign;
 	// } & WithMetadata<ToReadonlyObject<M0 & M1>>; // ADDED BY US // TODO VERIFY `WithMetadata`
+	// } & WithMetadata<{ readonly [K in keyof M0]: M0[K] } & { readonly [K in keyof M1]: M1[K] }>;
+	// } & WithMetadata<ToReadonlyObject<M0> & ToReadonlyObject<M1>>;
 } & WithMetadata<ToReadonlyObject<M0 & M1>>;
 // } & ({} extends M1 ? WithMetadata<ToReadonlyObject<M0>> : WithMetadata<ToReadonlyObject<M0 & M1>>);
 // WithMetadata<ToReadonlyObject<M0> & (never extends M1 ? WithMetadata<ToReadonlyObject<M0>> : ToReadonlyObject<M1>)>; // ADDED BY US // TODO VERIFY `WithMetadata`

@@ -50,3 +50,15 @@ ret2.metadata.foo = "nope";
 ret2.metadata.baz = "nope";
 
 noop(ret2.metadata.foo, ret2.metadata.baz);
+
+const ret3 = withMetadata(
+	{
+		...blockBase,
+		...ret2,
+	},
+	{ kurwa: "mac" }
+);
+
+// @ts-expect-error
+ret3.metadata.baz = "ke";
+noop(ret3.metadata.baz);

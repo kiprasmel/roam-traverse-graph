@@ -28,8 +28,8 @@ export type SettingsForPluginFindPublicPages = {
 	keepMetadata?: boolean;
 };
 
-export type PageWithMetadata<M extends RO> = {
-	page: Page<M>;
+export type PageWithMetadata<M0 extends RO, M1 extends RO> = {
+	page: Page<M0, M1>;
 	hasPublicTag: boolean;
 	isPublicTagInRootBlocks: boolean;
 	isFullyPublic: boolean;
@@ -114,11 +114,6 @@ export type ToReadonlyObject<O extends {}> = {
 export type WithMetadata<M extends RO = RO> = {
 	metadata: M;
 };
-export type RemoveUnknownProperties = MutatingAction<
-	Block, //
-	WithMetadata,
-	{}
->;
 
 // type A =
 
