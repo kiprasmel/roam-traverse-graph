@@ -3,7 +3,7 @@ const { createLinkedReferences } = require("./util");
 /**
  * @type { import("./types").FindLinkedReferences }
  */
-const findIfPagesHavePublicLinkedReferencesAndLinkThemAsMentions = ({
+export const findIfPagesHavePublicLinkedReferencesAndLinkThemAsMentions = ({
 	allPagesWithMetadata, //
 	rootParentPage,
 }) => (block) => {
@@ -92,7 +92,3 @@ function findMatchingLinkedReferences(blockString, allPagesWithMetadata) {
 
 	return linkedReferences;
 }
-
-module.exports = {
-	findIfPagesHavePublicLinkedReferencesAndLinkThemAsMentions,
-};

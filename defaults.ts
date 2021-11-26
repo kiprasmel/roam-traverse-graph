@@ -1,16 +1,15 @@
-module.exports = {
-	/** @type { Exclude<import("./types").FindPublicPagesOptions["publicTags"], undefined> } */
+import { FindPublicPagesOptions } from "./types";
+
+const defaultOptions: FindPublicPagesOptions = {
 	publicTags: ["#public"],
-	/** @type { string[] } */
 	publicOnlyTags: [],
-	/** @type { readonly string } */
-	privateTag: "#private",
-	/** @type { readonly string } */
+	privateTag: "#private", // TODO array
 	hiddenStringValue: "hidden",
-	/** @type { boolean } */
 	makeThePublicTagPagePublic: false,
-	/** @type { boolean } */
 	doNotHideTodoAndDone: true,
-	/** @type { boolean } */
 	keepMetadata: false,
 };
+
+export default {
+	...defaultOptions,
+} as const;

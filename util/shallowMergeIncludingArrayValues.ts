@@ -5,7 +5,11 @@
  * highest precedence = last item in the `srcs` array.
  *
  */
-const shallowMergeIncludingArrayValues = (dest, srcs = [], log = false) => {
+export const shallowMergeIncludingArrayValues = (dest, srcs = [], log = false, depth = 0) => {
+	if (depth === 0) {
+		console.log({ dest, srcs });
+	}
+
 	if (!srcs.length) {
 		if (log) {
 			console.log({ dest });
@@ -23,7 +27,9 @@ const shallowMergeIncludingArrayValues = (dest, srcs = [], log = false) => {
 	Object.keys(src).forEach((k) => {
 		if (Array.isArray(dest[k])) {
 			if (!Array.isArray(src[k])) {
-				throw new Error("dest[k] was an array; src[k] was not: " + dest[k] + "; " + src[k] + ".");
+				throw new Error(
+					`dest[k] was an array; src[k] was not. k = ${k}, dest[k] = ${dest[k]}, src[k] = ${src[k]}.`
+				);
 			}
 
 			let tmp;
@@ -37,9 +43,5 @@ const shallowMergeIncludingArrayValues = (dest, srcs = [], log = false) => {
 		}
 	});
 
-	return shallowMergeIncludingArrayValues(dest, srcs, log);
-};
-
-module.exports = {
-	shallowMergeIncludingArrayValues,
+	return shallowMergeIncludingArrayValues(dest, srcs, log, depth + 1);
 };

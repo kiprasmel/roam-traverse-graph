@@ -1,5 +1,7 @@
 #!/usr/bin/env ts-node-dev
 
+import { PageWithMetadata } from "./types";
+
 const path = require("path");
 
 const { publicTags: defaultPublicTags, publicOnlyTags: defaultPublicOnlyTags } = require("./defaults");
@@ -26,7 +28,7 @@ const allPages = readJsonSync(path.resolve(__dirname, pathToGraphFile));
 /**
  * @type { import("./types").PageWithMetadata[] }
  */
-const publicPagesWrappedWithMetadata = findPublicPages(allPages, {
+const publicPagesWrappedWithMetadata: PageWithMetadata[] = findPublicPages(allPages, {
 	publicTags,
 	publicOnlyTags,
 	keepMetadata: !process.env.CI, // TODO testing

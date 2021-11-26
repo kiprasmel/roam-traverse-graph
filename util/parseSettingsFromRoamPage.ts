@@ -8,7 +8,7 @@
  * @param { string } rawStringOfSettingsBlock
  * @returns { Partial<import("../types").FindPublicPagesOptions> }
  */
-const parseSettingsFromRawString = (
+export const parseSettingsFromRawString = (
 	rawStringOfSettingsBlock = '```javascript\nmodule.exports = () => {\n  return {\n    settingsVersion: "0"}\n}```', // TODO cleanup / remove
 	parsedSettings = [rawStringOfSettingsBlock]
 		.map((str) => str.replace(/^```[^\n]+/, ""))
@@ -21,9 +21,9 @@ const parseSettingsFromRawString = (
 		.map((settings) => (console.log({ stringified: JSON.stringify(settings) }), settings))[0]
 ) => parsedSettings;
 
-const defaultRoamSettingsPageTitle = "roam-traverse-graph-settings";
+export const defaultRoamSettingsPageTitle = "roam-traverse-graph-settings";
 
-const parseRoamTraverseGraphSettingsFromRoamPage = (
+export const parseRoamTraverseGraphSettingsFromRoamPage = (
 	somePages = [], //
 	roamSettingsPageTitle = defaultRoamSettingsPageTitle,
 	settingsPage = somePages.find((page) => page.title === roamSettingsPageTitle),
@@ -35,12 +35,6 @@ const parseRoamTraverseGraphSettingsFromRoamPage = (
 		? {}
 		: parseSettingsFromRawString(settingsPage.children[0].string)
 ) => settingsFromSettingsPage;
-
-module.exports = {
-	parseSettingsFromRawString,
-	defaultRoamSettingsPageTitle,
-	parseRoamTraverseGraphSettingsFromRoamPage,
-};
 
 if (!module.parent) {
 	parseSettingsFromRawString();
