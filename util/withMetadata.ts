@@ -1,4 +1,4 @@
-import { Block, RO, ToReadonlyObject, WithMetadata } from "../types";
+import { Block, RO, ToReadonlyObject } from "../types";
 
 /**
  * M0 - existing metadata;
@@ -22,12 +22,16 @@ export function withMetadata<
 		);
 	}
 
-	return {
+	// const newMetadata: ToReadonlyObject<M0 & M1> = {
+	const newMetadata: ToReadonlyObject<M0> & ToReadonlyObject<M1> = {
+		...block.metadata,
+		...meta,
+	} as const;
+
+	const newBlock: Block<M0, M1> = {
 		...block,
-		// metadata: Object.assign({}, block.metadata, meta),
-		metadata: {
-			...block.metadata,
-			...meta,
-		},
+		metadata: newMetadata,
 	};
+
+	return newBlock;
 }
