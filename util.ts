@@ -1,5 +1,3 @@
-// @ts-check
-
 /* eslint-disable indent */
 
 const fs = require("fs");
@@ -159,7 +157,7 @@ function withMeta(block, meta) {
 		...block,
 		metadata: {
 			...("metadata" in block ? block.metadata : {}),
-			...(meta),
+			...meta,
 		},
 	};
 }

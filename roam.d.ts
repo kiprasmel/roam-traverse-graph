@@ -1,5 +1,3 @@
-// @ts-check
-
 /**
  *
  * https://roamresearch.com/#/app/help/page/Nxz8u0vXU

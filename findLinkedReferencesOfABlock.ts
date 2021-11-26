@@ -1,5 +1,3 @@
-// @ts-check
-
 const { createLinkedReferences } = require("./util");
 
 /**
@@ -28,7 +26,7 @@ const findIfPagesHavePublicLinkedReferencesAndLinkThemAsMentions = ({
 
 	linkedReferences.forEach(
 		(lr) => (
-			((lr.metaPage.linkedMentions = lr.metaPage.linkedMentions || []),
+			(lr.metaPage.linkedMentions = lr.metaPage.linkedMentions || []),
 			lr.metaPage.linkedMentions.push({
 				blockUid: block.uid,
 				isBlockPublic,
@@ -47,7 +45,7 @@ const findIfPagesHavePublicLinkedReferencesAndLinkThemAsMentions = ({
 				// block,
 				// pageContainingBlock:
 				// 	rootParentPage.page.uid === lr.metaPage.page.uid ? "[circular, self reference]" : rootParentPage,
-			}))
+			})
 		)
 	);
 

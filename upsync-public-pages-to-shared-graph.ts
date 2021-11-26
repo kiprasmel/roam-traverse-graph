@@ -1,6 +1,4 @@
-#!/usr/bin/env node
-
-// @ts-check
+#!/usr/bin/env ts-node-dev
 
 const path = require("path");
 

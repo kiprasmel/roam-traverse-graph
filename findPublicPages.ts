@@ -1,4 +1,4 @@
-// @ts-check
+#!/usr/bin/env ts-node-dev
 
 /* eslint-disable indent */
 
@@ -44,7 +44,7 @@ const findPublicPages = (
 		publicTags,
 	} = settings
 ) => (
-	(console.log({
+	console.log({
 		defaults,
 		optionsOrig,
 		settingsFromSettingsPage,
@@ -65,7 +65,7 @@ const findPublicPages = (
 	/**
 	 * @type { import("./types").PageWithMetadata[] }
 	 */
-	((somePages || [])
+	(somePages || [])
 		.map(keepOnlyKnownPropertiesOfPage)
 
 		.map(
@@ -208,14 +208,14 @@ const findPublicPages = (
 
 		.map((p) => (!p.page.children?.length && delete p.page.children, p))
 
-		.sort(
-			(A, B) => (
-				/** public tag itself first, then public pages, then all other ones */
-				(sort = {
-					AHEAD: -1,
+		.sort((A, B) =>
+			((
+				sort = {
+					AHEAD: -1, //
 					BEHIND: 1,
 					EVEN: 0,
-				}),
+				}
+			) =>
 				publicTags.some((publicTag) => titleIsPublicTag(A.page, publicTag))
 					? sort["AHEAD"]
 					: publicTags.some((publicTag) => titleIsPublicTag(B.page, publicTag))
@@ -230,9 +230,8 @@ const findPublicPages = (
 					? sort["AHEAD"]
 					: B.hasAtLeastOnePublicBlockAnywhereInTheHierarchy
 					? sort["BEHIND"]
-					: sort["EVEN"]
-			)
-		)))
+					: sort["EVEN"])()
+		)
 );
 
 /**

@@ -1,5 +1,3 @@
-// @ts-check
-
 /* eslint-disable indent */
 
 /**
@@ -45,18 +43,18 @@ const markBlockPublic = (
 	 *
 	 */
 	const hasPublicTag =
-		!block.metadata.hasCodeBlock && (publicTags.some((publicTag) => block.string.includes(publicTag)));
+		!block.metadata.hasCodeBlock && publicTags.some((publicTag) => block.string.includes(publicTag));
 
 	const hasPublicOnlyTag =
-		!block.metadata.hasCodeBlock && (publicOnlyTags.some((publicOnlyTag) => block.string.includes(publicOnlyTag)));
+		!block.metadata.hasCodeBlock && publicOnlyTags.some((publicOnlyTag) => block.string.includes(publicOnlyTag));
 
-	const hasPrivateTag = !block.metadata.hasCodeBlock && (block.string.includes(privateTag));
+	const hasPrivateTag = !block.metadata.hasCodeBlock && block.string.includes(privateTag);
 
 	/**
 	 * ---
 	 */
 
-	const isPublicOnly = (hasPublicOnlyTag && !hasPrivateTag && !parentBlock?.metadata.hasPrivateTag);
+	const isPublicOnly = hasPublicOnlyTag && !hasPrivateTag && !parentBlock?.metadata.hasPrivateTag;
 
 	/**
 	 * @type { boolean }

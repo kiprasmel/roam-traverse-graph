@@ -1,6 +1,4 @@
-#!/usr/bin/env node
-
-// @ts-check
+#!/usr/bin/env ts-node-dev
 
 /**
  * TODO error handling
@@ -44,7 +42,6 @@ module.exports = {
 	parseRoamTraverseGraphSettingsFromRoamPage,
 };
 
-// @ts-expect-error
 if (!module.parent) {
 	parseSettingsFromRawString();
 }

@@ -1,5 +1,3 @@
-// @ts-check
-
 module.exports = {
 	/** @type { Exclude<import("./types").FindPublicPagesOptions["publicTags"], undefined> } */
 	publicTags: ["#public"],

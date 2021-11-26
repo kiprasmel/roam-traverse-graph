@@ -1,5 +1,3 @@
-// @ts-check
-
 /* eslint-disable indent */
 
 /**
