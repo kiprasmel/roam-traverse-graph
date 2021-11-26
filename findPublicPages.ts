@@ -17,8 +17,6 @@ import {
 	PageWithMetadata,
 	RO,
 	Block,
-	WithMetadata,
-	ToReadonlyObject,
 } from "./types";
 
 import { withMetadata } from "./util/withMetadata";
@@ -72,7 +70,7 @@ export const findPublicPages = <M0 extends RO, M1 extends RO>(
 	 * before we can parse the children tho..
 	 *
 	 */
-	somePages: Page<M0>[] = [], //
+	somePages: Page<M0, never>[] = [], //
 	optionsOrig: SettingsForPluginFindPublicPages = { publicTags: [], publicOnlyTags: [] },
 	settingsFromSettingsPage: Partial<SettingsForPluginFindPublicPages> = parseRoamTraverseGraphSettingsFromRoamPage(
 		somePages

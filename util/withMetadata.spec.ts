@@ -42,6 +42,8 @@ const ret2 = withMetadata(
 	}
 );
 
+// ret2.metadata.baz = "XD";
+
 // @ts-expect-error
 ret2.metadata.foo = "nope";
 // @ts-expect-error
