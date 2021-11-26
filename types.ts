@@ -99,10 +99,10 @@ export type RemoveUnknownPropertiesProps = {
 
 // TODO RENAME `ReadonlyObject`
 export type RO<
-	K extends string | number | symbol = string | number | symbol, //
-	V = unknown
+	O = {}
+	// Key extends string | number | symbol = string | number | symbol //
 > = {
-	readonly [key in K]: V; // TODO K[key]
+	readonly [key in keyof O]: O[key]; // TODO K[key]
 };
 
 // TODO REMOVE

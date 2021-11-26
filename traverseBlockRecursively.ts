@@ -24,13 +24,13 @@ export const traverseBlockRecursively = <
 	initialAndNonChangingPropsForMutatingAction: InitialSettings,
 		parentBlock: Block<M0 & M1, M1> | undefined = undefined
 ) =>
-(
-	block: Block<M0, {}>
+<M2 extends RO>(
+	block: Block<M0 & M2, {}>
 	// block: Block<M0> & WithMetadata<ToReadonlyObject<M0>>
 	// ): Block<M0> & WithMetadata<ToReadonlyObject<M0>> & WithMetadata<ToReadonlyObject<M1>> => {
 
 	// ): Omit<typeof parentBlock, undefined> => { // TODO undefined
-): Block<M0 & M1, M1> => {
+): Block<M0 & M1 & M2, M1> => {
 	/**
 	 * BEGIN TODO VERIFY
 	 */
@@ -54,7 +54,7 @@ export const traverseBlockRecursively = <
 
 	// const _newBlock: Block<M0> & WithMetadata<ToReadonlyObject<M0>> & WithMetadata<ToReadonlyObject<M1>> =
 
-	type B =Block<M0 & M1, M1>
+	type B =Block<M0 & M1 & M2, M1>
 
 	// const _newBlock: Omit<typeof parentBlock, undefined> = // TODO undefined
 	const _newBlock: B | [B, boolean] = mutatingActionToExecute(

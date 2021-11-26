@@ -4,10 +4,20 @@ import { withMetadata } from "./util/withMetadata";
 
 const { createLinkedReferences } = require("./util");
 
-export const findIfPagesHavePublicLinkedReferencesAndLinkThemAsMentions: MutatingActionToExecute<{
-	rootParentPage: PageWithMetadata<{}, {}>; // TODO FIXME
-	allPagesWithMetadata: PageWithMetadata<{}, {}>[];
-}> = ({
+export const findIfPagesHavePublicLinkedReferencesAndLinkThemAsMentions: MutatingActionToExecute<
+	{
+		rootParentPage: PageWithMetadata<{}, {}>; // TODO FIXME
+		allPagesWithMetadata: PageWithMetadata<{}, {}>[];
+	},
+	{
+		linkedReferences: LinkedRef[];
+	},
+	{
+		hasCodeBlock: boolean;
+		isPublic: boolean;
+		isPublicOnly: boolean;
+	}
+> = ({
 	allPagesWithMetadata, //
 	rootParentPage,
 }) => (block) => {
@@ -71,10 +81,7 @@ export const findIfPagesHavePublicLinkedReferencesAndLinkThemAsMentions: Mutatin
  * @returns { import("./types").LinkedRef[] }
  */
 function findMatchingLinkedReferences(blockString, allPagesWithMetadata) {
-	/**
-	 * @type { import("./types").LinkedRef[] }
-	 */
-	const linkedReferences = [];
+	const linkedReferences: LinkedRef[] = [];
 
 	/**
 	 * TODO - there's potential for optimization,

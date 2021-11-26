@@ -128,6 +128,7 @@ export const findPublicPages = <M0 extends RO>(
 				)
 			)
 		)
+		// .map(p => p.children[0].metadata.)
 		.map((page) => {
 			const isThePublicTagPageAndShouldBePublic =
 				makeThePublicTagPagePublic && publicTags.some((publicTag) => titleIsPublicTag(page, publicTag));
@@ -154,10 +155,17 @@ export const findPublicPages = <M0 extends RO>(
 
 		.map(
 			// mapChildren((currentPageWithMeta, _index, currentPagesWithMetadata) => (
+			/**
+			 * TODO - make pages non-moronic (dont wrap -- add metadata sideways),
+			 * then use the `mapChildren` here,
+			 * and use M2 also just like in traverseBlockRecursively to keep the metadata
+			 */
 
 			(currentPageWithMeta, _index, currentPagesWithMetadata) => (
 				(currentPageWithMeta.page.children = (currentPageWithMeta.page.children || [])
+					// .map(p => p.children[0].metadata.)
 					.map(traverseBlockRecursively(removeUnknownProperties, {}))
+					// .map(p => p.children[0].metadata.)
 					.filter((block) => !!block)
 					.map(
 						traverseBlockRecursively(
