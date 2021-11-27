@@ -1,5 +1,5 @@
-import { MutatingActionToExecute } from "./traverseBlockRecursively";
-import { LinkedRef } from "./types";
+import { MutatingActionToExecute } from "../traverseBlockRecursively";
+import { LinkedRef } from "../types";
 
 export const hideBlockStringsIfNotPublic: MutatingActionToExecute<
 	{

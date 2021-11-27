@@ -1,9 +1,9 @@
 /* eslint-disable indent */
 
-import { LinkedReference } from "./types";
+import fs from "fs";
+import path from "path";
 
-const fs = require("fs");
-const path = require("path");
+import { LinkedReference } from "./types";
 
 /**
  * @param { string } pathToFile

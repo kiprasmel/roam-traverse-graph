@@ -1,8 +1,8 @@
-import { MutatingActionToExecute } from "./traverseBlockRecursively";
-import { LinkedRef, PageWithMetadata } from "./types";
-import { withMetadata } from "./util/withMetadata";
+import { MutatingActionToExecute } from "../traverseBlockRecursively";
+import { LinkedRef, PageWithMetadata } from "../types";
+import { withMetadata } from "../util/withMetadata";
 
-const { createLinkedReferences } = require("./util");
+import { createLinkedReferences } from "../util";
 
 export const findIfPagesHavePublicLinkedReferencesAndLinkThemAsMentions: MutatingActionToExecute<
 	{

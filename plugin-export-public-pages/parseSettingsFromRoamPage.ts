@@ -2,11 +2,11 @@
 
 /* eslint-disable indent */
 
-import { defaultRoamSettingsPageTitle, SettingsForPluginFindPublicPages } from "../findPublicPages";
-import { Page } from "../roam.d";
+import { defaultRoamSettingsPageTitle, SettingsForPluginFindPublicPages } from "./findPublicPages";
+import { Page } from "../roam";
 import { RO } from "../types";
 
-import { blockStringHasCode } from "./blockContainsCode";
+import { blockStringHasCode } from "../util/blockContainsCode";
 
 /**
  * TODO error handling

@@ -4,10 +4,9 @@ import path from "path";
 
 import RoamPrivateApi from "./roam-research-private-api";
 
-import { defaultSettingsForPluginFindPublicPages } from "./findPublicPages";
+import { defaultSettingsForPluginFindPublicPages, findPublicPages } from "./plugin-export-public-pages";
 import secrets from "./secrets.json";
 
-import { findPublicPages } from "./findPublicPages";
 import { readJsonSync, startTimerMs /* getAllBlocksFromPages, poolPromises */, writeJsonSync } from "./util";
 
 // fs.writeFileSync("public-pages.json", JSON.stringify(publicPages, null, 2), { encoding: "utf-8" });

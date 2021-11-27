@@ -1,8 +1,8 @@
 /* eslint-disable indent */
 
-import { MutatingActionToExecute } from "./traverseBlockRecursively";
-import { PageWithMetadata } from "./types";
-import { withMetadata } from "./util/withMetadata";
+import { MutatingActionToExecute } from "../traverseBlockRecursively";
+import { PageWithMetadata } from "../types";
+import { withMetadata } from "../util/withMetadata";
 
 export const removeUnknownProperties: MutatingActionToExecute<{}> = () => (block) =>
 	!block

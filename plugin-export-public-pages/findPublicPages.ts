@@ -2,14 +2,14 @@
 
 /* eslint-disable indent */
 
-import { traverseBlockRecursively } from "./traverseBlockRecursively";
+import { traverseBlockRecursively } from "../traverseBlockRecursively";
 import { removeUnknownProperties, markBlockPublic } from "./findPublicBlocks";
 import { findIfPagesHavePublicLinkedReferencesAndLinkThemAsMentions } from "./findLinkedReferencesOfABlock";
 import { hideBlockStringsIfNotPublic } from "./hideBlockStringsIfNotPublic";
-import { parseRoamTraverseGraphSettingsFromRoamPage } from "./util/parseSettingsFromRoamPage"; // TODO FIXME
-import { shallowMergeIncludingArrayValues } from "./util/shallowMergeIncludingArrayValues";
-import { createLinkedReferences } from "./util";
-import { blockStringHasCode } from "./util/blockContainsCode";
+import { parseRoamTraverseGraphSettingsFromRoamPage } from "./parseSettingsFromRoamPage"; // TODO FIXME
+import { shallowMergeIncludingArrayValues } from "../util/shallowMergeIncludingArrayValues";
+import { createLinkedReferences } from "../util";
+import { blockStringHasCode } from "../util/blockContainsCode";
 
 import {
 	Page, //
@@ -17,9 +17,9 @@ import {
 	RO,
 	Block,
 	LinkedRef,
-} from "./types";
+} from "../types";
 
-import { withMetadata } from "./util/withMetadata";
+import { withMetadata } from "../util/withMetadata";
 
 export type SettingsForPluginFindPublicPages = {
 	/**
