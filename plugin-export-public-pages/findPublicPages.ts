@@ -87,7 +87,7 @@ export type SettingsForPluginFindPublicPages = {
 	keepMetadata: boolean;
 };
 
-export const defaultSettingsForPluginFindPublicPages: SettingsForPluginFindPublicPages = {
+export const getDefaultSettingsForPluginFindPublicPages = (): SettingsForPluginFindPublicPages => ({
 	publicGlobalTags: [],
 	publicTags: ["#public"],
 	publicOnlyTags: [],
@@ -96,7 +96,7 @@ export const defaultSettingsForPluginFindPublicPages: SettingsForPluginFindPubli
 	makeThePublicTagPagePublic: false,
 	doNotHideTodoAndDone: true,
 	keepMetadata: false,
-};
+});
 
 export const defaultRoamSettingsPageTitle = "roam-traverse-graph-settings" as const;
 
@@ -154,7 +154,7 @@ export const findPublicPages = <M0 extends RO>(
 		somePages
 	),
 	settings: SettingsForPluginFindPublicPages = shallowMergeIncludingArrayValues(
-		defaultSettingsForPluginFindPublicPages,
+		getDefaultSettingsForPluginFindPublicPages(),
 		[
 			optionsOrig, //
 			settingsFromSettingsPage,
@@ -174,7 +174,7 @@ export const findPublicPages = <M0 extends RO>(
 	// ): PageWithMetadata<M0, MFinal>[] => ( // TODO FIXME // TODO FIXME
 ) => (
 	console.log({
-		defaultOptions: defaultSettingsForPluginFindPublicPages,
+		defaultOptions: getDefaultSettingsForPluginFindPublicPages(),
 		optionsOrig,
 		settingsFromSettingsPage,
 		merged: settings,

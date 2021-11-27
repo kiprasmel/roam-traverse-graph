@@ -4,7 +4,7 @@ import path from "path";
 
 import RoamPrivateApi from "./roam-research-private-api";
 
-import { defaultSettingsForPluginFindPublicPages, findPublicPages } from "./plugin-export-public-pages";
+import { getDefaultSettingsForPluginFindPublicPages, findPublicPages } from "./plugin-export-public-pages";
 import secrets from "./secrets.json";
 
 import { readJsonSync, startTimerMs /* getAllBlocksFromPages, poolPromises */, writeJsonSync } from "./util";
@@ -15,7 +15,7 @@ console.log({ PATH_TO_ROAM_GRAPH: process.env.PATH_TO_ROAM_GRAPH });
 
 let publicOnlyTags = (process.env.ROAM_PUBLIC_ONLY_TAGS || "").split(",").filter((po) => !!po);
 if (!publicOnlyTags.length) {
-	publicOnlyTags = defaultSettingsForPluginFindPublicPages.publicOnlyTags;
+	publicOnlyTags = getDefaultSettingsForPluginFindPublicPages().publicOnlyTags;
 }
 
 let publicPagesRaw = findPublicPages(
@@ -27,10 +27,10 @@ let publicPagesRaw = findPublicPages(
 	),
 	{
 		publicTags: (
-			process.env.ROAM_PUBLIC_TAGS || defaultSettingsForPluginFindPublicPages.publicTags.join(",")
+			process.env.ROAM_PUBLIC_TAGS || getDefaultSettingsForPluginFindPublicPages().publicTags.join(",")
 		) /* TODO FIXME careful w/ this join lol */
 			.split(","), // custom for testing
-		privateTag: process.env.ROAM_PRIVATE_TAG || defaultSettingsForPluginFindPublicPages.privateTag,
+		privateTag: process.env.ROAM_PRIVATE_TAG || getDefaultSettingsForPluginFindPublicPages().privateTag,
 		publicOnlyTags,
 		// keepMetadata: true, // TODO DEBUG
 	}
