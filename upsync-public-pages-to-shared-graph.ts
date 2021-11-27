@@ -33,14 +33,12 @@ let publicPagesRaw = findPublicPages(
 			.split(","), // custom for testing
 		privateTag: process.env.ROAM_PRIVATE_TAG || defaultSettingsForPluginFindPublicPages.privateTag,
 		publicOnlyTags,
+		// keepMetadata: true, // TODO DEBUG
 	}
-).filter(
-	(raw) =>
-		![
-			"PmdJYvQ1i" /* anon */, //
-			"10-23-2021" /** TODO UPDATE TO CURRENT DAY */,
-		].includes(raw.page.uid)
 );
+/**
+ * TODO maybe filter out Anonymous page, idk
+ */
 
 writeJsonSync("../graphraw.to-be-uploaded.json", publicPagesRaw);
 
