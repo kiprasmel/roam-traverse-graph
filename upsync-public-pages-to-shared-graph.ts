@@ -8,7 +8,7 @@ import { defaultSettingsForPluginFindPublicPages } from "./defaults";
 import secrets from "./secrets.json";
 
 import { findPublicPages } from "./findPublicPages";
-import { readJsonSync, startTimerMs /* getAllBlocksFromPages, poolPromises */ } from "./util";
+import { readJsonSync, startTimerMs /* getAllBlocksFromPages, poolPromises */, writeJsonSync } from "./util";
 
 // fs.writeFileSync("public-pages.json", JSON.stringify(publicPages, null, 2), { encoding: "utf-8" });
 
@@ -41,6 +41,8 @@ let publicPagesRaw = findPublicPages(
 			"10-23-2021" /** TODO UPDATE TO CURRENT DAY */,
 		].includes(raw.page.uid)
 );
+
+writeJsonSync("../graphraw.to-be-uploaded.json", publicPagesRaw);
 
 const origRawLen = publicPagesRaw.length;
 
