@@ -37,8 +37,9 @@ export const findIfPagesHavePublicLinkedReferencesAndLinkThemAsMentions: Mutatin
 
 	linkedReferences.forEach(
 		(lr) => (
-			(lr.metaPage.linkedMentions = lr.metaPage.linkedMentions || []),
-			lr.metaPage.linkedMentions.push({
+			((lr.metaPage as any).linkedMentions = (lr.metaPage as any).linkedMentions || []), // TODO TS
+			// TODO TS
+			(lr.metaPage as any).linkedMentions.push({
 				blockUid: block.uid,
 				isBlockPublic,
 				blockString: block.string,
@@ -62,9 +63,9 @@ export const findIfPagesHavePublicLinkedReferencesAndLinkThemAsMentions: Mutatin
 
 	// Object.assign(block.metadata, { linkedReferences });
 
-	return withMetadata(block, {
+	return withMetadata({
 		linkedReferences,
-	});
+	})(block);
 
 	// return {
 	// 	...block,
@@ -75,12 +76,10 @@ export const findIfPagesHavePublicLinkedReferencesAndLinkThemAsMentions: Mutatin
 	// };
 };
 
-/**
- * @param { string } blockString
- * @param { import("./types").PageWithMetadata[] } allPagesWithMetadata
- * @returns { import("./types").LinkedRef[] }
- */
-function findMatchingLinkedReferences(blockString, allPagesWithMetadata) {
+function findMatchingLinkedReferences(
+	blockString: string,
+	allPagesWithMetadata: PageWithMetadata<{}, {}>[] // TODO TS
+): LinkedRef[] {
 	const linkedReferences: LinkedRef[] = [];
 
 	/**

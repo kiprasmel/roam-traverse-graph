@@ -4,7 +4,7 @@
 		"module": "commonjs",
 		"lib": ["dom", "es6", "es2017", "esnext.asynciterable"],
 		"allowJs": true,
-		"noEmit": true,
+		"noEmit": false,
 		"skipLibCheck": false,
 		"sourceMap": true,
 		"outDir": "./dist",
@@ -29,9 +29,11 @@
 		"rootDir": "."
 	},
 	"exclude": [
-		"node_modules" //
+		"node_modules", //
+		"dist"
 	],
 	"include": [
-		"**/*.js" //
+		"**/*.js", //
+		"**/*.ts"
 	]
 }

@@ -34,6 +34,9 @@ export const markBlockPublic: MutatingActionToExecute<
 		isPublicOnly: boolean;
 		hasPublicTag: boolean;
 		hasPrivateTag: boolean;
+	},
+	{
+		hasCodeBlock: boolean;
 	}
 > = ({
 	// parentBlock,
@@ -89,10 +92,10 @@ export const markBlockPublic: MutatingActionToExecute<
 			rootParentPage.hasAtLeastOnePublicBlockAnywhereInTheHierarchy = true;
 		}
 
-		return withMetadata(block, {
+		return withMetadata({
 			isPublicOnly,
 			isPublic,
 			hasPublicTag,
 			hasPrivateTag,
-		});
+		})(block);
 	};

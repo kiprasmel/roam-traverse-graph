@@ -4,7 +4,7 @@
  *
  */
 
-import { RO, ToReadonlyObject, WithMetadata } from "./types";
+import { RO, ToReadonlyObject, WithMetadata } from "./metadata.d";
 
 export type Ref = {
 	uid: string;

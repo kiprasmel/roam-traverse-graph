@@ -1,3 +1,5 @@
+/* eslint-disable indent */
+
 import { Block, RO, ToReadonlyObject } from "../types";
 
 /**
@@ -5,11 +7,14 @@ import { Block, RO, ToReadonlyObject } from "../types";
  * M1 - new metadata.
  *
  */
-export function withMetadata<
+export const withMetadata = <
 	M1 extends RO = RO, // TODO FIXME TEST
-	M0 extends RO = RO, //
-	M2 extends RO = RO
->(block: Block<M0 & M2, {}>, meta: M1): Block<M0 & M1 & M2, M1> {
+	M0 extends RO = RO //
+>(
+	meta: M1
+) => <M2>(block: Block<M0 & M2, {}>): Block<M0 & M1 & M2, M1> => {
+	if (!block.metadata) block.metadata = {} as M0 & M2;
+
 	/**
 	 * runtime check.
 	 *
@@ -23,8 +28,6 @@ export function withMetadata<
 		);
 	}
 
-	if (!block.metadata) block.metadata = {} as M0 & M2;
-
 	const newMetadata: ToReadonlyObject<M0 & M1 & M2> = {
 		// const newMetadata: ToReadonlyObject<M0> & ToReadonlyObject<M1> = {
 		...block.metadata,
@@ -32,7 +35,7 @@ export function withMetadata<
 	} as const;
 
 	const newBlock: Block<M0 & M1 & M2, M1> = {
-		...(block as Block<M0 & M2, any>),
+		...(block as Block<M0 & M2, any>), // TODO TS VERIFY
 		// ...block,
 		metadata: newMetadata,
 		// metadata: {
@@ -42,4 +45,4 @@ export function withMetadata<
 	};
 
 	return newBlock;
-}
+};

@@ -1,6 +1,6 @@
 import { SettingsForPluginFindPublicPages } from "./types";
 
-const defaultOptions: SettingsForPluginFindPublicPages = {
+export const defaultSettingsForPluginFindPublicPages: SettingsForPluginFindPublicPages = {
 	publicTags: ["#public"],
 	publicOnlyTags: [],
 	privateTag: "#private", // TODO array
@@ -10,6 +10,4 @@ const defaultOptions: SettingsForPluginFindPublicPages = {
 	keepMetadata: false,
 };
 
-export default {
-	...defaultOptions,
-};
+export const defaultRoamSettingsPageTitle = "roam-traverse-graph-settings" as const;

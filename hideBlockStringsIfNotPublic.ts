@@ -1,7 +1,19 @@
-/**
- * @type { import("./types").HideBlockStringsIfNotPublic }
- */
-export const hideBlockStringsIfNotPublic = ({
+import { MutatingActionToExecute } from "./traverseBlockRecursively";
+import { LinkedRef } from "./types";
+
+export const hideBlockStringsIfNotPublic: MutatingActionToExecute<
+	{
+		doNotHideTodoAndDone: boolean;
+		hiddenStringValue: string;
+	},
+	{},
+	{
+		isPublic: boolean;
+		isPublicOnly: boolean;
+		hasCodeBlock: boolean;
+		linkedReferences: LinkedRef[];
+	}
+> = ({
 	hiddenStringValue, //
 	doNotHideTodoAndDone,
 }) => (block) => {
@@ -49,6 +61,9 @@ export const hideBlockStringsIfNotPublic = ({
 
 	block.string += " " + linkedRefs;
 
+	/**
+	 * TODO FIXME
+	 */
 	block.refs = linkedReferences.map((lr) => ({ uid: lr.metaPage.page.uid }));
 
 	return block;

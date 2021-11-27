@@ -3,17 +3,17 @@
 import path from "path";
 
 import { Page, PageWithMetadata, RO } from "./types";
-import defaults from "./defaults";
+import { defaultSettingsForPluginFindPublicPages } from "./defaults";
 import { findPublicPages } from "./findPublicPages";
 import { readJsonSync, writeJsonSync } from "./util";
 
 const pathToGraphFile: string = process.argv?.[2] || "../notes/json/kipras-g1.json";
 
-const publicTags: string[] = process.argv?.[3]?.split?.(",") || defaults.publicTags;
+const publicTags: string[] = process.argv?.[3]?.split?.(",") || defaultSettingsForPluginFindPublicPages.publicTags;
 
 let publicOnlyTags: string[] = (process.argv?.[4] || "").split(",").filter((po) => !!po);
 if (!publicOnlyTags.length) {
-	publicOnlyTags = defaults.publicOnlyTags;
+	publicOnlyTags = defaultSettingsForPluginFindPublicPages.publicOnlyTags;
 }
 
 const allPages: Page<RO, RO>[] = readJsonSync(path.resolve(__dirname, pathToGraphFile));

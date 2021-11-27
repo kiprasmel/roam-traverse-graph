@@ -1,17 +1,22 @@
 #!/usr/bin/env ts-node-dev
 
-const path = require("path");
+import path from "path";
 
-const { readJsonSync, startTimerMs, getAllBlocksFromPages, poolPromises } = require("./util");
-const { findPublicPages } = require("./findPublicPages");
+import RoamPrivateApi from "./roam-research-private-api";
 
-const defaults = require("./defaults");
+import { defaultSettingsForPluginFindPublicPages } from "./defaults";
+import secrets from "./secrets.json";
+
+import { findPublicPages } from "./findPublicPages";
+import { readJsonSync, startTimerMs /* getAllBlocksFromPages, poolPromises */ } from "./util";
+
+// fs.writeFileSync("public-pages.json", JSON.stringify(publicPages, null, 2), { encoding: "utf-8" });
 
 console.log({ PATH_TO_ROAM_GRAPH: process.env.PATH_TO_ROAM_GRAPH });
 
 let publicOnlyTags = (process.env.ROAM_PUBLIC_ONLY_TAGS || "").split(",").filter((po) => !!po);
 if (!publicOnlyTags.length) {
-	publicOnlyTags = defaults.publicOnlyTags;
+	publicOnlyTags = defaultSettingsForPluginFindPublicPages.publicOnlyTags;
 }
 
 let publicPagesRaw = findPublicPages(
@@ -22,8 +27,11 @@ let publicPagesRaw = findPublicPages(
 		)
 	),
 	{
-		publicTag: process.env.ROAM_PUBLIC_TAG || defaults.publicTag, // custom for testing
-		privateTag: process.env.ROAM_PRIVATE_TAG || defaults.privateTag,
+		publicTags: (
+			process.env.ROAM_PUBLIC_TAGS || defaultSettingsForPluginFindPublicPages.publicTags.join(",")
+		) /* TODO FIXME careful w/ this join lol */
+			.split(","), // custom for testing
+		privateTag: process.env.ROAM_PRIVATE_TAG || defaultSettingsForPluginFindPublicPages.privateTag,
 		publicOnlyTags,
 	}
 ).filter(
@@ -36,12 +44,7 @@ let publicPagesRaw = findPublicPages(
 
 const origRawLen = publicPagesRaw.length;
 
-let publicPages = publicPagesRaw.map((p) => p.page);
-
-// fs.writeFileSync("public-pages.json", JSON.stringify(publicPages, null, 2), { encoding: "utf-8" });
-
-const RoamPrivateApi = require("./roam-research-private-api");
-const secrets = require("./secrets.json"); // TODO FIXME
+let publicPages = publicPagesRaw.map((p) => p.page); // TODO FIXME
 
 /**
  * TODO implement helpful measures to avoid deleting pages
@@ -70,16 +73,16 @@ const api = new RoamPrivateApi(publicGraphToImportInto, secrets.email, secrets.p
 
 const getDeltaSec = startTimerMs({ divider: 1000 });
 
-const allBlocks = getAllBlocksFromPages(publicPages); // .splice(0, 500); // TODO FIXME REMVOE
+// const allBlocks = getAllBlocksFromPages(publicPages); // .splice(0, 500); // TODO FIXME REMVOE
 
-// console.log(
-// 	"allBlocks",
-// 	allBlocks,
-// 	allBlocks.filter((b) => typeof b !== "string")
-// );
+// // console.log(
+// // 	"allBlocks",
+// // 	allBlocks,
+// // 	allBlocks.filter((b) => typeof b !== "string")
+// // );
 
-const minimumIntervalMsBetweenMaxRequests = 1000 * (60 + 2);
-const maxRequestsPerInterval = 300 - 5;
+// const minimumIntervalMsBetweenMaxRequests = 1000 * (60 + 2);
+// const maxRequestsPerInterval = 300 - 5;
 
 // TODO FIXME TEMP
 const publicPagesHighPrio = publicPagesRaw

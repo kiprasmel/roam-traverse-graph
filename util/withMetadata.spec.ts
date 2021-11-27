@@ -18,29 +18,23 @@ const blockBase = {
 expectToError(() => {
 	const duplicateKey = "key" as const;
 
-	const ret1 = withMetadata(
-		{
-			...blockBase,
-			metadata: { [duplicateKey]: "different" }, //
-		},
-		{ [duplicateKey]: "value" }
-	);
+	const ret1 = withMetadata({ [duplicateKey]: "value" })({
+		...blockBase,
+		metadata: { [duplicateKey]: "different" }, //
+	});
 
 	// @ts-expect-error
 	noop(ret1.metadata.kek);
 });
 
-const ret2 = withMetadata(
-	{
-		...blockBase,
-		metadata: {
-			foo: "bar",
-		},
+const ret2 = withMetadata({
+	baz: "ooka",
+})({
+	...blockBase,
+	metadata: {
+		foo: "bar",
 	},
-	{
-		baz: "ooka",
-	}
-);
+});
 
 // ret2.metadata.baz = "XD";
 
@@ -51,13 +45,10 @@ ret2.metadata.baz = "nope";
 
 noop(ret2.metadata.foo, ret2.metadata.baz);
 
-const ret3 = withMetadata(
-	{
-		...blockBase,
-		...ret2,
-	},
-	{ kurwa: "mac" }
-);
+const ret3 = withMetadata({ kurwa: "mac" })({
+	...blockBase,
+	...ret2,
+});
 
 // @ts-expect-error
 ret3.metadata.baz = "ke";

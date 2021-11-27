@@ -1,31 +1,33 @@
-import { Page, LinkedReferenceKind, Block } from "./roam";
+import { RO, WithMetadata } from "./metadata.d";
+import { Page, LinkedReferenceKind } from "./roam.d";
 
-export * from "./roam"; // TODO REMOVE
+export * from "./metadata.d"; // TODO TS
+export * from "./roam.d"; // TODO REMOVE
 
 export type SettingsForPluginFindPublicPages = {
 	publicTags: string[];
 	publicOnlyTags: string[];
-	privateTag?: string; // TODO ARRAY
+	privateTag: string; // TODO ARRAY
 	/**
 	 * TODO DEPRECATE - use the .uid instead! (will work for pages too to avoid merging them lol)
 	 * (or keep and concat w/ the .title / .string to make obvious it's hidden)
 	 */
-	hiddenStringValue?: string;
+	hiddenStringValue: string;
 	/**
 	 * make the publicTag page itself public
 	 */
-	makeThePublicTagPagePublic?: boolean;
+	makeThePublicTagPagePublic: boolean;
 
 	/**
 	 * TODO and DONE are more like boolean toggles to indicate if something's done or not,
 	 * and show a visual indicator, thus we have a special case for them
 	 */
-	doNotHideTodoAndDone?: boolean;
+	doNotHideTodoAndDone: boolean;
 
 	/**
 	 * currently blocks', will later apply to pages as well once we implement it properly
 	 */
-	keepMetadata?: boolean;
+	keepMetadata: boolean;
 };
 
 export type PageWithMetadata<M0 extends RO, M1 extends RO> = {
@@ -97,38 +99,12 @@ export type RemoveUnknownPropertiesProps = {
 	//
 };
 
-// TODO RENAME `ReadonlyObject`
-export type RO<
-	O = {}
-	// Key extends string | number | symbol = string | number | symbol //
-> = {
-	readonly [key in keyof O]: O[key]; // TODO K[key]
-};
-
-// TODO REMOVE
-
-export type ToReadonlyObject<O extends {}> = {
-	readonly [key in keyof O]: O[key]; //
-};
-
-export type WithMetadata<M extends RO> = {
-	metadata: M;
-};
-
 // type A =
 
 // (
 // 	props: RemoveUnknownPropertiesRecursivelyProps
 // ) => (block: Block) => Block;
 
-export type FindPublicBlocksProps = {
-	publicTags: string[];
-	publicOnlyTags: string[];
-	privateTag: string;
-
-	// parentBlock: Block | null;
-	rootParentPage: PageWithMetadata;
-};
 export type WithIsPublic = WithMetadata<{
 	isPublic: boolean; //
 	isPublicOnly: boolean;
@@ -136,37 +112,23 @@ export type WithIsPublic = WithMetadata<{
 	hasPrivateTag: boolean;
 }>;
 // export type FindPublicBlocks = (props: FindPublicBlocksProps) => (block: Block) => Block;
-export type FindPublicBlocks = MutatingAction<
-	Block & WithMetadata, //
-	WithIsPublic,
-	FindPublicBlocksProps
->;
 
-export type LinkedRef = {
-	metaPage: import("./types").PageWithMetadata;
-	candidateLR: import("./types").LinkedReference;
+// TODO TS FIXME
+export type LinkedRef<M0 extends RO = RO, M1 extends RO = RO> = {
+	metaPage: PageWithMetadata<M0, M1>;
+	candidateLR: LinkedReference;
 };
 
-export type FindLinkedReferencesProps = {
-	allPagesWithMetadata: PageWithMetadata[];
-	rootParentPage: PageWithMetadata;
+export type FindLinkedReferencesProps<M0, M1> = {
+	allPagesWithMetadata: PageWithMetadata<M0, M1>[];
+	rootParentPage: PageWithMetadata<M0, M1>;
 };
-export type WithLinkedReferences = WithIsPublic &
+export type WithLinkedReferences<M0, M1> = WithIsPublic &
 	WithMetadata<{
-		linkedReferences: LinkedRef[];
+		linkedReferences: LinkedRef<M0, M1>[];
 	}>;
-export type FindLinkedReferences = MutatingAction<
-	Block & WithIsPublic,
-	WithLinkedReferences,
-	FindLinkedReferencesProps
->;
 
 export type HideBlockStringsIfNotPublicProps = {
 	doNotHideTodoAndDone: boolean;
 	hiddenStringValue: string;
 };
-export type HideBlockStringsIfNotPublic = MutatingAction<
-	Block & WithIsPublic & WithLinkedReferences,
-	{},
-	HideBlockStringsIfNotPublicProps
->;

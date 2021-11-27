@@ -14,6 +14,10 @@ export type MutatingActionToExecute  	< InitialSettings extends RO, M1 extends R
 
 
 
+/**
+ * TODO rename to `traverseBlockRecursivelyWithParent`, move parentBlock fn as first,
+ * and create separate fn `traverseBlockRecursively` with parent as `undefined`.
+ */
 export const traverseBlockRecursively = <
 	// ExistingBlock extends Block,
 	// ExtraPropertiesForBlock extends Record<any, any>,

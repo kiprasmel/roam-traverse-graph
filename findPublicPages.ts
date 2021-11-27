@@ -6,10 +6,11 @@ import { traverseBlockRecursively } from "./traverseBlockRecursively";
 import { removeUnknownProperties, markBlockPublic } from "./findPublicBlocks";
 import { findIfPagesHavePublicLinkedReferencesAndLinkThemAsMentions } from "./findLinkedReferencesOfABlock";
 import { hideBlockStringsIfNotPublic } from "./hideBlockStringsIfNotPublic";
-import { parseRoamTraverseGraphSettingsFromRoamPage } from "./util/parseSettingsFromRoamPage";
+import { parseRoamTraverseGraphSettingsFromRoamPage } from "./util/parseSettingsFromRoamPage"; // TODO FIXME
 import { shallowMergeIncludingArrayValues } from "./util/shallowMergeIncludingArrayValues";
 import { createLinkedReferences } from "./util";
-import defaults from "./defaults";
+import { blockStringHasCode } from "./util/blockContainsCode";
+import { defaultSettingsForPluginFindPublicPages } from "./defaults";
 
 import {
 	SettingsForPluginFindPublicPages, //
@@ -40,23 +41,24 @@ import { withMetadata } from "./util/withMetadata";
 
 // bbbb.metadata.hasCodeBlock;
 
-const mapChildren = <
+const pageWithNewChildren = <
 	M0 extends RO,
-	M1 extends RO, //
-	M2 extends RO
+	M1 extends RO //
 >(
 	// pred: (block: Block<M0> & WithMetadata<ToReadonlyObject<M0>>) => typeof block & WithMetadata<ToReadonlyObject<M1>>,
-	pred: (block: Block<M0 & M2, {}>, index?: number, array?: Block<M0 & M2, {}>[]) => Block<M0 & M1 & M2, M1>,
-	newChildren: Block<M0 & M1 & M2, M1>[] = []
-) => (page: Page<M0 & M2, {}>): Page<M0 & M1 & M2, M1> => (
+	pred: <M2>(block: Block<M0 & M2, {}>, index?: number, array?: Block<M0 & M2, {}>[]) => Block<M0 & M1 & M2, M1>
+) => <M2>(page: Page<M0 & M2, {}>): Page<M0 & M1 & M2, M1> => {
 	// ) => (page: Page<M0>): Page<M0> & Page<M1> => (
 	// eslint-disable-next-line no-param-reassign
-	(newChildren = (page.children || []).map(pred)), //
-	{
+	const newChildren: Block<M0 & M1 & M2, M1>[] = (page.children || []).map((block, index, array) =>
+		pred<M2>(block, index, array)
+	); // TODO TS ?
+
+	return {
 		...page,
 		children: newChildren,
-	}
-);
+	};
+};
 
 // TODO
 // type MFinal = ToReadonlyObject<{ hasCodeBlock: boolean }>;
@@ -70,14 +72,17 @@ export const findPublicPages = <M0 extends RO>(
 	 *
 	 */
 	somePages: Page<M0, {}>[] = [], //
-	optionsOrig: SettingsForPluginFindPublicPages = { publicTags: [], publicOnlyTags: [] },
+	optionsOrig: Partial<SettingsForPluginFindPublicPages> = { publicTags: [], publicOnlyTags: [] },
 	settingsFromSettingsPage: Partial<SettingsForPluginFindPublicPages> = parseRoamTraverseGraphSettingsFromRoamPage(
 		somePages
 	),
-	settings: SettingsForPluginFindPublicPages = shallowMergeIncludingArrayValues(defaults, [
-		optionsOrig, //
-		settingsFromSettingsPage,
-	]),
+	settings: SettingsForPluginFindPublicPages = shallowMergeIncludingArrayValues(
+		defaultSettingsForPluginFindPublicPages,
+		[
+			optionsOrig, //
+			settingsFromSettingsPage,
+		]
+	),
 	{
 		doNotHideTodoAndDone,
 		hiddenStringValue,
@@ -91,7 +96,7 @@ export const findPublicPages = <M0 extends RO>(
 	// ): PageWithMetadata<M0, MFinal>[] => ( // TODO FIXME // TODO FIXME
 ) => (
 	console.log({
-		defaults,
+		defaultOptions: defaultSettingsForPluginFindPublicPages,
 		optionsOrig,
 		settingsFromSettingsPage,
 		merged: settings,
@@ -117,17 +122,18 @@ export const findPublicPages = <M0 extends RO>(
 		// 	)
 		// )
 		.map(
-			mapChildren(
-				traverseBlockRecursively<{}, { hasCodeBlock: boolean }>(
+			pageWithNewChildren<M0, { hasCodeBlock: boolean }>(
+				traverseBlockRecursively(
 					// traverseBlockRecursively<{}>(
 					() => (block) =>
-						withMetadata(block, {
-							hasCodeBlock: !!block?.string?.includes?.("```"),
-						}),
+						withMetadata({
+							hasCodeBlock: blockStringHasCode(block),
+						})(block),
 					{}
 				)(undefined)
 			)
 		)
+		// .map(p => p.children[0].metadata.)
 		// .map(p => p.children[0].metadata.)
 		.map((page) => {
 			const isThePublicTagPageAndShouldBePublic =
@@ -135,8 +141,8 @@ export const findPublicPages = <M0 extends RO>(
 
 			return isThePublicTagPageAndShouldBePublic || //
 				publicTags.some((publicTag) => isMarkedAsFullyPublic(page, publicTag))
-				? toFullyPublicPage(page, hiddenStringValue as string) // TODO TS wtf
-				: toPotentiallyPartiallyPublicPage(page, hiddenStringValue as string); // TODO TS wtf
+				? toFullyPublicPage(page, hiddenStringValue)
+				: toPotentiallyPartiallyPublicPage(page, hiddenStringValue);
 		})
 		// .map(pm => pm.page.children?.[0].metadata.)
 
@@ -162,12 +168,24 @@ export const findPublicPages = <M0 extends RO>(
 			 * and use M2 also just like in traverseBlockRecursively to keep the metadata
 			 */
 
+			// mapChildren((currentPageWithMeta, _index, currentPagesWithMetadata) => (
 			(currentPageWithMeta, _index, currentPagesWithMetadata) => (
+				// ((currentPageWithMeta.page.children || [])
+				// TODO FIXME TS:
+				// @ts-expect-error
 				(currentPageWithMeta.page.children = (currentPageWithMeta.page.children || [])
 					// .map(p => p.children[0].metadata.)
-					.map(traverseBlockRecursively(removeUnknownProperties, {}))
+					.map(traverseBlockRecursively(removeUnknownProperties, {})(undefined))
 					// .map(p => p.children[0].metadata.)
 					.filter((block) => !!block)
+					// testing:
+					// .map(
+					// 	traverseBlockRecursively<{}>(
+					// 		() => withMetadata({ foo: "bar" }), //
+					// 		{}
+					// 	)(undefined) //
+					// )
+					// .map((block) => block.metadata.)
 					.map(
 						traverseBlockRecursively(
 							// <
@@ -186,7 +204,7 @@ export const findPublicPages = <M0 extends RO>(
 								publicOnlyTags,
 								privateTag: privateTag as string, // TODO TS wtf
 							}
-						)
+						)(undefined)
 					)
 					// .map((block) => block)
 					// .map((b) => withMetadata(b, { foo: "bar" }))
@@ -200,12 +218,12 @@ export const findPublicPages = <M0 extends RO>(
 								rootParentPage: currentPageWithMeta,
 								allPagesWithMetadata: currentPagesWithMetadata,
 							}
-						)
+						)(undefined)
 					)
 					// .map(b => b.metadata.)
 					.map(
 						traverseBlockRecursively<
-							{ linkedReferences: LinkedRef[] },
+							{ linkedReferences: LinkedRef[] }, // TODO TS
 							{},
 							{
 								rootParentPage: PageWithMetadata<{}, {}>; // TODO FIXME
@@ -240,26 +258,34 @@ export const findPublicPages = <M0 extends RO>(
 								rootParentPage: currentPageWithMeta,
 								allPagesWithMetadata: currentPagesWithMetadata,
 							}
-						)
+						)(undefined)
 					)
 					.map(
 						traverseBlockRecursively(hideBlockStringsIfNotPublic, {
 							doNotHideTodoAndDone,
 							hiddenStringValue,
-						})
+						})(undefined)
 					)
+					// .map((block) => block.metadata.)
+
+					/**
+					 * TODO FIXME - remove this & `keepMetadata` true by default; users can remove it themselves via `JSON.stringify`
+					 */
+
 					.map((b) =>
 						keepMetadata
 							? b
 							: traverseBlockRecursively(
-									() => (block) => (delete (block as any).metadata, block), // TODO TS
+									() => (block) => (
+										(delete (block as any).metadata, block as Omit<typeof block, "metadata">), block // TODO TS
+									),
 									{}
-							  )(b)
+							  )(undefined)
 					)),
 				currentPageWithMeta
 			)
 		)
-		// .map(pm => pm.page.children?.[0].metadata.)
+		// .map(pm => pm.page.children?.[0].metadata. )
 
 		/**
 		 * TODO think about how we want to implement the hiding of page title's

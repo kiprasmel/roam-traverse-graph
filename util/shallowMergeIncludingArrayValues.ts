@@ -35,13 +35,17 @@ export const shallowMergeIncludingArrayValues = <
 		return dest;
 	}
 
-	const src = srcs.shift();
+	/**
+	 * already veirfied previously via srcs.length,
+	 * thus null-assertion here:
+	 */
+	const src: Partial<Dest> = srcs.shift()!;
 
 	if (log) {
 		console.log({ dest, src });
 	}
 
-	Object.keys(src).forEach((k) => {
+	(Object.keys(src) as (keyof typeof src)[]).forEach((k) => {
 		if (Array.isArray(dest[k])) {
 			if (!Array.isArray(src[k])) {
 				throw new Error(
@@ -49,14 +53,23 @@ export const shallowMergeIncludingArrayValues = <
 				);
 			}
 
+			/**
+			 * dest[k] is an array, and so is src[k],
+			 * and we have all these type assertions,
+			 * but they shouldn't be necessary.
+			 */
+
 			let tmp;
 			dest[k] =
-				((tmp = [...dest[k], ...src[k]]), //
+				((tmp = [...((dest[k] as unknown) as any[]), ...((src[k] as unknown) as any[])]), //
 				(tmp = new Set(tmp)),
 				(tmp = [...tmp]),
-				tmp);
+				(tmp as unknown) as Dest[keyof Dest]);
 		} else {
-			dest[k] = src[k];
+			/**
+			 * null-assertion because we're iterating thru keys of src
+			 */
+			dest[k] = src[k]!;
 		}
 	});
 
