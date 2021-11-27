@@ -271,16 +271,16 @@ export const findPublicPages = <M0 extends RO>(
 					/**
 					 * TODO FIXME - remove this & `keepMetadata` true by default; users can remove it themselves via `JSON.stringify`
 					 */
-
-					.map((b) =>
+					.map((block) =>
 						keepMetadata
-							? b
+							? block
 							: traverseBlockRecursively(
-									() => (block) => (
-										(delete (block as any).metadata, block as Omit<typeof block, "metadata">), block // TODO TS
-									),
+									() => (b) => (
+										"metadata" in b && ((b.metadata = {} as any), delete (b as any).metadata),
+										(b as Omit<typeof b, "metadata">) as any
+									), // TODO TS
 									{}
-							  )(undefined)
+							  )(undefined)(block)
 					)),
 				currentPageWithMeta
 			)
