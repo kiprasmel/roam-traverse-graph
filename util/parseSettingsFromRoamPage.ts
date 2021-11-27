@@ -2,9 +2,9 @@
 
 /* eslint-disable indent */
 
-import { defaultRoamSettingsPageTitle } from "../defaults";
+import { defaultRoamSettingsPageTitle, SettingsForPluginFindPublicPages } from "../findPublicPages";
 import { Page } from "../roam.d";
-import { SettingsForPluginFindPublicPages, RO } from "../types";
+import { RO } from "../types";
 
 import { blockStringHasCode } from "./blockContainsCode";
 

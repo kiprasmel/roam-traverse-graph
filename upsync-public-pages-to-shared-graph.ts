@@ -4,7 +4,7 @@ import path from "path";
 
 import RoamPrivateApi from "./roam-research-private-api";
 
-import { defaultSettingsForPluginFindPublicPages } from "./defaults";
+import { defaultSettingsForPluginFindPublicPages } from "./findPublicPages";
 import secrets from "./secrets.json";
 
 import { findPublicPages } from "./findPublicPages";

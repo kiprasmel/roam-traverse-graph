@@ -10,11 +10,9 @@ import { parseRoamTraverseGraphSettingsFromRoamPage } from "./util/parseSettings
 import { shallowMergeIncludingArrayValues } from "./util/shallowMergeIncludingArrayValues";
 import { createLinkedReferences } from "./util";
 import { blockStringHasCode } from "./util/blockContainsCode";
-import { defaultSettingsForPluginFindPublicPages } from "./defaults";
 
 import {
-	SettingsForPluginFindPublicPages, //
-	Page,
+	Page, //
 	PageWithMetadata,
 	RO,
 	Block,
@@ -22,6 +20,85 @@ import {
 } from "./types";
 
 import { withMetadata } from "./util/withMetadata";
+
+export type SettingsForPluginFindPublicPages = {
+	/**
+	 * marks itself (the page) & all it's children blocks public, up until a child block is marked as private.
+	 */
+	publicGlobalTags: string[];
+
+	/**
+	 * marks itself (the current block) & all it's children blocks public, up until a child is marked as private.
+	 * DOES break through a previous (even explicit) private mark.
+	 */
+	publicTags: string[];
+
+	/**
+	 * marks only itself (the current block) public, unless itself is also marked as private.
+	 * DOES NOT break through a previous (explicit) private mark.
+	 */
+	publicOnlyTags: string[];
+
+	/**
+	 * (explicitly) marks itself (the current block) and it's children private,
+	 *
+	 * up until a child is marked as public
+	 * (as long as that public mark has power to break the previous private mark,
+	 * see previous info about the different public tags).
+	 *
+	 * in general, both pages and blocks are private -- implicitly.
+	 * this tag marks them as private explicitly,
+	 * and has consequences as described above.
+	 *
+	 * to mark / "marks" / "marking" a page/block here means that:
+	 * the plugin, when processing the graph,
+	 * first adds metadata to each page/block that it is public/private & how much,
+	 * and later uses this metadata:
+	 * 1. to decide -- to hide, or not to hide, the page's title / block's string (i.e. replace it with "(hidden)" or similar),
+	 * 2. based on 1., to decide -- to hide, or not to hide, the linked references,
+	 *    even if the linked references themselves would be living inside a private page,
+	 * 3. to decide the order of exporting - which pages will come first, and which ones last,
+	 * 4. to decide if a page will be exported & uploaded at all or not.
+	 * 5. etc etc.
+	 *
+	 * see the source code of the plugin itself to understand better.
+	 *
+	 */
+	privateTag: string; // TODO ARRAY
+	/**
+	 * TODO DEPRECATE - use the .uid instead! (will work for pages too to avoid merging them lol)
+	 * (or keep and concat w/ the .title / .string to make obvious it's hidden)
+	 */
+	hiddenStringValue: string;
+	/**
+	 * make the publicTag page itself public
+	 */
+	makeThePublicTagPagePublic: boolean;
+
+	/**
+	 * TODO and DONE are more like boolean toggles to indicate if something's done or not,
+	 * and show a visual indicator, thus we have a special case for them
+	 */
+	doNotHideTodoAndDone: boolean;
+
+	/**
+	 * currently blocks', will later apply to pages as well once we implement it properly
+	 */
+	keepMetadata: boolean;
+};
+
+export const defaultSettingsForPluginFindPublicPages: SettingsForPluginFindPublicPages = {
+	publicGlobalTags: [],
+	publicTags: ["#public"],
+	publicOnlyTags: [],
+	privateTag: "#private", // TODO array
+	hiddenStringValue: "hidden",
+	makeThePublicTagPagePublic: false,
+	doNotHideTodoAndDone: true,
+	keepMetadata: false,
+};
+
+export const defaultRoamSettingsPageTitle = "roam-traverse-graph-settings" as const;
 
 // const blockBase = {
 // 	"create-time": 69,

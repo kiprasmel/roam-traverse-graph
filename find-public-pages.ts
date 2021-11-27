@@ -3,8 +3,7 @@
 import path from "path";
 
 import { Page, PageWithMetadata, RO } from "./types";
-import { defaultSettingsForPluginFindPublicPages } from "./defaults";
-import { findPublicPages } from "./findPublicPages";
+import { findPublicPages, defaultSettingsForPluginFindPublicPages } from "./findPublicPages";
 import { readJsonSync, writeJsonSync } from "./util";
 
 const pathToGraphFile: string = process.argv?.[2] || "../notes/json/kipras-g1.json";
