@@ -55,14 +55,13 @@ export const markBlockPublic: MutatingActionToExecute<
 		 * because we might have a #private tag that would affect this)
 		 *
 		 */
-		const hasPublicTag: boolean =
-			!block.metadata.hasCodeBlock && publicTags.some((publicTag) => block.string.includes(publicTag));
+		const hasSubstringNotInsideCode = (tags: string[]): boolean =>
+			!block.metadata.hasCodeBlock && tags.some((tag) => block.string.includes(tag)); //
 
-		const hasPublicOnlyTag: boolean =
-			!block.metadata.hasCodeBlock &&
-			publicOnlyTags.some((publicOnlyTag) => block.string.includes(publicOnlyTag));
+		const hasPublicTag: boolean = hasSubstringNotInsideCode(publicTags);
+		const hasPublicOnlyTag: boolean = hasSubstringNotInsideCode(publicOnlyTags);
 
-		const hasPrivateTag: boolean = !block.metadata.hasCodeBlock && block.string.includes(privateTag);
+		const hasPrivateTag: boolean = hasSubstringNotInsideCode([privateTag]);
 
 		/**
 		 * ---
