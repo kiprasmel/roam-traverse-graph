@@ -15,7 +15,7 @@ if (!publicOnlyTags.length) {
 	publicOnlyTags = defaultSettingsForPluginFindPublicPages.publicOnlyTags;
 }
 
-const allPages: Page<RO, RO>[] = readJsonSync(path.resolve(__dirname, pathToGraphFile));
+const allPages: Page<RO, RO>[] = readJsonSync(path.resolve(__dirname, "..", pathToGraphFile));
 
 const publicPagesWrappedWithMetadata: PageWithMetadata<RO, RO>[] = findPublicPages(allPages, {
 	publicTags,
