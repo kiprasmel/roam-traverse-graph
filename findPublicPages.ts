@@ -18,7 +18,6 @@ import {
 	RO,
 	Block,
 	LinkedRef,
-	ToReadonlyObject,
 } from "./types";
 
 import { withMetadata } from "./util/withMetadata";
@@ -135,14 +134,15 @@ export const findPublicPages = <M0 extends RO>(
 
 			return isThePublicTagPageAndShouldBePublic || //
 				publicTags.some((publicTag) => isMarkedAsFullyPublic(page, publicTag))
-				? toFullyPublicPage(page, hiddenStringValue)
-				: toPotentiallyPartiallyPublicPage(page, hiddenStringValue);
+				? toFullyPublicPage(page, hiddenStringValue as string) // TODO TS wtf
+				: toPotentiallyPartiallyPublicPage(page, hiddenStringValue as string); // TODO TS wtf
 		})
 		// .map(pm => pm.page.children?.[0].metadata.)
 
 		.map(
 			(pageMeta) => (
-				(pageMeta.isDailyNotesPage = [
+				// TODO TS
+				((pageMeta as any).isDailyNotesPage = [
 					/^\d{2}-\d{2}-\d{4}$/, //
 					/^\d{4}-\d{2}-\d{2}$/, // prolly won't happen ever, but...
 				].some((
@@ -183,10 +183,11 @@ export const findPublicPages = <M0 extends RO>(
 								rootParentPage: currentPageWithMeta,
 								publicTags, // TODO CONFIRM
 								publicOnlyTags,
-								privateTag,
+								privateTag: privateTag as string, // TODO TS wtf
 							}
 						)
 					)
+					// .map((block) => block)
 					// .map((b) => withMetadata(b, { foo: "bar" }))
 					// .map(b => b.metadata.)
 					// .map(traverseBlockRecursively<{}>(() => (b) => b.metadata, {}))
@@ -249,7 +250,10 @@ export const findPublicPages = <M0 extends RO>(
 					.map((b) =>
 						keepMetadata
 							? b
-							: traverseBlockRecursively(() => (block) => (delete block.metadata, block), {})(b)
+							: traverseBlockRecursively(
+									() => (block) => (delete (block as any).metadata, block), // TODO TS
+									{}
+							  )(b)
 					)),
 				currentPageWithMeta
 			)
@@ -265,7 +269,7 @@ export const findPublicPages = <M0 extends RO>(
 		 *
 		 */
 		.map((pageMeta) =>
-			pageMeta.isFullyPublic || pageMeta.hasAtLeastOnePublicLinkedReference || pageMeta.isDailyNotesPage
+			pageMeta.isFullyPublic || pageMeta.hasAtLeastOnePublicLinkedReference || (pageMeta as any).isDailyNotesPage // TODO TS
 				? ((pageMeta.isTitleHidden = false), //
 				  pageMeta)
 				: ((pageMeta.isTitleHidden = true), //
@@ -275,7 +279,10 @@ export const findPublicPages = <M0 extends RO>(
 
 		.map((p) => (!p.page.children?.length && delete p.page.children, p))
 
-		.sort((A, B) =>
+		.sort((
+			A: any, // TODO TS
+			B: any // TODO TS
+		) =>
 			((
 				sort = {
 					AHEAD: -1, //

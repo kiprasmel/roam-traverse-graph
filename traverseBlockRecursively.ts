@@ -4,13 +4,15 @@
 
 import { Block, RO } from "./types";
 
-export type MutatingActionToExecute  	< InitialSettings extends RO, M1 extends RO = RO, M0 extends RO = RO> = (
+export type MutatingActionToExecute  	< InitialSettings extends RO, M1 extends RO = RO, M0 extends RO = RO> = <M2>(
 		settings: InitialSettings, //
 	) => (
 		//
 		currentBlock: Block<M0, {}>,
-		parentBlockInside: Block<M0 & M1, M1> | undefined // TODO FIXME
-	) => (Block<M0 & M1, M1> | [Block<M0 & M1, M1>, boolean]); // TODO ESLINT
+		parentBlockInside: Block<M0 & M1 & M2, M1> | undefined // TODO FIXME
+	) => (Block<M0 & M1 & M2, M1> | [Block<M0 & M1 & M2, M1>, boolean]); // TODO ESLINT
+
+
 
 export const traverseBlockRecursively = <
 	// ExistingBlock extends Block,
@@ -18,13 +20,15 @@ export const traverseBlockRecursively = <
 	M0 extends RO = RO, // TODO VERIFY
 	M1 extends RO = RO, // TODO VERIFY
 	InitialSettings extends RO = {},//
+	M2 extends RO = RO, // TODO TS VERIFY (maybe parentBlock needs to go 1 lower instead?)
 >(
 	// mutatingActionToExecute: MutatingActionToExecute<InitialSettings, M0, M1>,
 	mutatingActionToExecute: MutatingActionToExecute<InitialSettings, M1, M0>,
 	initialAndNonChangingPropsForMutatingAction: InitialSettings,
-		parentBlock: Block<M0 & M1, M1> | undefined = undefined
+		parentBlock: Block<M0 & M1 & M2, M1> | undefined = undefined
 ) =>
-<M2 extends RO>(
+// <M2 extends RO>(
+(
 	block: Block<M0 & M2, {}>
 	// block: Block<M0> & WithMetadata<ToReadonlyObject<M0>>
 	// ): Block<M0> & WithMetadata<ToReadonlyObject<M0>> & WithMetadata<ToReadonlyObject<M1>> => {
@@ -57,9 +61,10 @@ export const traverseBlockRecursively = <
 	type B =Block<M0 & M1 & M2, M1>
 
 	// const _newBlock: Omit<typeof parentBlock, undefined> = // TODO undefined
-	const _newBlock: B | [B, boolean] = mutatingActionToExecute(
+	const _newBlock: B | [B, boolean] = mutatingActionToExecute<M2>(
 		initialAndNonChangingPropsForMutatingAction, //
-	)(block, 		parentBlock);
+	// )(block, 		parentBlock as undefined | B); // TODO TS VERIFY
+	)(block, 		  parentBlock); // TODO TS VERIFY
 
 	let newBlock: B
 
