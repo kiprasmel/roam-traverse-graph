@@ -5,6 +5,7 @@ export * from "./metadata.d"; // TODO TS
 export * from "./roam.d"; // TODO REMOVE
 
 export type SettingsForPluginFindPublicPages = {
+	publicGlobalTags: string[];
 	publicTags: string[];
 	publicOnlyTags: string[];
 	privateTag: string; // TODO ARRAY

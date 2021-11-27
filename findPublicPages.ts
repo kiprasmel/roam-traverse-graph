@@ -89,6 +89,7 @@ export const findPublicPages = <M0 extends RO>(
 		keepMetadata,
 		makeThePublicTagPagePublic,
 		privateTag,
+		publicGlobalTags,
 		publicOnlyTags,
 		publicTags,
 	} = settings
@@ -140,7 +141,7 @@ export const findPublicPages = <M0 extends RO>(
 				makeThePublicTagPagePublic && publicTags.some((publicTag) => titleIsPublicTag(page, publicTag));
 
 			return isThePublicTagPageAndShouldBePublic || //
-				publicTags.some((publicTag) => isMarkedAsFullyPublic(page, publicTag))
+				publicGlobalTags.some((tag) => isMarkedAsFullyPublic(page, tag))
 				? toFullyPublicPage(page, hiddenStringValue)
 				: toPotentiallyPartiallyPublicPage(page, hiddenStringValue);
 		})

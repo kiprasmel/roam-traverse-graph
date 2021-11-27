@@ -1,6 +1,7 @@
 import { SettingsForPluginFindPublicPages } from "./types";
 
 export const defaultSettingsForPluginFindPublicPages: SettingsForPluginFindPublicPages = {
+	publicGlobalTags: [],
 	publicTags: ["#public"],
 	publicOnlyTags: [],
 	privateTag: "#private", // TODO array
