@@ -42,12 +42,13 @@ import { withMetadata } from "./util/withMetadata";
 
 const mapChildren = <
 	M0 extends RO,
-	M1 extends RO //
+	M1 extends RO, //
+	M2 extends RO
 >(
 	// pred: (block: Block<M0> & WithMetadata<ToReadonlyObject<M0>>) => typeof block & WithMetadata<ToReadonlyObject<M1>>,
-	pred: (block: Block<M0, {}>, index?: number, array?: Block<M0, {}>[]) => Block<M0, M1>,
-	newChildren: ReturnType<typeof pred>[] = []
-) => (page: Page<M0, {}>): Page<M0, M1> => (
+	pred: (block: Block<M0 & M2, {}>, index?: number, array?: Block<M0 & M2, {}>[]) => Block<M0 & M1 & M2, M1>,
+	newChildren: Block<M0 & M1 & M2, M1>[] = []
+) => (page: Page<M0 & M2, {}>): Page<M0 & M1 & M2, M1> => (
 	// ) => (page: Page<M0>): Page<M0> & Page<M1> => (
 	// eslint-disable-next-line no-param-reassign
 	(newChildren = (page.children || []).map(pred)), //
@@ -118,13 +119,13 @@ export const findPublicPages = <M0 extends RO>(
 		.map(
 			mapChildren(
 				traverseBlockRecursively<{}, { hasCodeBlock: boolean }>(
+					// traverseBlockRecursively<{}>(
 					() => (block) =>
-						// eslint-disable-next-line no-param-reassign
 						withMetadata(block, {
 							hasCodeBlock: !!block?.string?.includes?.("```"),
 						}),
 					{}
-				)
+				)(undefined)
 			)
 		)
 		// .map(p => p.children[0].metadata.)

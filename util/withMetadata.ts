@@ -7,8 +7,9 @@ import { Block, RO, ToReadonlyObject } from "../types";
  */
 export function withMetadata<
 	M1 extends RO = RO, // TODO FIXME TEST
-	M0 extends RO = RO //
->(block: Block<M0, {}>, meta: M1): Block<M0 & M1, M1> {
+	M0 extends RO = RO, //
+	M2 extends RO = RO
+>(block: Block<M0 & M2, {}>, meta: M1): Block<M0 & M1 & M2, M1> {
 	/**
 	 * runtime check.
 	 *
@@ -22,16 +23,16 @@ export function withMetadata<
 		);
 	}
 
-	if (!block.metadata) block.metadata = {} as M0;
+	if (!block.metadata) block.metadata = {} as M0 & M2;
 
-	const newMetadata: ToReadonlyObject<M0 & M1> = {
+	const newMetadata: ToReadonlyObject<M0 & M1 & M2> = {
 		// const newMetadata: ToReadonlyObject<M0> & ToReadonlyObject<M1> = {
 		...block.metadata,
 		...meta,
 	} as const;
 
-	const newBlock: Block<M0 & M1, M1> = {
-		...(block as Block<M0, any>),
+	const newBlock: Block<M0 & M1 & M2, M1> = {
+		...(block as Block<M0 & M2, any>),
 		// ...block,
 		metadata: newMetadata,
 		// metadata: {

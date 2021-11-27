@@ -4,11 +4,11 @@
 
 import { Block, RO } from "./types";
 
-export type MutatingActionToExecute  	< InitialSettings extends RO, M1 extends RO = RO, M0 extends RO = RO> = <M2>(
+export type MutatingActionToExecute  	< InitialSettings extends RO, M1 extends RO = RO, M0 extends RO = RO> = (
 		settings: InitialSettings, //
-	) => (
+	) => <M2>(
 		//
-		currentBlock: Block<M0, {}>,
+		currentBlock: Block<M0 & M2, {}>,
 		parentBlockInside: Block<M0 & M1 & M2, M1> | undefined // TODO FIXME
 	) => (Block<M0 & M1 & M2, M1> | [Block<M0 & M1 & M2, M1>, boolean]); // TODO ESLINT
 
@@ -20,11 +20,12 @@ export const traverseBlockRecursively = <
 	M0 extends RO = RO, // TODO VERIFY
 	M1 extends RO = RO, // TODO VERIFY
 	InitialSettings extends RO = {},//
-	M2 extends RO = RO, // TODO TS VERIFY (maybe parentBlock needs to go 1 lower instead?)
 >(
 	// mutatingActionToExecute: MutatingActionToExecute<InitialSettings, M0, M1>,
 	mutatingActionToExecute: MutatingActionToExecute<InitialSettings, M1, M0>,
 	initialAndNonChangingPropsForMutatingAction: InitialSettings,
+) =>
+<M2 extends RO>(
 		parentBlock: Block<M0 & M1 & M2, M1> | undefined = undefined
 ) =>
 // <M2 extends RO>(
@@ -61,10 +62,10 @@ export const traverseBlockRecursively = <
 	type B =Block<M0 & M1 & M2, M1>
 
 	// const _newBlock: Omit<typeof parentBlock, undefined> = // TODO undefined
-	const _newBlock: B | [B, boolean] = mutatingActionToExecute<M2>(
+	const _newBlock: B | [B, boolean] = mutatingActionToExecute(
 		initialAndNonChangingPropsForMutatingAction, //
 	// )(block, 		parentBlock as undefined | B); // TODO TS VERIFY
-	)(block, 		  parentBlock); // TODO TS VERIFY
+	)<M2>(block, 		  parentBlock); // TODO TS VERIFY
 
 	let newBlock: B
 
@@ -96,7 +97,7 @@ export const traverseBlockRecursively = <
 	 * TODO - explain why B is unbelievably better than A and how it works.
 	 *
 	 */
-	let newChildren;
+	let newChildren: undefined | Block<M0 & M1 & M2, M1>[]
 
 	if (block.children && block.children.length) {
 		newChildren = block.children.map(
@@ -104,7 +105,8 @@ export const traverseBlockRecursively = <
 				mutatingActionToExecute, //
 				initialAndNonChangingPropsForMutatingAction,
 				// block,
-				newBlock, // TODO VERIFY  // TODO TEST PERFORMANCE // TODO PARENT
+			)<M2>(
+				newBlock
 			)
 		);
 	}
