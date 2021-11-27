@@ -497,7 +497,3 @@ function toPotentiallyPartiallyPublicPage<M0 extends RO, M1 extends RO>(
 		isTitleHidden: false, // CHANGEABLE LATER // TODO VERIFY
 	};
 }
-
-module.exports = {
-	findPublicPages,
-};
