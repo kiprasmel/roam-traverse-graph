@@ -14,6 +14,25 @@ import { Block, PageWithMetadata } from "../types";
 // TODO TS
 const pagesWithMeta: PageWithMetadata<{}, {}>[] = readJsonSync(path.join(__dirname, "..", "..", "graphraw.json")); // TODO FIXME
 
+export type PluginInfo = {
+	displayName: string;
+	sourceUrl: string;
+	originalAuthor: {
+		displayName: string;
+		githubUrl: string;
+	};
+};
+
+export const pluginInfo: PluginInfo = {
+	// displayName: "plugin-export-public-pages",
+	displayName: path.basename(__dirname),
+	sourceUrl: "http://github.com/kiprasmel/roam-traverse-graph/tree/master/plugin-export-public-pages",
+	originalAuthor: {
+		displayName: "kiprasmel",
+		githubUrl: "http://github.com/kiprasmel",
+	},
+};
+
 export const pagesWithMetaAndHtml: PageWithMetadata<{}, {}>[] = pagesWithMeta.map((meta, metaIdx) => {
 	console.log(metaIdx, "orig title", meta.originalTitle);
 	const { page } = meta;
@@ -75,11 +94,23 @@ ${joinChildren(
 		</main>
 
 		<aside>
+
 		</aside>
 
 		<footer>
 			<center>
-				exported from <a target="_blank" rel="noopener" href="http://roamresearch.com">roam</a> by <a target="_blank" rel="noopener" href="http://github.com/kiprasmel/roam-traverse-graph">roam-traverse-graph</a>'s plugin <a target="_blank" rel="noopener" href="https://github.com/kiprasmel/roam-traverse-graph/tree/master/plugin-export-public-pages">plugin-export-public-pages</a>.
+				exported from
+				<a target="_blank" rel="noopener" href="http://roamresearch.com">
+					roam</a>
+				via
+				<a target="_blank" rel="noopener" href="http://github.com/kiprasmel/roam-traverse-graph">
+					roam-traverse-graph</a>'s
+				plugin
+				<a target="_blank" rel="noopener" href="${pluginInfo.sourceUrl}">
+					${pluginInfo.displayName}</a>
+				by
+				<a target="_blank" rel="noopener" href="${pluginInfo.originalAuthor.githubUrl}">
+					${pluginInfo.originalAuthor.displayName}</a>.
 			</center>
 		</footer>
 	</body>
