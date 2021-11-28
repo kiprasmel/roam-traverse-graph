@@ -64,9 +64,9 @@ export const hideBlockStringsIfNotPublic: MutatingActionToExecute<
 		})
 		.map((lr) =>
 			lr.candidateLR.create(
-				lr.metaPage.isFullyPublic //
-					? lr.metaPage.originalTitle
-					: lr.metaPage.hiddenTitle
+				!lr.metaPage.isFullyPublic //
+					? lr.metaPage.hiddenTitle
+					: lr.metaPage.originalTitle
 			)
 		)
 		.join(" ");
