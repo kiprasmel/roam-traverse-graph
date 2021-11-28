@@ -225,8 +225,13 @@ ${drawLinkedMentions(mentionsGroupedByPage)}
 
 const prefix = path.join(__dirname, "notes");
 
-fs.rmdirSync(prefix, { recursive: true });
 fs.mkdirpSync(prefix);
+
+const oldFilePaths = fs.readdirSync(prefix).map((file) => path.join(prefix, file));
+oldFilePaths //
+	.filter((file) => /.html$/.test(file))
+	.map((file) => (console.log(file), file))
+	.map((file) => fs.removeSync(file));
 
 pagesWithMetaAndHtml.forEach((meta) => {
 	let fixedTitle: string = meta.page.title
