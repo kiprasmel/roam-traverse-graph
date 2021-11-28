@@ -57,6 +57,30 @@ export const pagesWithMetaAndHtml: PageWithMetadata<{}, {}>[] = pagesWithMeta.ma
 <html>
 	<head>
 		<title>${page.title} | notes</title>
+
+		<style>
+			/*
+				first child
+			*/
+			ul li:nth-child(1) {
+				margin-top: 8px;
+
+				/*
+				color: green;
+				*/
+			}
+
+			/*
+				everyone except the first child
+			*/
+			ul li + li {
+				margin-top: 8px;
+
+				/*
+				color: blue;
+				*/
+			}
+		</style>
 	</head>
 
 	<body>
