@@ -387,7 +387,9 @@ export const findPublicPages = <M0 extends RO>(
 		 *
 		 */
 		.map((pageMeta) =>
-			pageMeta.isFullyPublic || (pageMeta as any).isDailyNotesPage // TODO TS
+			pageMeta.isFullyPublic ||
+			(pageMeta as any).isDailyNotesPage || // TODO TS
+			(doNotHideTodoAndDone && ["TODO", "DONE"].includes(pageMeta.originalTitle))
 				? ((pageMeta.isTitleHidden = false), //
 				  pageMeta)
 				: ((pageMeta.isTitleHidden = true), //
@@ -415,6 +417,10 @@ export const findPublicPages = <M0 extends RO>(
 					: A.isFullyPublic
 					? sort["AHEAD"]
 					: B.isFullyPublic
+					? sort["BEHIND"]
+					: doNotHideTodoAndDone && ["TODO", "DONE"].includes(A.originalTitle)
+					? sort["AHEAD"]
+					: doNotHideTodoAndDone && ["TODO", "DONE"].includes(B.originalTitle)
 					? sort["BEHIND"]
 					: A.isDailyNotesPage
 					? sort["AHEAD"]
