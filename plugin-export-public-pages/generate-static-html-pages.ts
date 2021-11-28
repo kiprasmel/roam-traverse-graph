@@ -93,6 +93,7 @@ export const pagesWithMetaAndHtml: PageWithMetadata<{}, {}>[] = pagesWithMeta.ma
 <html>
 	<head>
 		<title>${page.title} | notes</title>
+		<link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
 
 		<style>
 			/*
@@ -259,6 +260,7 @@ const indexHtml: string = `\
 <!DOCTYPE html>
 <html>
 	<title>notes</title>
+	<link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
 </html>
 
 <body>
