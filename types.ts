@@ -1,5 +1,5 @@
 import { RO, WithMetadata } from "./metadata.d";
-import { Page, LinkedReferenceKind } from "./roam.d";
+import { Page, LinkedReferenceKind, Block } from "./roam.d";
 
 export * from "./metadata.d"; // TODO TS
 export * from "./roam.d"; // TODO REMOVE
@@ -20,6 +20,19 @@ export type PageWithMetadata<M0 extends RO, M1 extends RO> = {
 	isTitleHidden?: boolean;
 	originalTitle: string;
 	hiddenTitle: string;
+
+	isDailyNotesPage?: boolean;
+
+	linkedMentions?: LinkedMention<M0, M1>[];
+};
+
+export type LinkedMention<M0 extends RO, M1 extends RO> = {
+	blockUid: Block<M0, M1>["uid"];
+	isBlockPublic: boolean;
+	blockString: Block<M0, M1>["string"];
+	uidOfPageContainingBlock: Page<M0, M1>["uid"];
+	originalTitleOfPageContainingBlock: PageWithMetadata<M0, M1>["originalTitle"];
+	pageContainingBlock: PageWithMetadata<M0, M1>; // expect to be removed when JSON.stringify'd since circular
 };
 
 export type LinkedReference = {

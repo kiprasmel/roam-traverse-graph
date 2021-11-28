@@ -1,5 +1,5 @@
 import { MutatingActionToExecute } from "../traverseBlockRecursively";
-import { LinkedRef, PageWithMetadata } from "../types";
+import { LinkedMention, LinkedRef, PageWithMetadata } from "../types";
 import { withMetadata } from "../util/withMetadata";
 
 import { createLinkedReferences } from "../util";
@@ -37,9 +37,10 @@ export const findIfPagesHavePublicLinkedReferencesAndLinkThemAsMentions: Mutatin
 
 	linkedReferences.forEach(
 		(lr) => (
-			((lr.metaPage as any).linkedMentions = (lr.metaPage as any).linkedMentions || []), // TODO TS
-			// TODO TS
-			(lr.metaPage as any).linkedMentions.push({
+			(lr.metaPage.linkedMentions = lr.metaPage.linkedMentions || []),
+			// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+			lr.metaPage.linkedMentions.push(<LinkedMention<{}, {}>>{
+				// TODO TS
 				blockUid: block.uid,
 				isBlockPublic,
 				blockString: block.string,
