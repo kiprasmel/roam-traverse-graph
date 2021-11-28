@@ -387,7 +387,7 @@ export const findPublicPages = <M0 extends RO>(
 		 *
 		 */
 		.map((pageMeta) =>
-			pageMeta.isFullyPublic || pageMeta.hasAtLeastOnePublicLinkedReference || (pageMeta as any).isDailyNotesPage // TODO TS
+			pageMeta.isFullyPublic || (pageMeta as any).isDailyNotesPage // TODO TS
 				? ((pageMeta.isTitleHidden = false), //
 				  pageMeta)
 				: ((pageMeta.isTitleHidden = true), //

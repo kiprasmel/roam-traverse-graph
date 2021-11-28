@@ -51,7 +51,7 @@ export const hideBlockStringsIfNotPublic: MutatingActionToExecute<
 		})
 		.map((lr) =>
 			lr.candidateLR.create(
-				lr.metaPage.isFullyPublic || lr.metaPage.hasAtLeastOnePublicLinkedReference // TODO YES/no? thinking about explicit #private tag...
+				lr.metaPage.isFullyPublic //
 					? lr.metaPage.originalTitle
 					: lr.metaPage.hiddenTitle
 			)
