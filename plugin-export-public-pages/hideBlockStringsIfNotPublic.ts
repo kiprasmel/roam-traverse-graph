@@ -18,6 +18,19 @@ export const hideBlockStringsIfNotPublic: MutatingActionToExecute<
 	doNotHideTodoAndDone,
 }) => (block) => {
 	if (block.metadata.isPublic || block.metadata.isPublicOnly) {
+		block.metadata.linkedReferences.forEach((lr) => {
+			/**
+			 * poor man's replaceAll
+			 */
+			block.string = block.string
+				.split(lr.candidateLR.fullStr)
+				/**
+				 * TODO PRIVACY - ensure that the page.title
+				 * already had a chance to be hidden.
+				 */
+				.join(lr.candidateLR.create(lr.metaPage.page.title));
+		});
+
 		return block;
 	}
 
