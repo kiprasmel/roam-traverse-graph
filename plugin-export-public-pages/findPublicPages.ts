@@ -251,6 +251,25 @@ export const findPublicPages = <M0 extends RO>(
 		)
 		// .map(pm => pm.page.children?.[0].metadata.)
 
+		/**
+		 * TODO think about how we want to implement the hiding of page title's
+		 * if we allow an option to NOT hide them IF at least 1 child anywhere in hierarchy
+		 * has the public tag
+		 *
+		 * will need 2 passes through the hieararchy prolly
+		 *
+		 */
+		.map((pageMeta) =>
+			pageMeta.isFullyPublic ||
+			(pageMeta as any).isDailyNotesPage || // TODO TS
+			(doNotHideTodoAndDone && ["TODO", "DONE"].includes(pageMeta.originalTitle))
+				? ((pageMeta.isTitleHidden = false), //
+				  pageMeta)
+				: ((pageMeta.isTitleHidden = true), //
+				  (pageMeta.page.title = `(${hiddenStringValue}) ${pageMeta.page.uid}`),
+				  pageMeta)
+		)
+
 		.map(
 			// mapChildren((currentPageWithMeta, _index, currentPagesWithMetadata) => (
 			/**
@@ -377,25 +396,6 @@ export const findPublicPages = <M0 extends RO>(
 			)
 		)
 		// .map(pm => pm.page.children?.[0].metadata. )
-
-		/**
-		 * TODO think about how we want to implement the hiding of page title's
-		 * if we allow an option to NOT hide them IF at least 1 child anywhere in hierarchy
-		 * has the public tag
-		 *
-		 * will need 2 passes through the hieararchy prolly
-		 *
-		 */
-		.map((pageMeta) =>
-			pageMeta.isFullyPublic ||
-			(pageMeta as any).isDailyNotesPage || // TODO TS
-			(doNotHideTodoAndDone && ["TODO", "DONE"].includes(pageMeta.originalTitle))
-				? ((pageMeta.isTitleHidden = false), //
-				  pageMeta)
-				: ((pageMeta.isTitleHidden = true), //
-				  (pageMeta.page.title = `(${hiddenStringValue}) ${pageMeta.page.uid}`),
-				  pageMeta)
-		)
 
 		.map((p) => (!p.page.children?.length && delete p.page.children, p))
 
