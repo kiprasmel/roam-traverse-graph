@@ -85,7 +85,10 @@ export const pagesWithMetaAndHtml: PageWithMetadata<{}, {}>[] = pagesWithMeta.ma
 
 	<body>
 		<nav>
-			<a href="/">/</a>
+			<!--
+				TODO "in graphName"
+			-->
+			<a href="/">all notes</a>
 		</nav>
 
 		<h1>
@@ -94,15 +97,16 @@ export const pagesWithMetaAndHtml: PageWithMetadata<{}, {}>[] = pagesWithMeta.ma
 
 		<small>
 			<div>
-				last edit on:
+				last edit (excluding linked mentions) on: <!-- TODO linked mentions too -->
 				<br/>
-				${lastSignificantUpdate.toISOString()}.
+				${lastSignificantUpdate.toISOString()}
+				
 			</div>
 
-			<div>
+			<div style="margin-top: 0.5rem; ">
 				checked, re-generated & exported on:
 				<br/>
-				${startTime.toISOString()}.
+				${startTime.toISOString()}
 			</div>
 
 			<!--
@@ -154,7 +158,7 @@ pagesWithMetaAndHtml.forEach((meta) => {
 	let fixedTitle: string = meta.page.title
 		.replace(/\(/g, "(") //
 		.replace(/\)/g, ")")
-		.replace(/\//g, "/_");
+		.replace(/\//g, "_");
 
 	fixedTitle += ".html";
 
