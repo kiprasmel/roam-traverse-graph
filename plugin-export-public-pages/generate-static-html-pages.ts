@@ -141,7 +141,9 @@ ${joinChildren(
 
 		<aside>
 			<h2>
-				Linked Mentions (${(meta.linkedMentions || []).length} in ${mentionsGroupedByPage.length} pages)
+				Linked Mentions (${(meta.linkedMentions || []).length} in ${mentionsGroupedByPage.length} ${
+		[1, -1].includes(mentionsGroupedByPage.length) ? "page" : "pages"
+	})
 			</h2>
 
 			<ol>
@@ -280,7 +282,7 @@ function drawLinkedMentions<M0 extends RO, M1 extends RO>(mentionsGroupedByPage:
 		<!--
 		<span style="background-color: hsl(0, 0%, 95%); padding: 4px 16px; ">
 		-->
-			${mentionsOfAPage[0].pageContainingBlock.page.title}
+			${mentionsOfAPage[0].pageContainingBlock.page.title} (${mentionsOfAPage.length})
 		<!--
 		</span>
 		-->
@@ -293,9 +295,22 @@ function drawLinkedMentions<M0 extends RO, M1 extends RO>(mentionsGroupedByPage:
 			<!--
 				TODO <h4> for semantics
 			-->
+
+			<!--
+			TODO add this back, once clickable.
+
 			<span style="background-color: hsl(0, 0%, 95%); padding: 3px 6px; ">
+			-->
+			${
+				!mention.blockRef.string
+					? ""
+					: `<div style="max-width: 65ch; ">
 				${mention.blockRef.string}
+			</div>`
+			}
+			<!--
 			</span>
+			-->
 ${
 	/**
 	 * we're re-doing this multiple times.

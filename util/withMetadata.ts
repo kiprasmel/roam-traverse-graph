@@ -1,6 +1,6 @@
 /* eslint-disable indent */
 
-import { Block, RO, ToReadonlyObject } from "../types";
+import { Block, RO } from "../types";
 
 /**
  * M0 - existing metadata;
@@ -13,7 +13,7 @@ export const withMetadata = <
 >(
 	meta: M1
 ) => <M2>(block: Block<M0 & M2, {}>): Block<M0 & M1 & M2, M1> => {
-	if (!block.metadata) block.metadata = {} as M0 & M2;
+	if (!("metadata" in block)) (block as Block<M0 & M2, {}>).metadata = {} as M0 & M2;
 
 	/**
 	 * runtime check.
@@ -28,21 +28,33 @@ export const withMetadata = <
 		);
 	}
 
-	const newMetadata: ToReadonlyObject<M0 & M1 & M2> = {
-		// const newMetadata: ToReadonlyObject<M0> & ToReadonlyObject<M1> = {
-		...block.metadata,
-		...meta,
-	} as const;
+	/**
+	 * instead of correct typescript types & spreading,
+	 * we use this to avoid modifying the reference of the block object
+	 * & it's metadata object.
+	 */
+	Object.entries(meta).forEach(([key, value]) => {
+		/**
+		 * TODO we could even verify here that the key is not already in block.metadata.
+		 */
+		(block.metadata as any)[key] = value;
+	});
 
-	const newBlock: Block<M0 & M1 & M2, M1> = {
-		...(block as Block<M0 & M2, any>), // TODO TS VERIFY
-		// ...block,
-		metadata: newMetadata,
-		// metadata: {
-		// 	...block.metadata,
-		// 	...meta,
-		// },
-	};
+	// const newMetadata: ToReadonlyObject<M0 & M1 & M2> = {
+	// 	// const newMetadata: ToReadonlyObject<M0> & ToReadonlyObject<M1> = {
+	// 	...block.metadata,
+	// 	...meta,
+	// } as const;
 
-	return newBlock;
+	// const newBlock: Block<M0 & M1 & M2, M1> = {
+	// 	...(block as Block<M0 & M2, any>), // TODO TS VERIFY
+	// 	// ...block,
+	// 	metadata: newMetadata,
+	// 	// metadata: {
+	// 	// 	...block.metadata,
+	// 	// 	...meta,
+	// 	// },
+	// };
+
+	return block as Block<M0 & M1 & M2, M0>;
 };
