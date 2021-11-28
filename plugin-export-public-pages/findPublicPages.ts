@@ -412,6 +412,14 @@ export const findPublicPages = <M0 extends RO>(
 					? sort["AHEAD"]
 					: publicTags.some((publicTag) => titleIsPublicTag(B.page, publicTag))
 					? sort["BEHIND"]
+					: A.isFullyPublic
+					? sort["AHEAD"]
+					: B.isFullyPublic
+					? sort["BEHIND"]
+					: A.isDailyNotesPage
+					? sort["AHEAD"]
+					: B.isDailyNotesPage
+					? sort["BEHIND"]
 					: A.linkedMentions && B.linkedMentions
 					? B.linkedMentions.length - A.linkedMentions.length
 					: A.linkedMentions
