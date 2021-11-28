@@ -14,8 +14,14 @@ import { Block, PageWithMetadata } from "../types";
 // TODO TS
 const pagesWithMeta: PageWithMetadata<{}, {}>[] = readJsonSync(path.join(__dirname, "..", "..", "graphraw.json")); // TODO FIXME
 
-export const pagesWithMetaAndHtml: PageWithMetadata<{}, {}>[] = pagesWithMeta.map((meta) => {
+export const pagesWithMetaAndHtml: PageWithMetadata<{}, {}>[] = pagesWithMeta.map((meta, metaIdx) => {
+	console.log(metaIdx, "orig title", meta.originalTitle);
 	const { page } = meta;
+
+	// if (meta.originalTitle === "how-fuse-works") {
+	// 	(meta as any).html = "";
+	// 	return meta;
+	// }
 
 	const startTime: Date = new Date();
 	const lastSignificantUpdate: Date = new Date(page["edit-time"]);
@@ -35,40 +41,40 @@ export const pagesWithMetaAndHtml: PageWithMetadata<{}, {}>[] = pagesWithMeta.ma
 	</head>
 
 	<body>
+		<nav>
+			<a href="/">/</a>
+		</nav>
+
+		<h1>
+			${page.title}
+		</h1>
+
+		<small>
+			<div>
+				last edit on:
+				<br/>
+				${lastSignificantUpdate.toISOString()}.
+			</div>
+
+			<div>
+				checked, re-generated & exported on:
+				<br/>
+				${startTime.toISOString()}.
+			</div>
+
+			<!--
+				TODO dynamic updates "x sec/min/h/day etc. ago" w/ a simple js function + setInterval
+			-->
+		</small>
+
 		<main>
-			<nav>
-				<a href="/">/</a>
-			</nav>
-
-			<h1>
-				${page.title}
-			</h1>
-			<small>
-				<div>
-					last edit on:
-					<br/>
-					${lastSignificantUpdate.toISOString()}.
-				</div>
-
-				<div>
-					checked, re-generated & exported on:
-					<br/>
-					${startTime.toISOString()}.
-				</div>
-
-				<!--
-					TODO dynamic updates "x sec/min/h/day etc. ago" w/ a simple js function + setInterval
-				-->
-			</small>
-
-			${joinChildren(
-				(page.children || []).map((block) => blockRecursively(block, 0)),
-				3
-			)}
+${joinChildren(
+	(page.children || []).map((block) => blockRecursively(block, 3 + 1)),
+	3
+)}
 		</main>
 
 		<aside>
-			//
 		</aside>
 
 		<footer>
@@ -102,27 +108,53 @@ pagesWithMetaAndHtml.forEach((meta) => {
 	fs.writeFileSync(fullPath, (meta as any).html);
 });
 
+//
+
 function blockRecursively<M0, M1>(block: Block<M0, M1>, existingTabCount: number): string {
-	const childrenHtml: string[] = (block.children || []).map((child) =>
-		blockRecursively(child, existingTabCount + 1 + 1)
-	);
+	/**
+	 * returning if string is empty would remove empty blocks,
+	 * but we don't want that.
+	 */
+	// if (!block.string) return ``;
 
-	return `\
-<li>
-	<span>
-		${block.string}
-	</span>
+	const selfHtml: string = !block.string
+		? ""
+		: `
+	<div style="max-width: 65ch;">
+			${block.string}
+	</div>
+	`;
 
-	${joinChildren(childrenHtml, existingTabCount + 1)}
-</li>`;
+	const childrenHtml: string[] = (block.children || []).map((child) => blockRecursively(child, existingTabCount + 1));
+
+	const joinedChildrenHtml: string = !block.children?.length ? "" : joinChildren(childrenHtml, 1);
+
+	return `<li>
+${selfHtml}
+
+${joinedChildrenHtml}
+</li>` //
+		.split("\n")
+		.map((line) => line.replace(/^[\s\t]*$/g, ""))
+		.map((line) => line.replace(/^[\s\t]*\n$/g, "\n"))
+		.join("\n")
+		.replace(/\n\n\n/g, "\n")
+		.replace(/\n\n/g, "\n")
+		.replace(/<li>\n\t*<\/li>/, "<li></li>");
 }
 
-function joinChildren(childrenHtml: string[], existingTabCount: number): string {
-	return `\
-<ul>
-	${childrenHtml.join("\n")}
-</ul>`
-		.split("\n")
-		.map((line) => "\n".repeat(existingTabCount) + line)
-		.join("\n");
+function joinChildren(childrenHtmls: string[], existingTabCount: number): string {
+	return `${"\t".repeat(existingTabCount)}<ul>
+${childrenHtmls
+	.filter((html) => !!html)
+	.map((html) =>
+		html
+			.split("\n")
+			.map((line) => "\t".repeat(existingTabCount + 1) + line)
+			.join("\n")
+	)
+	.join("\n")}
+${"\t".repeat(existingTabCount)}</ul>`;
+
+	// ${childrenHtmls.map((html) => "\t".repeat(existingTabCount + 1) + html).join("\n")}
 }
