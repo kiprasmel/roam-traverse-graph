@@ -29,10 +29,13 @@ export type PageWithMetadata<M0 extends RO, M1 extends RO> = {
 export type LinkedMention<M0 extends RO, M1 extends RO> = {
 	blockUid: Block<M0, M1>["uid"];
 	isBlockPublic: boolean;
-	blockString: Block<M0, M1>["string"];
 	uidOfPageContainingBlock: Page<M0, M1>["uid"];
 	originalTitleOfPageContainingBlock: PageWithMetadata<M0, M1>["originalTitle"];
-	pageContainingBlock: PageWithMetadata<M0, M1>; // expect to be removed when JSON.stringify'd since circular
+
+	/** expect to be removed when JSON.stringify'd since circular: */
+	blockRef: Block<M0, M1>; // TODO add `parentBlock` to block's metadata
+	/** expect to be removed when JSON.stringify'd since circular: */
+	pageContainingBlock: PageWithMetadata<M0, M1>;
 };
 
 export type LinkedReference = {

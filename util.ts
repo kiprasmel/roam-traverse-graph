@@ -23,7 +23,7 @@ export const writeJsonSync = (
 			(key, value) =>
 				["metaPage"].includes(key)
 					? "[circular]"
-					: key === "pageContainingBlock"
+					: ["pageContainingBlock", "blockRef", "parentBlockRef"].includes(key)
 					? "[dangerous, highly likely circular if at least 1 cross-referencing in a cycle]"
 					: // : key === "refOfPageContainingBlock"
 					  // ? (({ linkedReferences, ...rest } = value), rest)

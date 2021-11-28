@@ -200,6 +200,19 @@ export const findPublicPages = <M0 extends RO>(
 		// 	)
 		// )
 		.map(
+			pageWithNewChildren<M0, { parentBlockRef?: Block<M0, {}> }>(
+				traverseBlockRecursively(
+					// traverseBlockRecursively<{}>(
+					() => (block, parentBlockRef) =>
+						withMetadata({
+							parentBlockRef: parentBlockRef,
+						})(block),
+					{}
+				)(undefined)
+			)
+		)
+
+		.map(
 			pageWithNewChildren<M0, { hasCodeBlock: boolean }>(
 				traverseBlockRecursively(
 					// traverseBlockRecursively<{}>(

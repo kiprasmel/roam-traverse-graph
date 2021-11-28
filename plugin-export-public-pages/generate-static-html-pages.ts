@@ -2,17 +2,29 @@
 
 /* eslint-disable indent */
 
-// import { findPublicPages } from "./findPublicPages";
-// const publicPages = findPublicPages();
-
 import fs from "fs-extra";
 import path from "path";
 
-import { readJsonSync } from "../util";
-import { Block, PageWithMetadata } from "../types";
+import { findPublicPages } from "./findPublicPages";
 
-// TODO TS
-const pagesWithMeta: PageWithMetadata<{}, {}>[] = readJsonSync(path.join(__dirname, "..", "..", "graphraw.json")); // TODO FIXME
+import { readJsonSync } from "../util";
+import { Block, LinkedMention, PageWithMetadata, RO } from "../types";
+
+/**
+ * there's a difference between reading from a already generated json file,
+ * and re-run the function that generates the json file,
+ *
+ * because when we write into file, we remove circulars,
+ * and it would break behavior.
+ *
+ */
+// const pagesWithMeta: PageWithMetadata<{}, {}>[] = readJsonSync(path.join(__dirname, "..", "..", "graphraw.json")); // BAD, DO NOT USE
+const pagesWithMeta: PageWithMetadata<{}, {}>[] = findPublicPages(
+	readJsonSync(process.env.PATH_TO_ROAM_GRAPH || path.join(__dirname, "..", "..", "notes", "json", "kipras-g1.json")),
+	{
+		keepMetadata: true,
+	}
+);
 
 export type PluginInfo = {
 	displayName: string;
@@ -44,6 +56,12 @@ export const pagesWithMetaAndHtml: PageWithMetadata<{}, {}>[] = pagesWithMeta.ma
 
 	const startTime: Date = new Date();
 	const lastSignificantUpdate: Date = new Date(page["edit-time"]);
+
+	const mentionsGroupedByPage: LinkedMention<{}, {}>[][] = groupBy<LinkedMention<{}, {}>>(
+		"originalTitleOfPageContainingBlock",
+		(meta.linkedMentions || []) //
+			.sort((A, B) => B.blockRef["create-time"] - A.blockRef["create-time"] || 0)
+	).filter((mentionsGroupedByPage) => mentionsGroupedByPage.length);
 
 	/**
 	 * TODO - we want static html here. is it time for Svelte?!
@@ -122,7 +140,13 @@ ${joinChildren(
 		</main>
 
 		<aside>
+			<h2>
+				Linked Mentions (${(meta.linkedMentions || []).length} in ${mentionsGroupedByPage.length} pages)
+			</h2>
 
+			<ol>
+${drawLinkedMentions(mentionsGroupedByPage)}
+			</ol>
 		</aside>
 
 		<footer>
@@ -216,4 +240,82 @@ ${childrenHtmls
 ${"\t".repeat(existingTabCount)}</ul>`;
 
 	// ${childrenHtmls.map((html) => "\t".repeat(existingTabCount + 1) + html).join("\n")}
+}
+
+function groupBy<T, K extends keyof T = keyof T>(itemKey: K, items: T[]): T[][] {
+	const map: Map<T[K], T[]> = new Map();
+
+	items.forEach((item) => {
+		const groupKey: T[K] = item[itemKey];
+
+		let group: T[] | undefined = map.get(groupKey);
+
+		if (!group) {
+			group = [];
+		}
+
+		group.push(item);
+
+		map.set(groupKey, group);
+	});
+
+	return [...map.values()];
+}
+
+function drawLinkedMentions<M0 extends RO, M1 extends RO>(mentionsGroupedByPage: LinkedMention<M0, M1>[][]): string {
+	return mentionsGroupedByPage
+		.map(
+			(mentionsOfAPage) =>
+				/**
+				 * TODO - do advanced grouping, similar to turbo-schedule's hierarchy
+				 *
+				 * go to mention's root page,
+				 * iter thru blocks recursively,
+				 * detect if linkedReferences include this page,
+				 * and group them, just like we do w/ the children when doing regular display.
+				 */
+				`\
+<li>
+	<h3>
+		<!--
+		<span style="background-color: hsl(0, 0%, 95%); padding: 4px 16px; ">
+		-->
+			${mentionsOfAPage[0].pageContainingBlock.page.title}
+		<!--
+		</span>
+		-->
+	</h3>
+	<ul>
+		${mentionsOfAPage
+			.map(
+				(mention) => `\
+		<li>
+			<!--
+				TODO <h4> for semantics
+			-->
+			<span style="background-color: hsl(0, 0%, 95%); padding: 3px 6px; ">
+				${mention.blockRef.string}
+			</span>
+${
+	/**
+	 * we're re-doing this multiple times.
+	 * instead, this should already be available as metadata on the block.
+	 *
+	 * we need to walk properly to implement that.
+	 *
+	 * proper walking also will allow advanced grouping.
+	 *
+	 */
+	joinChildren(
+		(mention.blockRef.children || []).map((block) => blockRecursively(block, 0 + 1)),
+		0
+	)
+}
+		</li>`
+			)
+			.join("\n")}
+	</ul>
+</li>`
+		)
+		.join("\n");
 }

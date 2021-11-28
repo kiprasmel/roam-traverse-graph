@@ -21,8 +21,7 @@ export const hideBlockStringsIfNotPublic: MutatingActionToExecute<
 		return block;
 	}
 
-	/** @type { string } */
-	const tmp = block.string;
+	const tmp: string = block.string;
 
 	block.string = `(${hiddenStringValue}) ${block.uid}`;
 
@@ -63,6 +62,7 @@ export const hideBlockStringsIfNotPublic: MutatingActionToExecute<
 
 	/**
 	 * TODO FIXME
+	 * TODO FIXME p2 - this gets only applied if block is not public, since we return early
 	 */
 	block.refs = linkedReferences.map((lr) => ({ uid: lr.metaPage.page.uid }));
 

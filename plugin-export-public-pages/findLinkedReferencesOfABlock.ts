@@ -40,12 +40,22 @@ export const findIfPagesHavePublicLinkedReferencesAndLinkThemAsMentions: Mutatin
 			(lr.metaPage.linkedMentions = lr.metaPage.linkedMentions || []),
 			// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 			lr.metaPage.linkedMentions.push(<LinkedMention<{}, {}>>{
+				/**
+				 * WARNING - do NOT add `block.string` here,
+				 * because if it's private (hidden),
+				 * it's still not applied & you'll leak info,
+				 * use the `blockRef` instead!
+				 *
+				 * we'll make this impossible to do accidently soon
+				 * w/ explicit metadata & slight re-design.
+				 *
+				 */
 				// TODO TS
 				blockUid: block.uid,
 				isBlockPublic,
-				blockString: block.string,
 				uidOfPageContainingBlock: rootParentPage.page.uid,
 				originalTitleOfPageContainingBlock: rootParentPage.originalTitle,
+				blockRef: block,
 				pageContainingBlock: rootParentPage, // expect to be removed when JSON.stringify'd since circular
 
 				/**
