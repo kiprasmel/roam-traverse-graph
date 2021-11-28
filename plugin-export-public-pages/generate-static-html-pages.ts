@@ -62,6 +62,13 @@ const footerContent: string = `
 			</center>
 `;
 
+const faviconUrlAndFixedScript = (depthUntilRootPage: number) => `
+		<link rel="shortcut icon" type="image/x-icon" href="/notes/favicon.ico">
+		<script>
+			document.querySelector('link[type="image/x-icon"]').setAttribute("href", window.location.href.replace(/(\\/[^\\/]*$){${depthUntilRootPage}}/, "") + "/favicon.ico");
+		</script>
+`;
+
 export const pagesWithMetaAndHtml: PageWithMetadata<{}, {}>[] = pagesWithMeta.map((meta, metaIdx) => {
 	console.log(metaIdx, "orig title", meta.originalTitle);
 	const { page } = meta;
@@ -93,7 +100,8 @@ export const pagesWithMetaAndHtml: PageWithMetadata<{}, {}>[] = pagesWithMeta.ma
 <html>
 	<head>
 		<title>${page.title} | notes</title>
-		<link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+
+		${faviconUrlAndFixedScript(1)}
 
 		<style>
 			/*
@@ -260,7 +268,7 @@ const indexHtml: string = `\
 <!DOCTYPE html>
 <html>
 	<title>notes</title>
-	<link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+	${faviconUrlAndFixedScript(0)}
 </html>
 
 <body>
