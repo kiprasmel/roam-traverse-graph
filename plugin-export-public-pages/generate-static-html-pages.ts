@@ -67,6 +67,7 @@ export const pagesWithMetaAndHtml: PageWithMetadata<{}, {}>[] = pagesWithMeta.ma
 	 * TODO - we want static html here. is it time for Svelte?!
 	 *
 	 * -> YES
+	 * -> MAYBE
 	 *
 	 */
 
@@ -99,6 +100,47 @@ export const pagesWithMetaAndHtml: PageWithMetadata<{}, {}>[] = pagesWithMeta.ma
 				*/
 			}
 		</style>
+
+		<script type="text/javascript">
+			function updateAndSetIntervalToUpdateFor(id, initialTimeMs) {
+
+				function update() {
+					var msAgo  = new Date().getTime() - initialTimeMs;
+
+					var secAgo =  msAgo / 1000;
+					var minAgo = secAgo /   60;
+					var hAgo   = minAgo /   60;
+					var dayAgo =   hAgo /   24;
+
+					dayAgo = Math.floor(dayAgo);
+					hAgo   = Math.floor(  hAgo);
+					minAgo = Math.floor(minAgo);
+					secAgo = Math.floor(secAgo);
+					msAgo  = Math.floor( msAgo);
+
+					msAgo  = msAgo  - (secAgo * 1000);
+					secAgo = secAgo - (minAgo *   60);
+					minAgo = minAgo - (  hAgo *   60);
+					hAgo   = hAgo   - (dayAgo *   24);
+					dayAgo = dayAgo                  ;
+
+					console.log({ id, dayAgo, hAgo, minAgo, secAgo, msAgo });
+
+					var el = document.getElementById(id);
+
+					el.textContent = "(" + dayAgo + " days, " + (hAgo) + " hours, " + (minAgo) + " mins" + " ago)";
+				};
+
+				update();
+				window.setInterval(update, 1000 * 60);
+			}
+		</script>
+		<!--
+					el.textContent = "(" + dayAgo + " days, " + (hAgo) + " hours, " + (minAgo) + " mins, " + (secAgo) + " secs" + " ago)";
+
+				window.setInterval(update, 1000);
+		-->
+
 	</head>
 
 	<body>
@@ -118,18 +160,24 @@ export const pagesWithMetaAndHtml: PageWithMetadata<{}, {}>[] = pagesWithMeta.ma
 				last edit (excluding linked mentions) on: <!-- TODO linked mentions too -->
 				<br/>
 				${lastSignificantUpdate.toISOString()}
-				
+
+				<span id="ago-1" />
+
 			</div>
 
 			<div style="margin-top: 0.5rem; ">
 				checked, re-generated & exported on:
 				<br/>
 				${startTime.toISOString()}
+
+				<span id="ago-2" />
+
 			</div>
 
-			<!--
-				TODO dynamic updates "x sec/min/h/day etc. ago" w/ a simple js function + setInterval
-			-->
+			<script type="text/javascript">
+				updateAndSetIntervalToUpdateFor("ago-1", ${lastSignificantUpdate.getTime()});
+				updateAndSetIntervalToUpdateFor("ago-2", ${startTime.getTime()});
+			</script>
 		</small>
 
 		<main>
