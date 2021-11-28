@@ -165,7 +165,12 @@ export const pagesWithMetaAndHtml: PageWithMetadata<{}, {}>[] = pagesWithMeta.ma
 			<!--
 				TODO "in graphName"
 			-->
-			<a href="/">all notes</a>
+			<button onclick="goBackToAllNotes()">all notes</button>
+			<script>
+				function goBackToAllNotes() {
+					window.location.href = window.location.href.replace(/\\/[^\\/]*$/, "");
+				}
+			</script>
 		</nav>
 
 		<h1>
