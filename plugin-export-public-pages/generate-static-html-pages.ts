@@ -45,6 +45,23 @@ export const pluginInfo: PluginInfo = {
 	},
 };
 
+const footerContent: string = `
+			<center>
+				exported from
+				<a target="_blank" rel="noopener" href="http://roamresearch.com">
+					roam</a>
+				via
+				<a target="_blank" rel="noopener" href="http://github.com/kiprasmel/roam-traverse-graph">
+					roam-traverse-graph</a>'s
+				plugin
+				<a target="_blank" rel="noopener" href="${pluginInfo.sourceUrl}">
+					${pluginInfo.displayName}</a>
+				by
+				<a target="_blank" rel="noopener" href="${pluginInfo.originalAuthor.githubUrl}">
+					${pluginInfo.originalAuthor.displayName}</a>.
+			</center>
+`;
+
 export const pagesWithMetaAndHtml: PageWithMetadata<{}, {}>[] = pagesWithMeta.map((meta, metaIdx) => {
 	console.log(metaIdx, "orig title", meta.originalTitle);
 	const { page } = meta;
@@ -200,20 +217,7 @@ ${drawLinkedMentions(mentionsGroupedByPage)}
 		</aside>
 
 		<footer>
-			<center>
-				exported from
-				<a target="_blank" rel="noopener" href="http://roamresearch.com">
-					roam</a>
-				via
-				<a target="_blank" rel="noopener" href="http://github.com/kiprasmel/roam-traverse-graph">
-					roam-traverse-graph</a>'s
-				plugin
-				<a target="_blank" rel="noopener" href="${pluginInfo.sourceUrl}">
-					${pluginInfo.displayName}</a>
-				by
-				<a target="_blank" rel="noopener" href="${pluginInfo.originalAuthor.githubUrl}">
-					${pluginInfo.originalAuthor.displayName}</a>.
-			</center>
+			${footerContent}
 		</footer>
 	</body>
 </html>`;
@@ -230,21 +234,49 @@ fs.mkdirpSync(prefix);
 const oldFilePaths = fs.readdirSync(prefix).map((file) => path.join(prefix, file));
 oldFilePaths //
 	.filter((file) => /.html$/.test(file))
-	.map((file) => (console.log(file), file))
 	.map((file) => fs.removeSync(file));
 
-pagesWithMetaAndHtml.forEach((meta) => {
-	let fixedTitle: string = meta.page.title
+const fixTitle = (title: string): string =>
+	title
 		.replace(/\(/g, "(") //
 		.replace(/\)/g, ")")
-		.replace(/\//g, "_");
+		.replace(/\//g, "_") + ".html";
 
-	fixedTitle += ".html";
+pagesWithMetaAndHtml.forEach((meta) => {
+	const fixedTitle: string = fixTitle(meta.page.title);
 
 	const fullPath = path.join(prefix, fixedTitle);
 	fs.createFileSync(fullPath);
 	fs.writeFileSync(fullPath, (meta as any).html);
 });
+
+const indexHtml: string = `\
+<!DOCTYPE html>
+<html>
+	<title>notes</title>
+</html>
+
+<body>
+	<ol>
+	${pagesWithMetaAndHtml
+		.map(
+			(meta): string => `\
+		<li>
+			<a href="${fixTitle(meta.page.title)}">
+				${meta.page.title}
+			</a>
+		</li>`
+		)
+		.join("\n")}
+	</ol>
+
+	<footer>
+		${footerContent}
+	</footer>
+</body>
+`;
+
+fs.writeFileSync(path.join(prefix, "index.html"), indexHtml);
 
 //
 
