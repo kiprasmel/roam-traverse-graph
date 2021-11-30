@@ -689,13 +689,14 @@ eslint-module-utils@^2.1.1, eslint-module-utils@^2.7.0:
     find-up "^2.1.0"
     pkg-dir "^2.0.0"
 
-eslint-plugin-clean-regex@^0.5.1:
-  version "0.5.2"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-clean-regex/-/eslint-plugin-clean-regex-0.5.2.tgz#91adb45204e1ef494b6f1ca51425bd4be447871a"
-  integrity sha512-xYa5bs6qHrg/tzAiGdk7Gm/koa6kIE+KRXnol/iPPBrMtO8ASdQLDsr/JCV04oUUATuFwI3DjQrPDaMCfzIQHA==
+eslint-plugin-clean-regex@0.4:
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-clean-regex/-/eslint-plugin-clean-regex-0.4.0.tgz#8e2de47ffed29e4c535f98a30e2b93ca5ea2cb60"
+  integrity sha512-6IukO2g65+oxBn2EybtkR7+wFviBPu7r4uOht47ZLsIRRDU2AWbnZfNdgfhtbS267CB7t5tXTgFeoErxurdv5Q==
   dependencies:
-    refa "^0.7.1"
+    refa "^0.2.2"
     regexpp "^3.1.0"
+    requireindex "^1.2.0"
 
 eslint-plugin-flowtype@4.7.0:
   version "4.7.0"
@@ -1728,12 +1729,12 @@ readdirp@~3.6.0:
   dependencies:
     picomatch "^2.2.1"
 
-refa@^0.7.1:
-  version "0.7.1"
-  resolved "https://registry.yarnpkg.com/refa/-/refa-0.7.1.tgz#ebd1b36a0b6f83b2ec05df406bd8336d64de2e7f"
-  integrity sha512-rvs2Px1z/PS01L8wY06YZZYDg4KzWz2CZjjsUekhyF3gnvUhu9EMfdgKwGmSJYUQItpZEPJjv2uz4vUlOkUiZg==
+refa@^0.2.2:
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/refa/-/refa-0.2.2.tgz#a49a8e0d2f178952fbc133bd909c9478160110d0"
+  integrity sha512-o7u5GeVMQOwJcE8qqEPLP/hnAnH9d6L/cNhk57IzTCPYESl+0RedqLTR68jnTJcXKeW3T6D/d632aIGnga3OLQ==
   dependencies:
-    regexpp "^3.1.0"
+    regexpp "^3.0.0"
 
 regenerator-runtime@^0.13.4:
   version "0.13.9"
@@ -1757,6 +1758,11 @@ regexpp@^3.0.0, regexpp@^3.1.0:
   version "3.2.0"
   resolved "https://registry.yarnpkg.com/regexpp/-/regexpp-3.2.0.tgz#0425a2768d8f23bad70ca4b90461fa2f1213e1b2"
   integrity sha512-pq2bWo9mVD43nbts2wGv17XLiNLya+GklZ8kaDLV2Z08gDCsGpnKn9BFMepvWuHCbyVvY7J5o5+BVvoQbmlJLg==
+
+requireindex@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/requireindex/-/requireindex-1.2.0.tgz#3463cdb22ee151902635aa6c9535d4de9c2ef1ef"
+  integrity sha512-L9jEkOi3ASd9PYit2cwRfyppc9NoABujTP8/5gFcbERmo5jUoAKovIC3fsF17pkTnGsrByysqX+Kxd2OTNI1ww==
 
 resolve-from@^4.0.0:
   version "4.0.0"
