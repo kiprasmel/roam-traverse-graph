@@ -8,7 +8,7 @@ yarn install --frozen-lockfile
 
 pushd ./roam-research-private-api
 
-npm i
+npm ci
 
 # will also download chromium lmao, we really gotta get that edn format going from json...
 
