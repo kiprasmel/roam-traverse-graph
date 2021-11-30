@@ -10,6 +10,7 @@ import { parseRoamTraverseGraphSettingsFromRoamPage } from "./parseSettingsFromR
 import { shallowMergeIncludingArrayValues } from "../util/shallowMergeIncludingArrayValues";
 import { createLinkedReferences } from "../util";
 import { blockStringHasCode } from "../util/blockContainsCode";
+import { sortUntilFirstXORMatchUsing, Order } from "../util/sortUntilFirstXORMatch";
 
 import {
 	Page, //
@@ -399,44 +400,25 @@ export const findPublicPages = <M0 extends RO>(
 
 		.map((p) => (!p.page.children?.length && delete p.page.children, p))
 
-		.sort((
-			A: any, // TODO TS
-			B: any // TODO TS
-		) =>
-			((
-				sort = {
-					AHEAD: -1, //
-					BEHIND: 1,
-					EVEN: 0,
-				}
-			) =>
-				publicTags.some((publicTag) => titleIsPublicTag(A.page, publicTag))
-					? sort["AHEAD"]
-					: publicTags.some((publicTag) => titleIsPublicTag(B.page, publicTag))
-					? sort["BEHIND"]
-					: A.isFullyPublic
-					? sort["AHEAD"]
-					: B.isFullyPublic
-					? sort["BEHIND"]
-					: doNotHideTodoAndDone && ["TODO", "DONE"].includes(A.originalTitle)
-					? sort["AHEAD"]
-					: doNotHideTodoAndDone && ["TODO", "DONE"].includes(B.originalTitle)
-					? sort["BEHIND"]
-					: A.isDailyNotesPage
-					? sort["AHEAD"]
-					: B.isDailyNotesPage
-					? sort["BEHIND"]
-					: A.linkedMentions && B.linkedMentions
-					? B.linkedMentions.length - A.linkedMentions.length
-					: A.linkedMentions
-					? sort["AHEAD"]
-					: B.linkedMentions
-					? sort["BEHIND"]
-					: A.hasAtLeastOnePublicBlockAnywhereInTheHierarchy
-					? sort["AHEAD"]
-					: B.hasAtLeastOnePublicBlockAnywhereInTheHierarchy
-					? sort["BEHIND"]
-					: sort["EVEN"])()
+		.sort(
+			sortUntilFirstXORMatchUsing<PageWithMetadata<{}, {}>>(
+				[
+					(AB): boolean => publicTags.some((publicTag) => titleIsPublicTag(AB.page, publicTag)),
+					(AB): boolean => AB.isFullyPublic,
+					(AB): boolean => doNotHideTodoAndDone && ["TODO", "DONE"].includes(AB.originalTitle),
+					(AB): boolean => !!AB.isDailyNotesPage,
+					(A, B): number =>
+						A.isDailyNotesPage && B?.isDailyNotesPage
+							? (B.page["create-time"] || -Infinity) - (A.page["create-time"] || -Infinity) || Order.EVEN
+							: Order.EVEN,
+					(AB): boolean => !!AB.linkedMentions?.length,
+					(A, B): number => (B?.linkedMentions?.length || 0) - (A.linkedMentions?.length || 0),
+					(AB): boolean => AB.hasAtLeastOnePublicBlockAnywhereInTheHierarchy,
+					(A, B): number => (B?.wordCount || -Infinity) - A.wordCount,
+					(A, B): number => (B?.charCount || -Infinity) - A.charCount,
+				],
+				{ log: false }
+			)
 		)
 );
 
