@@ -39,7 +39,7 @@ let publicPagesRaw = findPublicPages(
  * TODO maybe filter out Anonymous page, idk
  */
 
-writeJsonSync("../graphraw.to-be-uploaded.json", publicPagesRaw);
+writeJsonSync("./graphraw.json", publicPagesRaw);
 
 const origRawLen = publicPagesRaw.length;
 

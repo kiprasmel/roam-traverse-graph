@@ -7,7 +7,7 @@ import path from "path";
 
 import { findPublicPages } from "./findPublicPages";
 
-import { readJsonSync } from "../util";
+import { readJsonSync, writeJsonSync } from "../util";
 import { Block, LinkedMention, PageWithMetadata, RO } from "../types";
 
 /**
@@ -25,6 +25,8 @@ const pagesWithMeta: PageWithMetadata<{}, {}>[] = findPublicPages(
 		keepMetadata: true,
 	}
 );
+
+writeJsonSync("./graphraw.json", pagesWithMeta);
 
 export type PluginInfo = {
 	displayName: string;

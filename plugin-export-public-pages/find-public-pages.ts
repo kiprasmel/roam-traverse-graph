@@ -38,10 +38,10 @@ const publicPagesWrappedWithMetadata: PageWithMetadata<RO, RO>[] = findPublicPag
 // );
 
 writeJsonSync(
-	"../graph.json",
+	"./graph.json",
 	publicPagesWrappedWithMetadata.map((p) => p.page)
 );
-writeJsonSync("../graphraw.json", publicPagesWrappedWithMetadata);
+writeJsonSync("./graphraw.json", publicPagesWrappedWithMetadata);
 
 console.log(
 	publicPagesWrappedWithMetadata
