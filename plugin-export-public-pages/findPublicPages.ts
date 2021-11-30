@@ -119,6 +119,9 @@ export const defaultRoamSettingsPageTitle = "roam-traverse-graph-settings" as co
 
 // bbbb.metadata.hasCodeBlock;
 
+/**
+ * TODO RENAME `assignChildren` (tho doesn't assign, but changes children ~~ nvm, all good) or similar
+ */
 const pageWithNewChildren = <
 	M0 extends RO,
 	M1 extends RO //
@@ -251,6 +254,55 @@ export const findPublicPages = <M0 extends RO>(
 			)
 		)
 		// .map(pm => pm.page.children?.[0].metadata.)
+
+		/** BEGIN word & char counts */
+		.map(
+			(pageMeta) => (
+				(pageMeta.page.children = (pageMeta.page.children || []).map(
+					traverseBlockRecursively<
+						{},
+						{
+							wordCountSelfAndChildren: number; //
+							charCountSelfAndChildren: number;
+						}
+					>(
+						() => (block, parentBlock) => (
+							parentBlock &&
+								(((parentBlock.metadata
+									.wordCountSelfAndChildren as number) /** work-around to remove readonly */ += block.string.split(
+									" "
+								).length),
+								((parentBlock.metadata
+									.charCountSelfAndChildren as number) /** work-around to remove readonly */ += block.string.length)),
+							withMetadata({
+								wordCountSelfAndChildren: block.string.split(" ").length,
+								charCountSelfAndChildren: block.string.length,
+							})(block) // TODO
+						),
+						{}
+					)(undefined)
+				)),
+				pageMeta
+			)
+		)
+
+		.map(
+			(pageMeta) => (
+				(pageMeta.wordCount = (pageMeta.page.children || [])
+					.map((child) => (child.metadata as any).wordCountSelfAndChildren) // TODO TS
+					.reduce((accum, current) => accum + current, 0)),
+				pageMeta
+			)
+		)
+		.map(
+			(pageMeta) => (
+				(pageMeta.charCount = (pageMeta.page.children || [])
+					.map((child) => (child.metadata as any).charCountSelfAndChildren) // TODO TS
+					.reduce((accum, current) => accum + current, 0)),
+				pageMeta
+			)
+		)
+		/** END word & char counts */
 
 		/**
 		 * TODO think about how we want to implement the hiding of page title's
@@ -486,6 +538,8 @@ function toFullyPublicPage<M0 extends RO, M1 extends RO>(
 		hasAtLeastOnePublicLinkedReference: false, // until found out otherwise
 		hasAtLeastOneMentionOfAPublicLinkedReference: false, // CHANGEABLE LATER
 		isTitleHidden: false, // CHANGEABLE LATER
+		wordCount: 0,
+		charCount: 0,
 	};
 }
 
@@ -504,5 +558,7 @@ function toPotentiallyPartiallyPublicPage<M0 extends RO, M1 extends RO>(
 		hasAtLeastOnePublicLinkedReference: false, // CHANGEABLE LATER
 		hasAtLeastOneMentionOfAPublicLinkedReference: false, // CHANGEABLE LATER // TODO VERIFY
 		isTitleHidden: false, // CHANGEABLE LATER // TODO VERIFY
+		wordCount: 0,
+		charCount: 0,
 	};
 }
