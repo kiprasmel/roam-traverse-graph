@@ -245,7 +245,7 @@ export const pagesWithMetaAndHtml: PageWithMetadata<{}, {}>[] = pagesWithMeta.ma
 			</div>
 
 			<div style="margin-top: 0.5rem; ">
-				checked, re-generated & exported on:
+				re-generated & exported on:
 				<br/>
 				<span>${startTime.toISOString()}</span>
 				--
