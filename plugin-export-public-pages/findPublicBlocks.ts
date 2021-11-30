@@ -69,13 +69,12 @@ export const markBlockPublic: MutatingActionToExecute<
 
 		const isPublicOnly: boolean = hasPublicOnlyTag && !hasPrivateTag && !parentBlock?.metadata.hasPrivateTag;
 
-		const isPublic: boolean = !!(
+		const isPublic: boolean =
 			(rootParentPage.isFullyPublic || //
 				hasPublicTag ||
-				parentBlock?.metadata.isPublic) &&
+				!!parentBlock?.metadata.isPublic) &&
 			!hasPrivateTag &&
-			!isPublicOnly
-		);
+			!isPublicOnly;
 
 		if (isPublic || hasPublicOnlyTag) {
 			/**
