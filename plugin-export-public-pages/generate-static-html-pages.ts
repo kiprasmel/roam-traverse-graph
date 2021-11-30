@@ -156,7 +156,7 @@ export const pagesWithMetaAndHtml: PageWithMetadata<{}, {}>[] = pagesWithMeta.ma
 
 					var el = document.getElementById(id);
 
-					el.textContent = "(" + dayAgo + " days, " + (hAgo) + " hours, " + (minAgo) + " mins" + " ago)";
+					el.textContent = dayAgo + " days, " + (hAgo) + " hours, " + (minAgo) + " mins" + " ago";
 				};
 
 				update();
@@ -199,18 +199,18 @@ export const pagesWithMetaAndHtml: PageWithMetadata<{}, {}>[] = pagesWithMeta.ma
 			<div style="margin-top: 0.5rem; ">
 				last edit (excluding linked mentions) on: <!-- TODO linked mentions too -->
 				<br/>
-				${lastSignificantUpdate.toISOString()}
-
-				<span id="ago-1" />
+				<span>${lastSignificantUpdate.toISOString()}</span>
+				--
+				<span id="ago-1"></span>
 
 			</div>
 
 			<div style="margin-top: 0.5rem; ">
 				checked, re-generated & exported on:
 				<br/>
-				${startTime.toISOString()}
-
-				<span id="ago-2" />
+				<span>${startTime.toISOString()}</span>
+				--
+				<span id="ago-2"></span>
 
 			</div>
 
