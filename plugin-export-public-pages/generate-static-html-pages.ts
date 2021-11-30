@@ -86,7 +86,7 @@ export const pagesWithMetaAndHtml: PageWithMetadata<{}, {}>[] = pagesWithMeta.ma
 	const mentionsGroupedByPage: LinkedMention<{}, {}>[][] = groupBy<LinkedMention<{}, {}>>(
 		"originalTitleOfPageContainingBlock",
 		(meta.linkedMentions || []) //
-			.sort((A, B) => B.blockRef["create-time"] - A.blockRef["create-time"] || 0)
+			.sort((A, B) => (B.blockRef["create-time"] || -Infinity) - (A.blockRef["create-time"] || -Infinity) || 0)
 	).filter((mentionsGroupedByPage) => mentionsGroupedByPage.length);
 
 	/**

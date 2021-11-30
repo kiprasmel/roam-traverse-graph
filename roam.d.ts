@@ -11,7 +11,13 @@ export type Ref = {
 };
 
 export type EntityBase<M0 extends RO, M1 extends RO> = {
-	"create-time": number;
+	/**
+	 * should always be available, but I've encountered a few cases
+	 * both "create-time" and ":create/user" were missing
+	 * (never only one of them though).
+	 */
+	"create-time"?: number;
+	":create/user"?: number;
 	"edit-time": number;
 	"edit-email": string;
 	uid: string;
