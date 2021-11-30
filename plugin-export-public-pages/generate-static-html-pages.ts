@@ -156,11 +156,13 @@ export const pagesWithMetaAndHtml: PageWithMetadata<{}, {}>[] = pagesWithMeta.ma
 
 					var el = document.getElementById(id);
 
-					el.textContent = dayAgo + " days, " + (hAgo) + " hours, " + (minAgo) + " mins" + " ago";
+					el.textContent = dayAgo + " days, " + (hAgo) + " hours, " + (minAgo) + " mins, " + (secAgo) + " seconds" + " ago."
 				};
 
 				update();
-				window.setInterval(update, 1000 * 60);
+				
+				/* disabled because gives false sense of security because if actually re-generated, it won't refresh the page. */
+				/* window.setInterval(update, 1000); */
 			}
 		</script>
 		<!--
