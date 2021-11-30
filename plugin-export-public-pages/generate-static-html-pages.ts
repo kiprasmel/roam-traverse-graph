@@ -130,10 +130,21 @@ export const pagesWithMetaAndHtml: PageWithMetadata<{}, {}>[] = pagesWithMeta.ma
 		</style>
 
 		<script type="text/javascript">
+			/** note - interval won't work because of this - if enabling again (unlikely), disable this: */
+			var pageLoadTime = new Date();
+
 			function updateAndSetIntervalToUpdateFor(id, initialTimeMs) {
+				var el = document.getElementById(id);
 
 				function update() {
-					var msAgo  = new Date().getTime() - initialTimeMs;
+					/**
+					 * floor & divide & multiple to make the milisecond difference go away,
+					 * so that if multiple functions are called,
+					 * and the page is refreshed fast,
+					 * all values update at the same time.
+					 */
+					var msAgo = pageLoadTime.getTime() - (Math.floor(initialTimeMs / 1000) * 1000);
+					/* var msAgo = new Date().getTime() - initialTimeMs; */
 
 					var secAgo =  msAgo / 1000;
 					var minAgo = secAgo /   60;
@@ -153,8 +164,6 @@ export const pagesWithMetaAndHtml: PageWithMetadata<{}, {}>[] = pagesWithMeta.ma
 					dayAgo = dayAgo                  ;
 
 					console.log({ id, dayAgo, hAgo, minAgo, secAgo, msAgo });
-
-					var el = document.getElementById(id);
 
 					el.textContent = dayAgo + " days, " + (hAgo) + " hours, " + (minAgo) + " mins, " + (secAgo) + " seconds" + " ago."
 				};
@@ -219,6 +228,7 @@ export const pagesWithMetaAndHtml: PageWithMetadata<{}, {}>[] = pagesWithMeta.ma
 			<script type="text/javascript">
 				updateAndSetIntervalToUpdateFor("ago-1", ${lastSignificantUpdate.getTime()});
 				updateAndSetIntervalToUpdateFor("ago-2", ${startTime.getTime()});
+
 			</script>
 		</small>
 
