@@ -190,6 +190,13 @@ export const pagesWithMetaAndHtml: PageWithMetadata<{}, {}>[] = pagesWithMeta.ma
 
 		<small>
 			<div>
+				word count (excluding linked mentions):
+				<br/>
+				${meta.wordCount}
+
+			</div>
+
+			<div style="margin-top: 0.5rem; ">
 				last edit (excluding linked mentions) on: <!-- TODO linked mentions too -->
 				<br/>
 				${lastSignificantUpdate.toISOString()}
