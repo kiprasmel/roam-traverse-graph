@@ -258,30 +258,59 @@ export const findPublicPages = <M0 extends RO>(
 		/** BEGIN word & char counts */
 		.map(
 			(pageMeta) => (
-				(pageMeta.page.children = (pageMeta.page.children || []).map(
-					traverseBlockRecursively<
-						{},
-						{
-							wordCountSelfAndChildren: number; //
-							charCountSelfAndChildren: number;
-						}
-					>(
-						() => (block, parentBlock) => (
-							parentBlock &&
-								(((parentBlock.metadata
-									.wordCountSelfAndChildren as number) /** work-around to remove readonly */ += block.string.split(
-									" "
-								).length),
-								((parentBlock.metadata
-									.charCountSelfAndChildren as number) /** work-around to remove readonly */ += block.string.length)),
-							withMetadata({
-								wordCountSelfAndChildren: block.string.split(" ").length,
-								charCountSelfAndChildren: block.string.length,
-							})(block) // TODO
-						),
-						{}
-					)(undefined)
-				)),
+				(pageMeta.page.children = (pageMeta.page.children || [])
+					.map(
+						traverseBlockRecursively<
+							{},
+							{
+								wordCountSelf: number; //
+								wordCountChildrenRecursively: number;
+							}
+						>(
+							() => (block) =>
+								withMetadata({
+									wordCountSelf: block.string.split(" ").filter((str) => !!str.trim()).length,
+									wordCountChildrenRecursively: 0,
+								})(block), // TODO
+							{}
+						)(undefined)
+					)
+					.map(
+						traverseBlockRecursively(
+							() => (block: any) => {
+								const isLeafBlock = block.metadata.parentBlockRef && !block.children?.length;
+
+								if (!isLeafBlock) {
+									return block;
+								}
+
+								let tmpBlock = block;
+								let parentBlock = tmpBlock.metadata.parentBlockRef;
+
+								while (parentBlock) {
+									parentBlock.metadata.wordCountChildrenRecursively +=
+										tmpBlock.metadata.wordCountSelf +
+										tmpBlock.metadata.wordCountChildrenRecursively;
+
+									const lastChildOfParent = parentBlock.children[parentBlock.children.length - 1];
+									const currentBlockIsLastChild = tmpBlock === lastChildOfParent;
+
+									if (!currentBlockIsLastChild) {
+										// break;
+										return block;
+									}
+
+									tmpBlock = parentBlock;
+									parentBlock = tmpBlock?.metadata.parentBlockRef;
+								}
+
+								// console.log({ isLeafBlock, string: block.string, tmpBlock: tmpBlock.metadata });
+
+								return block;
+							},
+							{}
+						)(undefined)
+					)),
 				pageMeta
 			)
 		)
@@ -289,15 +318,10 @@ export const findPublicPages = <M0 extends RO>(
 		.map(
 			(pageMeta) => (
 				(pageMeta.wordCount = (pageMeta.page.children || [])
-					.map((child) => (child.metadata as any).wordCountSelfAndChildren) // TODO TS
-					.reduce((accum, current) => accum + current, 0)),
-				pageMeta
-			)
-		)
-		.map(
-			(pageMeta) => (
-				(pageMeta.charCount = (pageMeta.page.children || [])
-					.map((child) => (child.metadata as any).charCountSelfAndChildren) // TODO TS
+					.map(
+						(child) =>
+							(child.metadata as any).wordCountSelf + (child.metadata as any).wordCountChildrenRecursively
+					) // TODO TS
 					.reduce((accum, current) => accum + current, 0)),
 				pageMeta
 			)
@@ -467,7 +491,6 @@ export const findPublicPages = <M0 extends RO>(
 					(A, B): number => (B?.linkedMentions?.length || 0) - (A.linkedMentions?.length || 0),
 					(AB): boolean => AB.hasAtLeastOnePublicBlockAnywhereInTheHierarchy,
 					(A, B): number => (B?.wordCount || -Infinity) - A.wordCount,
-					(A, B): number => (B?.charCount || -Infinity) - A.charCount,
 				],
 				{ log: false }
 			)
@@ -539,7 +562,6 @@ function toFullyPublicPage<M0 extends RO, M1 extends RO>(
 		hasAtLeastOneMentionOfAPublicLinkedReference: false, // CHANGEABLE LATER
 		isTitleHidden: false, // CHANGEABLE LATER
 		wordCount: 0,
-		charCount: 0,
 	};
 }
 
@@ -559,6 +581,5 @@ function toPotentiallyPartiallyPublicPage<M0 extends RO, M1 extends RO>(
 		hasAtLeastOneMentionOfAPublicLinkedReference: false, // CHANGEABLE LATER // TODO VERIFY
 		isTitleHidden: false, // CHANGEABLE LATER // TODO VERIFY
 		wordCount: 0,
-		charCount: 0,
 	};
 }
