@@ -201,9 +201,37 @@ export const pagesWithMetaAndHtml: PageWithMetadata<{}, {}>[] = pagesWithMeta.ma
 
 		<small>
 			<div>
-				word count (excluding linked mentions):
-				<br/>
-				${meta.wordCount}
+
+				<table>
+					<caption style="text-align: left; ">
+						word count:
+					</caption
+
+					<tbody>
+						<tr>
+							<td style="text-align: right; ">${meta.wordCount}</td>
+							<td>(self)</td>
+						</tr>
+
+						<tr>
+							<td style="text-align: right; ">
+							${meta.wordCountOfLinkedMentions}
+							</td>
+							<td>
+							(linked mentions)
+							</td>
+						</tr>
+
+						<tr>
+							<td style="text-align: right; ">
+							${meta.wordCountTotal}
+							</td>
+							<td>
+							(both)
+							</td>
+						</tr>
+					</tbody>
+				</table>
 
 			</div>
 

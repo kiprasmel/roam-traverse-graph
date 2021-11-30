@@ -474,6 +474,21 @@ export const findPublicPages = <M0 extends RO>(
 		)
 		// .map(pm => pm.page.children?.[0].metadata. )
 
+		/** END extra wordCounts (for linkedMentions & total) */
+		.map(
+			(pageMeta) => (
+				(pageMeta.wordCountOfLinkedMentions = (pageMeta.linkedMentions || [])
+					.map(
+						({ blockRef: child }) =>
+							(child.metadata as any).wordCountSelf + (child.metadata as any).wordCountChildrenRecursively
+					) // TODO TS
+					.reduce((accum, current) => accum + current, 0)),
+				(pageMeta.wordCountTotal = pageMeta.wordCount + pageMeta.wordCountOfLinkedMentions),
+				pageMeta
+			)
+		)
+		/** END extra wordCounts (for linkedMentions & total) */
+
 		.map((p) => (!p.page.children?.length && delete p.page.children, p))
 
 		.sort(
@@ -562,6 +577,8 @@ function toFullyPublicPage<M0 extends RO, M1 extends RO>(
 		hasAtLeastOneMentionOfAPublicLinkedReference: false, // CHANGEABLE LATER
 		isTitleHidden: false, // CHANGEABLE LATER
 		wordCount: 0,
+		wordCountOfLinkedMentions: 0,
+		wordCountTotal: 0,
 	};
 }
 
@@ -581,5 +598,7 @@ function toPotentiallyPartiallyPublicPage<M0 extends RO, M1 extends RO>(
 		hasAtLeastOneMentionOfAPublicLinkedReference: false, // CHANGEABLE LATER // TODO VERIFY
 		isTitleHidden: false, // CHANGEABLE LATER // TODO VERIFY
 		wordCount: 0,
+		wordCountOfLinkedMentions: 0,
+		wordCountTotal: 0,
 	};
 }

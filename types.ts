@@ -26,6 +26,8 @@ export type PageWithMetadata<M0 extends RO, M1 extends RO> = {
 	linkedMentions?: LinkedMention<M0, M1>[];
 
 	wordCount: number;
+	wordCountOfLinkedMentions: number;
+	wordCountTotal: number;
 };
 
 export type LinkedMention<M0 extends RO, M1 extends RO> = {
