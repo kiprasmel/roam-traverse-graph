@@ -64,10 +64,29 @@ const footerContent: string = `
 			</center>
 `;
 
-const faviconUrlAndFixedScript = (depthUntilRootPage: number) => `
-		<link rel="shortcut icon" type="image/x-icon" href="/notes/favicon.ico">
+const fixStaticHref = (
+	depthUntilRootPage: number //
+) => (
+	remainingUrlAfterRootPage: string, //
+	selector: string
+) => `
 		<script>
-			document.querySelector('link[type="image/x-icon"]').setAttribute("href", window.location.href.replace(/(\\/[^\\/]*$){${depthUntilRootPage}}/, "") + "/favicon.ico");
+			/**
+			 * if the website is mounted on a different path than the assumed "/notes",
+			 * this will be needed for some links to work.
+			 * 
+			 * removes n paths (as specified at compile time with "depthUntilRootPage"),
+			 * to make the href work again.
+			 */
+			document
+				.querySelector('${selector}')
+				.setAttribute(
+					"href",
+					window.location.href.replace(
+													/(\\/[^\\/]*$){${depthUntilRootPage}}/, "")
+													+
+													"${remainingUrlAfterRootPage}"
+												);
 		</script>
 `;
 
@@ -103,7 +122,8 @@ export const pagesWithMetaAndHtml: PageWithMetadata<{}, {}>[] = pagesWithMeta.ma
 	<head>
 		<title>${page.title} | notes</title>
 
-		${faviconUrlAndFixedScript(1)}
+		<link rel="shortcut icon" type="image/x-icon" href="/notes/favicon.ico">
+		${fixStaticHref(1)("/favicon.ico", 'link[type="image/x-icon"]')}
 
 		<style>
 			/*
@@ -187,12 +207,10 @@ export const pagesWithMetaAndHtml: PageWithMetadata<{}, {}>[] = pagesWithMeta.ma
 			<!--
 				TODO "in graphName"
 			-->
-			<button onclick="goBackToAllNotes()">all notes</button>
-			<script>
-				function goBackToAllNotes() {
-					window.location.href = window.location.href.replace(/\\/[^\\/]*$/, "");
-				}
-			</script>
+			<a id="all-notes" href="/notes">
+				all notes
+			</a>
+			${fixStaticHref(1)("/", "a#all-notes")}
 		</nav>
 
 		<h1>
@@ -317,7 +335,9 @@ const indexHtml: string = `\
 <!DOCTYPE html>
 <html>
 	<title>notes</title>
-	${faviconUrlAndFixedScript(0)}
+
+	<link rel="shortcut icon" type="image/x-icon" href="/notes/favicon.ico">
+	${fixStaticHref(0)("/favicon.ico", 'link[type="image/x-icon"]')}
 </html>
 
 <body>
