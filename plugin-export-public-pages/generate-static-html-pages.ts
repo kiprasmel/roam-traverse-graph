@@ -230,7 +230,7 @@ export const pagesWithMetaAndHtml: PageWithMetadata<{}, {}>[] = pagesWithMeta.ma
 				<table>
 					<caption style="text-align: left; ">
 						word count:
-					</caption
+					</caption>
 
 					<tbody>
 						<tr>
