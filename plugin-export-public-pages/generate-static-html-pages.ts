@@ -116,6 +116,13 @@ export const pagesWithMetaAndHtml: PageWithMetadata<{}, {}>[] = pagesWithMeta.ma
 	 *
 	 */
 
+	/**
+	 * TODO configurable
+	 */
+	// let initialOrderOfLinkedMentions: "oldest-first" | "newest-first" = "newest-first";
+	// eslint-disable-next-line prefer-const
+	let initialOrderOfLinkedMentions: "oldest-first" | "newest-first" = "oldest-first";
+
 	(meta as any).html = `\
 <!DOCTYPE html>
 <html>
@@ -286,14 +293,64 @@ ${joinChildren(
 		</main>
 
 		<aside>
+			<script>
+				// var localStorageKeyOfLinkedMentionsOrder = "notes.linked-mentions-order.${meta.page.uid}";
+
+				function toggleOrderOfLinkedMentions(btn /*, localStorageKey */) {
+					var oldest = "oldest-first";
+					var newest = "newest-first";
+
+					var linkedMentions = document.getElementById("linked-mentions");
+					var order = "data-order"
+					var currentOrder = linkedMentions.attributes[order].value;
+
+					if (currentOrder === oldest) {
+						var newOrder = newest;
+
+						btn.textContent = newOrder;
+						// localStorage.setItem(localStorageKey, newOrder);
+
+						linkedMentions.attributes[order].value = newOrder;
+						linkedMentions.style["flex-direction"] = "column-reverse";
+
+					} else if (currentOrder === newest) {
+						var newOrder = oldest;
+
+						btn.textContent = newOrder;
+						// localStorage.setItem(localStorageKey, newOrder);
+
+						linkedMentions.attributes[order].value = newOrder;
+						linkedMentions.style["flex-direction"] = "column";
+					} else {
+						throw new Error("invalid order found: " + currentOrder);
+					}
+				}
+			</script>
+
 			<h2>
-				Linked Mentions (${(meta.linkedMentions || []).length} in ${mentionsGroupedByPage.length} ${
-		[1, -1].includes(mentionsGroupedByPage.length) ? "page" : "pages"
-	})
+				Linked Mentions 
+				(${(meta.linkedMentions || []).length}
+				in
+				${mentionsGroupedByPage.length}
+				${[1, -1].includes(mentionsGroupedByPage.length) ? "page" : "pages"}
+				)
+
+				<button
+					id="order-toggle"
+					onclick="toggleOrderOfLinkedMentions(this)"
+					title="shows current value. click to toggle."
+				>
+					${initialOrderOfLinkedMentions}
+				</button>
+
 			</h2>
 
-			<ol>
-${drawLinkedMentions(mentionsGroupedByPage)}
+			<ol
+				id="linked-mentions"
+				data-order="${initialOrderOfLinkedMentions}"
+				style="display: flex; flex-direction: ${initialOrderOfLinkedMentions === "oldest-first" ? "column" : "column-reverse"};"
+			>
+				${drawLinkedMentions(mentionsGroupedByPage.reverse())}
 			</ol>
 		</aside>
 
