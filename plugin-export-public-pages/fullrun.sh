@@ -1,0 +1,1 @@
+runfull.sh
