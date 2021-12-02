@@ -24,6 +24,7 @@ export type PageWithMetadata<M0 extends RO, M1 extends RO> = {
 	isDailyNotesPage?: boolean;
 
 	linkedMentions?: LinkedMention<M0, M1>[];
+	linkedReferencesFromChildren?: LinkedReferenceFromChild<M0, M1>[];
 
 	wordCount: number;
 	wordCountOfLinkedMentions: number;
@@ -32,7 +33,7 @@ export type PageWithMetadata<M0 extends RO, M1 extends RO> = {
 
 export type LinkedMention<M0 extends RO, M1 extends RO> = {
 	blockUid: Block<M0, M1>["uid"];
-	isBlockPublic: boolean;
+	// isBlockPublic: boolean;
 	uidOfPageContainingBlock: Page<M0, M1>["uid"];
 	originalTitleOfPageContainingBlock: PageWithMetadata<M0, M1>["originalTitle"];
 
@@ -40,6 +41,19 @@ export type LinkedMention<M0 extends RO, M1 extends RO> = {
 	blockRef: Block<M0, M1>; // TODO add `parentBlock` to block's metadata
 	/** expect to be removed when JSON.stringify'd since circular: */
 	pageContainingBlock: PageWithMetadata<M0, M1>;
+};
+
+export type LinkedReferenceFromChild<M0 extends RO, M1 extends RO> = {
+	blockUid: Block<M0 & { depth: number }, M1>["uid"];
+	// isBlockPublic: boolean;
+	/** expect to be removed when JSON.stringify'd since circular: */
+	blockRef: Block<M0 & { depth: number }, M1>;
+
+	// uidOfMentionedPage: Page<M0, M1>["uid"];
+	uidOfReferencedPage: Page<M0, M1>["uid"];
+	originalTitleOfReferencedPage: PageWithMetadata<M0, M1>["originalTitle"];
+	/** expect to be removed when JSON.stringify'd since circular: */
+	referencedPageRef: PageWithMetadata<M0, M1>;
 };
 
 export type LinkedReference = {
