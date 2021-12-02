@@ -16,6 +16,7 @@ export const findIfPagesHavePublicLinkedReferencesAndLinkThemAsMentions: Mutatin
 		hasCodeBlock: boolean;
 		isPublic: boolean;
 		isPublicOnly: boolean;
+		depth: number;
 	}
 > = ({
 	allPagesWithMetadata, //
@@ -68,6 +69,15 @@ export const findIfPagesHavePublicLinkedReferencesAndLinkThemAsMentions: Mutatin
 				// block,
 				// pageContainingBlock:
 				// 	rootParentPage.page.uid === lr.metaPage.page.uid ? "[circular, self reference]" : rootParentPage,
+			}),
+			(rootParentPage.linkedReferencesFromChildren = rootParentPage.linkedReferencesFromChildren || []),
+			rootParentPage.linkedReferencesFromChildren.push({
+				blockUid: block.uid,
+				blockRef: block,
+				//
+				uidOfReferencedPage: lr.metaPage.page.uid,
+				originalTitleOfReferencedPage: lr.metaPage.originalTitle,
+				referencedPageRef: lr.metaPage,
 			})
 		)
 	);

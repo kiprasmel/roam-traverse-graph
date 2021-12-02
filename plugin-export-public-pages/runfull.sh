@@ -7,7 +7,8 @@ PRIVATE_NOTES_USERNAME="${2:-sarpik}"
 PRIVATE_NOTES_REPO_NAME="${3:-notes}" # TODO notes-private by default
 PUBLIC_NOTES_ROOT_URL="${4:-http://kiprasmel.github.io/notes}"
 PUBLIC_NOTES_DIR="${5:-notes}"
-DO_NOT_REGENERATE_IF_NO_NEW_CHANGES_IN_PRIVATE_NOTES_REPO="${6:-0}"
+PUBLIC_NOTES_GITHUB_URL=${6:-"http://github.com/kiprasmel/notes"}
+DO_NOT_REGENERATE_IF_NO_NEW_CHANGES_IN_PRIVATE_NOTES_REPO="${7:-0}"
 
 ###
 
@@ -19,8 +20,18 @@ pushd "$PUBLIC_NOTES_DIR"
 
 # https://stackoverflow.com/a/9393642/9285308
 repo_has_untracked_changes && {
-	printf "\nuncommitted changes in PUBLIC_NOTES_DIR ($PUBLIC_NOTES_DIR) ($(pwd))\n\n"
-	exit 1
+	printf "\nuncommitted changes in PUBLIC_NOTES_DIR ($PUBLIC_NOTES_DIR) ($(pwd))\n"
+
+	printf "\nthe html is most likely generated."
+	printf "\ndiscard with 'git reset --hard HEAD'? [y/N] "
+	read -r answer
+
+	if [ "$answer" = "y" ] || [ "$answer" = "Y" ]; then
+		printf "\n"
+		git reset --hard HEAD
+	else
+		exit 0
+	fi
 }
 
 git pull
@@ -86,4 +97,4 @@ popd
  
 ###
 
-printf "\n$PUBLIC_NOTES_ROOT_URL\n\n"
+printf "\n\n$PUBLIC_NOTES_GITHUB_URL\n$PUBLIC_NOTES_ROOT_URL\n\n"

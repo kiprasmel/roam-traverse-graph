@@ -7,8 +7,8 @@ import path from "path";
 
 import { findPublicPages } from "./findPublicPages";
 
-import { readJsonSync, writeJsonSync } from "../util";
-import { Block, LinkedMention, PageWithMetadata, RO } from "../types";
+import { createLinkedReferences, readJsonSync, writeJsonSync } from "../util";
+import { Block, LinkedMention, LinkedRef, PageWithMetadata, RO } from "../types";
 
 /**
  * there's a difference between reading from a already generated json file,
@@ -18,8 +18,17 @@ import { Block, LinkedMention, PageWithMetadata, RO } from "../types";
  * and it would break behavior.
  *
  */
+
+export type RequiredBlockMetadata = {
+	linkedReferences: LinkedRef[]; //
+	originalString: string;
+};
+
 // const pagesWithMeta: PageWithMetadata<{}, {}>[] = readJsonSync(path.join(__dirname, "..", "..", "graphraw.json")); // BAD, DO NOT USE
-const pagesWithMeta: PageWithMetadata<{}, {}>[] = findPublicPages(
+const pagesWithMeta: PageWithMetadata<
+	RequiredBlockMetadata, //
+	{}
+>[] = findPublicPages<RequiredBlockMetadata>(
 	readJsonSync(process.env.PATH_TO_ROAM_GRAPH || path.join(__dirname, "..", "..", "notes", "json", "kipras-g1.json")),
 	{
 		keepMetadata: true,
@@ -90,7 +99,10 @@ const fixStaticHref = (
 		</script>
 `;
 
-export const pagesWithMetaAndHtml: PageWithMetadata<{}, {}>[] = pagesWithMeta.map((meta, metaIdx) => {
+export const pagesWithMetaAndHtml: PageWithMetadata<
+	RequiredBlockMetadata, //
+	{}
+>[] = pagesWithMeta.map((meta, metaIdx) => {
 	console.log(metaIdx, "orig title", meta.originalTitle);
 	const { page } = meta;
 
@@ -121,7 +133,29 @@ export const pagesWithMetaAndHtml: PageWithMetadata<{}, {}>[] = pagesWithMeta.ma
 	 */
 	// let initialOrderOfLinkedMentions: "oldest-first" | "newest-first" = "newest-first";
 	// eslint-disable-next-line prefer-const
-	let initialOrderOfLinkedMentions: "oldest-first" | "newest-first" = "oldest-first";
+	let initialOrderOfLinkedMentions: "oldest-first" | "newest-first" = (
+		meta.linkedReferencesFromChildren || []
+	).filter(
+		(lr) =>
+			lr.blockRef.metadata.depth === 1 &&
+			// lr.blockRef.metadata.linkedReferences.map((blr) => blr.candidateLR.origStr).includes("newest-first") && // TODO config
+			// !lr.blockRef.metadata.linkedReferences.map((blr) => blr.candidateLR.origStr).includes("oldest-first") // TODO config
+
+			// TODO config
+			createLinkedReferences("newest-first").filter(
+				(candidate) => candidate.fullStr === lr.blockRef.metadata.originalString
+			).length &&
+			// TODO config
+			!createLinkedReferences("oldest-first").filter(
+				(candidate) => candidate.fullStr === lr.blockRef.metadata.originalString
+			).length
+	).length
+		? "newest-first"
+		: "oldest-first";
+
+	/**
+	 * let's paint.
+	 */
 
 	(meta as any).html = `\
 <!DOCTYPE html>

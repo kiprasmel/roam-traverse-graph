@@ -144,6 +144,14 @@ const pageWithNewChildren = <
 // TODO
 // type MFinal = ToReadonlyObject<{ hasCodeBlock: boolean }>;
 
+export type ContributesBlockMetadata = {
+	depth: number;
+	originalString: string;
+	/**
+	 * TODO document all
+	 */
+};
+
 export const findPublicPages = <M0 extends RO>(
 	/**
 	 * TODO consider single vs array
@@ -176,7 +184,9 @@ export const findPublicPages = <M0 extends RO>(
 	} = settings
 	// ): PageWithMetadata<M0 & M1>[] => ( // TODO FIXME
 	// ): PageWithMetadata<M0, MFinal>[] => ( // TODO FIXME // TODO FIXME
-) => (
+
+	// ): PageWithMetadata<M0, {}>[] =>
+): PageWithMetadata<M0, ContributesBlockMetadata>[] => (
 	console.log({
 		defaultOptions: getDefaultSettingsForPluginFindPublicPages(),
 		optionsOrig,
@@ -204,12 +214,37 @@ export const findPublicPages = <M0 extends RO>(
 		// 	)
 		// )
 		.map(
+			pageWithNewChildren<M0, { originalString: string }>(
+				traverseBlockRecursively<{}, { originalString: string }>(
+					() => (block) =>
+						withMetadata({
+							originalString: block.string,
+						})(block),
+					{}
+				)(undefined)
+			)
+		)
+
+		.map(
 			pageWithNewChildren<M0, { parentBlockRef?: Block<M0, {}> }>(
 				traverseBlockRecursively(
 					// traverseBlockRecursively<{}>(
 					() => (block, parentBlockRef) =>
 						withMetadata({
 							parentBlockRef: parentBlockRef,
+						})(block),
+					{}
+				)(undefined)
+			)
+		)
+
+		.map(
+			pageWithNewChildren<M0, { depth: number }>(
+				traverseBlockRecursively<{}, { depth: number }>(
+					// traverseBlockRecursively<{}>(
+					() => (block, _parentBlockRef, depth) =>
+						withMetadata({
+							depth,
 						})(block),
 					{}
 				)(undefined)

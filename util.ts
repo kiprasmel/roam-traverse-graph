@@ -23,7 +23,7 @@ export const writeJsonSync = (
 			(key, value) =>
 				["metaPage"].includes(key)
 					? "[circular]"
-					: ["pageContainingBlock", "blockRef", "parentBlockRef"].includes(key)
+					: ["pageContainingBlock", "blockRef", "parentBlockRef", "referencedPageRef"].includes(key)
 					? "[dangerous, highly likely circular if at least 1 cross-referencing in a cycle]"
 					: // : key === "refOfPageContainingBlock"
 					  // ? (({ linkedReferences, ...rest } = value), rest)
@@ -104,6 +104,11 @@ export const poolPromises = async <T>(
 	return results.flat();
 };
 
+/**
+ * TODO move together w/ the type definition
+ * TODO clear up meanings of `origStr` & `fullStr`
+ * TODO `create` -> `createFromStr`
+ */
 export function createLinkedReferences(str: string): LinkedReference[] {
 	return [
 		{
