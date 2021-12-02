@@ -217,6 +217,19 @@ export const findPublicPages = <M0 extends RO>(
 		)
 
 		.map(
+			pageWithNewChildren<M0, { depth: number }>(
+				traverseBlockRecursively<{}, { depth: number }>(
+					// traverseBlockRecursively<{}>(
+					() => (block, _parentBlockRef, depth) =>
+						withMetadata({
+							depth,
+						})(block),
+					{}
+				)(undefined)
+			)
+		)
+
+		.map(
 			pageWithNewChildren<M0, { hasCodeBlock: boolean }>(
 				traverseBlockRecursively(
 					// traverseBlockRecursively<{}>(

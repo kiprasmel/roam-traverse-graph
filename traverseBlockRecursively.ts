@@ -4,12 +4,32 @@
 
 import { Block, RO } from "./types";
 
+/**
+ * mindset:
+ * everything is a block;
+ * it just has a different depth.
+ */
+export const Depth = {
+	GRAPH: -1,
+	PAGE: 0,
+	ROOT_LEVEL_BLOCK: 1,
+} as const;
+
+export type DepthT = typeof Depth;
+export type DepthKeys = keyof DepthT;
+export type DepthValues = DepthT[DepthKeys]
+/**
+ * ...because there are deeper blocks than root level (duh)
+ */
+export type DepthValuesIncludingAnyNumber = DepthValues | number;
+
 export type MutatingActionToExecute  	< InitialSettings extends RO, M1 extends RO = RO, M0 extends RO = RO> = (
 		settings: InitialSettings, //
 	) => <M2>(
 		//
 		currentBlock: Block<M0 & M2, {}>,
-		parentBlockInside: Block<M0 & M1 & M2, M1> | undefined // TODO FIXME
+		parentBlockInside: Block<M0 & M1 & M2, M1> | undefined, // TODO FIXME
+		depth: DepthValuesIncludingAnyNumber
 	) => (Block<M0 & M1 & M2, M1> | [Block<M0 & M1 & M2, M1>, boolean]); // TODO ESLINT
 
 
@@ -28,6 +48,7 @@ export const traverseBlockRecursively = <
 	// mutatingActionToExecute: MutatingActionToExecute<InitialSettings, M0, M1>,
 	mutatingActionToExecute: MutatingActionToExecute<InitialSettings, M1, M0>,
 	initialAndNonChangingPropsForMutatingAction: InitialSettings,
+	depth: number = Depth.PAGE
 ) =>
 <M2 extends RO>(
 		parentBlock: Block<M0 & M1 & M2, M1> | undefined = undefined
@@ -68,8 +89,8 @@ export const traverseBlockRecursively = <
 	// const _newBlock: Omit<typeof parentBlock, undefined> = // TODO undefined
 	const _newBlock: B | [B, boolean] = mutatingActionToExecute(
 		initialAndNonChangingPropsForMutatingAction, //
-	// )(block, 		parentBlock as undefined | B); // TODO TS VERIFY
-	)<M2>(block, 		  parentBlock); // TODO TS VERIFY
+	// )(block, 		parentBlock as undefined | B, depth + 1); // TODO TS VERIFY
+	)<M2>(block, 		  parentBlock, depth + 1); // TODO TS VERIFY
 
 	let newBlock: B
 
@@ -109,6 +130,7 @@ export const traverseBlockRecursively = <
 				mutatingActionToExecute, //
 				initialAndNonChangingPropsForMutatingAction,
 				// block,
+				depth + 1
 			)<M2>(
 				newBlock
 			)

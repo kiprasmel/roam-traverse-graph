@@ -16,6 +16,7 @@ export const findIfPagesHavePublicLinkedReferencesAndLinkThemAsMentions: Mutatin
 		hasCodeBlock: boolean;
 		isPublic: boolean;
 		isPublicOnly: boolean;
+		depth: number;
 	}
 > = ({
 	allPagesWithMetadata, //
