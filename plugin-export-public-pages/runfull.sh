@@ -19,8 +19,18 @@ pushd "$PUBLIC_NOTES_DIR"
 
 # https://stackoverflow.com/a/9393642/9285308
 repo_has_untracked_changes && {
-	printf "\nuncommitted changes in PUBLIC_NOTES_DIR ($PUBLIC_NOTES_DIR) ($(pwd))\n\n"
-	exit 1
+	printf "\nuncommitted changes in PUBLIC_NOTES_DIR ($PUBLIC_NOTES_DIR) ($(pwd))\n"
+
+	printf "\nthe html is most likely generated."
+	printf "\ndiscard with 'git reset --hard HEAD'? [y/N] "
+	read -r answer
+
+	if [ "$answer" = "y" ] || [ "$answer" = "Y" ]; then
+		printf "\n"
+		git reset --hard HEAD
+	else
+		exit 0
+	fi
 }
 
 git pull
