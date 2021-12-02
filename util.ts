@@ -104,6 +104,11 @@ export const poolPromises = async <T>(
 	return results.flat();
 };
 
+/**
+ * TODO move together w/ the type definition
+ * TODO clear up meanings of `origStr` & `fullStr`
+ * TODO `create` -> `createFromStr`
+ */
 export function createLinkedReferences(str: string): LinkedReference[] {
 	return [
 		{
