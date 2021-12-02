@@ -146,6 +146,7 @@ const pageWithNewChildren = <
 
 export type ContributesBlockMetadata = {
 	depth: number;
+	originalString: string;
 	/**
 	 * TODO document all
 	 */
@@ -210,6 +211,18 @@ export const findPublicPages = <M0 extends RO>(
 		// 		traverseBlockRecursively(() => (block) => ((block.metadata = block.metadata || ({} as M0)), block), {})
 		// 	)
 		// )
+		.map(
+			pageWithNewChildren<M0, { originalString: string }>(
+				traverseBlockRecursively<{}, { originalString: string }>(
+					() => (block) =>
+						withMetadata({
+							originalString: block.string,
+						})(block),
+					{}
+				)(undefined)
+			)
+		)
+
 		.map(
 			pageWithNewChildren<M0, { parentBlockRef?: Block<M0, {}> }>(
 				traverseBlockRecursively(
