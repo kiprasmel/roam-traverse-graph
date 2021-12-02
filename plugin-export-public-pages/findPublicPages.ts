@@ -144,6 +144,13 @@ const pageWithNewChildren = <
 // TODO
 // type MFinal = ToReadonlyObject<{ hasCodeBlock: boolean }>;
 
+export type ContributesBlockMetadata = {
+	depth: number;
+	/**
+	 * TODO document all
+	 */
+};
+
 export const findPublicPages = <M0 extends RO>(
 	/**
 	 * TODO consider single vs array
@@ -176,7 +183,7 @@ export const findPublicPages = <M0 extends RO>(
 	} = settings
 	// ): PageWithMetadata<M0 & M1>[] => ( // TODO FIXME
 	// ): PageWithMetadata<M0, MFinal>[] => ( // TODO FIXME // TODO FIXME
-) => (
+): PageWithMetadata<M0, ContributesBlockMetadata>[] => (
 	console.log({
 		defaultOptions: getDefaultSettingsForPluginFindPublicPages(),
 		optionsOrig,

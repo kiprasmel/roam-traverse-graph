@@ -18,8 +18,16 @@ import { Block, LinkedMention, PageWithMetadata, RO } from "../types";
  * and it would break behavior.
  *
  */
+
+export type RequiredBlockMetadata = {
+	//
+};
+
 // const pagesWithMeta: PageWithMetadata<{}, {}>[] = readJsonSync(path.join(__dirname, "..", "..", "graphraw.json")); // BAD, DO NOT USE
-const pagesWithMeta: PageWithMetadata<{}, {}>[] = findPublicPages(
+const pagesWithMeta: PageWithMetadata<
+	RequiredBlockMetadata, //
+	{}
+>[] = findPublicPages(
 	readJsonSync(process.env.PATH_TO_ROAM_GRAPH || path.join(__dirname, "..", "..", "notes", "json", "kipras-g1.json")),
 	{
 		keepMetadata: true,
