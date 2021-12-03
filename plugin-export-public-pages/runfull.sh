@@ -18,6 +18,13 @@ repo_has_untracked_changes() {
 
 pushd "$PUBLIC_NOTES_DIR"
 
+ls -a | grep ".git" &>/dev/null || {
+	printf "\nerror - PUBLIC_NOTES_DIR ($PUBLIC_NOTES_DIR) _not_ a git repository."
+	printf "\nyou probably forgot to clone the repo & only ran the script to generate html. exiting. \n"
+	printf "\n"
+	exit 1
+}
+
 # https://stackoverflow.com/a/9393642/9285308
 repo_has_untracked_changes && {
 	printf "\nuncommitted changes in PUBLIC_NOTES_DIR ($PUBLIC_NOTES_DIR) ($(pwd))\n"
