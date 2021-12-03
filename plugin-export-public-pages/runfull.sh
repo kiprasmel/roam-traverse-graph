@@ -10,6 +10,11 @@ PUBLIC_NOTES_DIR="${5:-notes}"
 PUBLIC_NOTES_GITHUB_URL=${6:-"http://github.com/kiprasmel/notes"}
 DO_NOT_REGENERATE_IF_NO_NEW_CHANGES_IN_PRIVATE_NOTES_REPO="${7:-0}"
 
+# set this to true if you don't have access to the private notes repo,
+# but you can open roam & export-all as json
+# & place that json in the private notes repo.
+DO_NOT_RUN_PRIVATE_NOTES="${DO_NOT_RUN_PRIVATE_NOTES:-0}"
+
 ###
 
 repo_has_untracked_changes() {
@@ -75,19 +80,37 @@ commit_push() {
 
 ###
  
-pushd "$PRIVATE_NOTES_DIR"
+if [ "$DO_NOT_RUN_PRIVATE_NOTES" = 0 ]; then
+	printf "\nrunning run.sh in private notes dir\n\n"
 
-# create one yourself, until maybe we do a generalised one, hehe.
-bash ./run.sh
+	pushd "$PRIVATE_NOTES_DIR"
+	
+	! [ -f "./run.sh" ] && {
+		printf "\nerror - run.sh file missing in PRIVATE_NOTES_DIR ($PRIVATE_NOTES_DIR)"
+		printf "\na) create the run.sh script, or"
+		printf "\nb) set DO_NOT_RUN_PRIVATE_NOTES to any value and run again."
+		printf "\n\nthe B scenario is useful if e.g. you don't have access to the private notes repo,"
+		printf "\nbut you are logged in in roam, and can yourself click export-all"
+		printf "\n& place the json in the same location as the private notes repo"
+		printf "\n($PRIVATE_NOTES_DIR), most likely inside /json/"
+		printf "\n\n"
+		exit 1
+	}
 
-git add .
-diffy
-
-commit_push
-
-COMMIT_SHA="$(git show --pretty=format:'%H' | head -n 1)"
- 
-popd
+	# create one yourself, until maybe we do a generalised one, hehe.
+	bash ./run.sh
+	
+	git add .
+	diffy
+	
+	commit_push
+	
+	COMMIT_SHA="$(git show --pretty=format:'%H' | head -n 1)"
+	 
+	popd
+else
+	printf "\nNOT running run.sh in private notes dir (skipped because DO_NOT_RUN_PRIVATE_NOTES set).\n\n"
+fi
 
 ###
  
