@@ -365,8 +365,7 @@ ${joinChildren(
 				(${(meta.linkedMentions || []).length}
 				in
 				${mentionsGroupedByPage.length}
-				${[1, -1].includes(mentionsGroupedByPage.length) ? "page" : "pages"}
-				)
+				${[1, -1].includes(mentionsGroupedByPage.length) ? "page" : "pages"})
 
 				<button
 					id="order-toggle"
