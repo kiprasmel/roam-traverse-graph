@@ -140,17 +140,17 @@ export const pagesWithMetaAndHtml: PageWithMetadata<
 			// lr.blockRef.metadata.linkedReferences.map((blr) => blr.candidateLR.origStr).includes("newest-first") && // TODO config
 			// !lr.blockRef.metadata.linkedReferences.map((blr) => blr.candidateLR.origStr).includes("oldest-first") // TODO config
 
+			// // TODO config
+			// createLinkedReferences("newest-first").filter(
+			// 	(candidate) => candidate.fullStr === lr.blockRef.metadata.originalString
+			// ).length &&
 			// TODO config
-			createLinkedReferences("newest-first").filter(
-				(candidate) => candidate.fullStr === lr.blockRef.metadata.originalString
-			).length &&
-			// TODO config
-			!createLinkedReferences("oldest-first").filter(
+			createLinkedReferences("oldest-first").filter(
 				(candidate) => candidate.fullStr === lr.blockRef.metadata.originalString
 			).length
 	).length
-		? "newest-first"
-		: "oldest-first";
+		? "oldest-first"
+		: "newest-first";
 
 	/**
 	 * let's paint.
