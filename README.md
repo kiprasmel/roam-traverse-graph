@@ -8,6 +8,17 @@ NB! current codebase very much a work-in-progress, many things will change, docu
 
 follow progress at https://kiprasmel.github.io/notes/roam-traverse-graph.html
 
+## Setup
+
+```sh
+git clone https://github.com/kiprasmel/roam-traverse-graph.git
+# or:  git clone git@github.com:kiprasmel/roam-traverse-graph.git
+
+cd roam-traverse-graph/
+
+./install.sh
+```
+
 ## License
 
 [AGPL-3.0-only](./LICENSE) © 2021-present [Kipras Melnikovas](https://github.com/kiprasmel)
