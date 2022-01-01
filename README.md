@@ -1,8 +1,12 @@
 # roam-traverse-graph
 
-traverse the graph, use/create plugins (simple js functions) to modify/react to the graph however you want, and optionally use it to create a new graph in roam.
+traverse the graph, use/create plugins (simple js functions) to modify/react to the graph.
 
-initial idea was to safely export selected pages and mark them as public, but then i quickly realized one can add any functionality they want and start using roam for literally any automation.
+initial idea was to safely export selected pages and make them public, but then i realized one can add more functionality and start using roam for automation.
+
+NB! current codebase very much a work-in-progress, many things will change, documentation is missing. create an issue if you want to work on something / suggest stuff.
+
+follow progress at https://kiprasmel.github.io/notes/roam-traverse-graph.html
 
 ## License
 
