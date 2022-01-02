@@ -2,8 +2,6 @@ import { MutatingActionToExecute } from "../traverseBlockRecursively";
 import { Block, LinkedMention, LinkedRef, PageWithMetadata } from "../types";
 import { withMetadata } from "../util/withMetadata";
 
-import { createLinkedReferences } from "../util";
-
 export const findIfPagesHavePublicLinkedReferencesAndLinkThemAsMentions: MutatingActionToExecute<
 	{
 		rootParentPage: PageWithMetadata<{}, {}>; // TODO FIXME
@@ -98,7 +96,7 @@ export const findIfPagesHavePublicLinkedReferencesAndLinkThemAsMentions: Mutatin
 };
 
 function findMatchingLinkedReferences(
-	blockString: string,
+	blockStackTree: {},
 	allPagesWithMetadata: PageWithMetadata<{}, {}>[] // TODO TS
 ): LinkedRef[] {
 	const linkedReferences: LinkedRef[] = [];
@@ -115,11 +113,13 @@ function findMatchingLinkedReferences(
 			continue;
 		}
 
-		for (const candidateLR of createLinkedReferences(metaPage.originalTitle)) {
-			if (blockString.includes(candidateLR.fullStr)) {
-				linkedReferences.push({ metaPage, candidateLR });
-			}
-		}
+		blockStackTree.forEach(
+			(item) =>
+				item.type === "linked-reference" &&
+				item.children
+					.filter((child) => child.type === "text" && child.content === metaPage.originalTitle)
+					.map((child) => linkedReferences.push({ metaPage, linkedRefNode: item, linkedRefTextNode: child }))
+		);
 	}
 
 	return linkedReferences;
