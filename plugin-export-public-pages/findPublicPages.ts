@@ -653,7 +653,7 @@ export const findPublicPages = <M0 extends RO>(
 										s === str.slice(0, s.length);
 
 									//
-									const foundNonText: boolean = !!boundaries.find((b): boolean => {
+									const foundNonText: boolean = boundaries.some((b): boolean => {
 										// for (const b of boundaries) {
 										if (b.begin === null && b.end === null) {
 											throw new Error("begin & end cannot both be null");
@@ -702,6 +702,19 @@ export const findPublicPages = <M0 extends RO>(
 										} else if (startsWith(b.begin)) {
 											// advance(b.begin.length);
 
+											if (b.begin === b.end && until === b.end) {
+												/**
+												 * do NOT advance NOR push here
+												 * because once we return,
+												 * the stuff right below us will activate
+												 * & do the work there.
+												 */
+												// advance(b.end.length);
+												// stack.push(["end", b]);
+
+												return true;
+											}
+
 											stack.push(["begin", b]);
 											advance(b.begin.length);
 
@@ -727,7 +740,7 @@ export const findPublicPages = <M0 extends RO>(
 											// };
 										} else if (startsWith(b.end)) {
 											if (until !== b.end) {
-												// TODO INDICATE FAILURE IF NONE MATCH
+												// TODO INDICATE FAILURE IF NONE MATCH (or should we?)
 												return false;
 												// throw new Error(
 												// 	`unmatched! block.uid = "${block.uid}", block.string (original!) = "${block.string}", cursor was at "${cursor}", until = "${until}", b.end = "${b.end}"`
@@ -736,6 +749,7 @@ export const findPublicPages = <M0 extends RO>(
 												/**
 												 * matched!
 												 */
+												advance(b.end.length);
 												return true;
 											}
 										}
@@ -773,8 +787,46 @@ export const findPublicPages = <M0 extends RO>(
 									stackWithTextInsteadOfChars.push(["text", leftoverText]);
 								}
 
+								let i = 0;
+
+								const stackTree = {
+									children: toTree(),
+								};
+
+								// TODO TS
+								function toTree(): any[] {
+									const childrenAtCurrentLevel = [];
+
+									for (; i < stackWithTextInsteadOfChars.length; i++) {
+										const [beginEndText, item] = stackWithTextInsteadOfChars[i];
+
+										if (beginEndText === "text") {
+											// childrenAtCurrentLevel.push({
+											// 	type: "text",
+											// 	content: item,
+											// });
+											childrenAtCurrentLevel.push({
+												type: "text",
+												content: item,
+											});
+											// return { item};
+										} else if (beginEndText === "begin") {
+											i++;
+											childrenAtCurrentLevel.push({
+												...item,
+												children: toTree(),
+											});
+										} else if (beginEndText === "end") {
+											return childrenAtCurrentLevel;
+										}
+									}
+
+									return childrenAtCurrentLevel;
+								}
+
 								return withMetadata({
 									stack: stackWithTextInsteadOfChars,
+									stackTree,
 								})(block);
 							},
 							{}
