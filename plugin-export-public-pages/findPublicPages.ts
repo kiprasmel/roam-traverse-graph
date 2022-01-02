@@ -709,8 +709,9 @@ export const findPublicPages = <M0 extends RO>(
 												 * the stuff right below us will activate
 												 * & do the work there.
 												 */
-												// advance(b.end.length);
-												// stack.push(["end", b]);
+
+												stack.push(["end", b]);
+												advance(b.end.length);
 
 												return true;
 											}
@@ -720,8 +721,8 @@ export const findPublicPages = <M0 extends RO>(
 
 											parseUntil(b.end);
 
-											stack.push(["end", b]);
-											advance(b.end.length);
+											// stack.push(["end", b]);
+											// advance(b.end.length);
 
 											return true;
 
@@ -739,7 +740,8 @@ export const findPublicPages = <M0 extends RO>(
 											// 	children,
 											// };
 										} else if (startsWith(b.end)) {
-											if (until !== b.end) {
+											if (until !== b.end && until !== null) {
+												// stack.push(["MISMATCH", { until, b }]);
 												// TODO INDICATE FAILURE IF NONE MATCH (or should we?)
 												return false;
 												// throw new Error(
@@ -749,7 +751,9 @@ export const findPublicPages = <M0 extends RO>(
 												/**
 												 * matched!
 												 */
+												stack.push(["end", b]);
 												advance(b.end.length);
+
 												return true;
 											}
 										}
@@ -757,22 +761,25 @@ export const findPublicPages = <M0 extends RO>(
 										return false;
 									});
 
-									if (!foundNonText) {
-										/**
-										 * regular text
-										 */
-										if (!str.length) return;
+									const curr = advance(0);
 
-										const char = str[0];
-										stack.push(["char", char]);
-										advance(1);
+									if (curr.length) {
+										if (!foundNonText) {
+											const char = curr[0];
+											stack.push(["char", char]);
+											advance(1);
 
-										return parseUntil(until);
-										// }
+											return parseUntil(until);
+										}
+
+										// return parseUntil(null);
+										// return parseUntil(until);
 									}
 								}
 
-								parseUntil(null);
+								while (cursor < originalString.length) {
+									parseUntil(null);
+								}
 
 								const [stackWithTextInsteadOfChars, leftoverText] = stack.reduce(
 									([acc, tempString], [beginEndChar, item]) =>
