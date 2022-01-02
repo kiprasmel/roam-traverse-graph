@@ -8,7 +8,6 @@ import { findIfPagesHavePublicLinkedReferencesAndLinkThemAsMentions } from "./fi
 import { hideBlockStringsIfNotPublic } from "./hideBlockStringsIfNotPublic";
 import { parseRoamTraverseGraphSettingsFromRoamPage } from "./parseSettingsFromRoamPage"; // TODO FIXME
 import { shallowMergeIncludingArrayValues } from "../util/shallowMergeIncludingArrayValues";
-import { createLinkedReferences } from "../util";
 import { blockStringHasCode } from "../util/blockContainsCode";
 import { sortUntilFirstXORMatchUsing, Order } from "../util/sortUntilFirstXORMatch";
 
@@ -176,7 +175,6 @@ export const findPublicPages = <M0 extends RO>(
 		doNotHideTodoAndDone,
 		hiddenStringValue,
 		keepMetadata,
-		makeThePublicTagPagePublic,
 		privateTag,
 		publicGlobalTags,
 		publicOnlyTags,
@@ -263,15 +261,11 @@ export const findPublicPages = <M0 extends RO>(
 		)
 		// .map(p => p.children[0].metadata.)
 		// .map(p => p.children[0].metadata.)
-		.map((page) => {
-			const isThePublicTagPageAndShouldBePublic =
-				makeThePublicTagPagePublic && publicTags.some((publicTag) => titleIsPublicTag(page, publicTag));
-
-			return isThePublicTagPageAndShouldBePublic || //
-				publicGlobalTags.some((tag) => isMarkedAsFullyPublic(page, tag))
+		.map((page) =>
+			publicGlobalTags.some((tag) => isMarkedAsFullyPublic(page, tag))
 				? toFullyPublicPage(page, hiddenStringValue)
-				: toPotentiallyPartiallyPublicPage(page, hiddenStringValue);
-		})
+				: toPotentiallyPartiallyPublicPage(page, hiddenStringValue)
+		)
 		// .map(pm => pm.page.children?.[0].metadata.)
 
 		.map(
@@ -988,7 +982,6 @@ export const findPublicPages = <M0 extends RO>(
 		.sort((_a, _b) =>
 			sortUntilFirstXORMatchUsing<PageWithMetadata<{}, {}>>(
 				[
-					(AB): boolean => publicTags.some((publicTag) => titleIsPublicTag(AB.page, publicTag)),
 					(AB): boolean =>
 						AB.isFullyPublic &&
 						/**
@@ -1063,19 +1056,6 @@ function keepOnlyKnownPropertiesOfPage<M0 extends RO>(
 		...("refs" in page ? { refs: page.refs } : {}),
 		...("children" in page ? { children: page.children } : {}),
 	};
-}
-
-function titleIsPublicTag<M0 extends RO, M1 extends RO>(page: Page<M0, M1>, publicTag: string): boolean {
-	if (!page.title) {
-		return false;
-	}
-
-	const { title } = page;
-
-	return !![
-		title, //
-		...createLinkedReferences(title).map((lr) => lr.fullStr),
-	].includes(publicTag);
 }
 
 function isMarkedAsFullyPublic<M0 extends RO & { hasCodeBlock: boolean }, M1 extends RO>(
