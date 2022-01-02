@@ -613,14 +613,17 @@ export const findPublicPages = <M0 extends RO>(
 										type: "linked-reference",
 										kind: "[[]]",
 									},
-									{
-										begin: "#",
-										// end: [" ", ".", ":", "'"],
-										end: " ", // TODO FIXME - use above
-										type: "linked-reference",
-										kind: "#",
-										// TODO "allow unfinished"
-									},
+									/**
+									 * TODO FIXME:
+									 */
+									// {
+									// 	begin: "#",
+									// 	// end: [" ", ".", ":", "'"],
+									// 	end: " ", // TODO FIXME - use above
+									// 	type: "linked-reference",
+									// 	kind: "#",
+									// 	// TODO "allow unfinished"
+									// },
 									//
 									{
 										begin: "{{",
