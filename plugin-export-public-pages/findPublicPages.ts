@@ -598,6 +598,21 @@ export const findPublicPages = <M0 extends RO>(
 										type: "linked-reference", // TODO attribute? or nah? probably not.
 										kind: "::",
 									},
+									// {
+									// 	// TODO "allow un-beginned" or whatever
+									// 	begin: null,
+									// 	end: "::",
+									// 	extraAdvanceEnd: -2,
+									// 	type: "attribute", // TODO attribute? or nah? probably not.
+									// 	kind: "key",
+									// },
+									// {
+									// 	// TODO "allow un-beginned" or whatever
+									// 	begin: "::",
+									// 	end: null,
+									// 	type: "attribute", // TODO attribute? or nah? probably not.
+									// 	kind: "value",
+									// },
 									{
 										begin: "#[[",
 										end: "]]",
@@ -675,6 +690,7 @@ export const findPublicPages = <M0 extends RO>(
 
 												stack.push(["end", b]);
 
+												// advance(b.end.length + (b.extraAdvanceEnd ?? 0));
 												advance(b.end.length);
 
 												return true;
@@ -714,6 +730,7 @@ export const findPublicPages = <M0 extends RO>(
 												 */
 
 												stack.push(["end", b]);
+												// advance(b.end.length + (b.extraAdvanceEnd ?? 0));
 												advance(b.end.length);
 
 												return true;
@@ -761,6 +778,7 @@ export const findPublicPages = <M0 extends RO>(
 												 * matched!
 												 */
 												stack.push(["end", b]);
+												// advance(b.end.length + (b.extraAdvanceEnd ?? 0));
 												advance(b.end.length);
 
 												return true;
@@ -789,7 +807,7 @@ export const findPublicPages = <M0 extends RO>(
 								while (cursor < originalString.length) {
 									parseUntil(null, null);
 								}
-
+								//
 								const [stackWithTextInsteadOfChars, leftoverText] = stack.reduce(
 									([acc, tempString], [beginEndChar, item]) =>
 										beginEndChar === "char"
