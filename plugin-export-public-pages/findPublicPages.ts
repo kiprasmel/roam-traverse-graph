@@ -637,7 +637,7 @@ export const findPublicPages = <M0 extends RO>(
 								const stack: any[] = [];
 
 								// function parseUntil(str: string, current: string | null, until: string | null) {
-								function parseUntil(until: string | null): void {
+								function parseUntil(from: string | null, until: string | null): void {
 									// let lastLengthOfStartsWith = -1;
 									//
 									// const eat = (n: number = lastLengthOfStartsWith): string => str.slice(n);
@@ -691,7 +691,7 @@ export const findPublicPages = <M0 extends RO>(
 												stack.push(["begin", b]);
 												advance(b.begin.length);
 
-												parseUntil(null);
+												parseUntil(b.begin, null);
 
 												// stack.push(["text", "TODO"]);
 
@@ -719,7 +719,7 @@ export const findPublicPages = <M0 extends RO>(
 											stack.push(["begin", b]);
 											advance(b.begin.length);
 
-											parseUntil(b.end);
+											parseUntil(b.begin, b.end);
 
 											// stack.push(["end", b]);
 											// advance(b.end.length);
@@ -740,8 +740,14 @@ export const findPublicPages = <M0 extends RO>(
 											// 	children,
 											// };
 										} else if (startsWith(b.end)) {
-											if (until !== b.end && until !== null) {
-												// stack.push(["MISMATCH", { until, b }]);
+											if (
+												// (from !== b.begin && from !== null) ||
+												// (until !== b.end && until !== null)
+												(from !== b.begin || until !== b.end) &&
+												(from !== null || until !== null)
+												// TODO FIXME
+											) {
+												// stack.push(["MISMATCH", { from, until, b }]);
 												// TODO INDICATE FAILURE IF NONE MATCH (or should we?)
 												return false;
 												// throw new Error(
@@ -769,7 +775,7 @@ export const findPublicPages = <M0 extends RO>(
 											stack.push(["char", char]);
 											advance(1);
 
-											return parseUntil(until);
+											return parseUntil(from, until);
 										}
 
 										// return parseUntil(null);
@@ -778,7 +784,7 @@ export const findPublicPages = <M0 extends RO>(
 								}
 
 								while (cursor < originalString.length) {
-									parseUntil(null);
+									parseUntil(null, null);
 								}
 
 								const [stackWithTextInsteadOfChars, leftoverText] = stack.reduce(
