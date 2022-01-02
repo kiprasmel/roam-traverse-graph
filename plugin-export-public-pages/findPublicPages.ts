@@ -406,6 +406,371 @@ export const findPublicPages = <M0 extends RO>(
 					// 	)(undefined) //
 					// )
 					// .map((block) => block.metadata.)
+
+					// .map(traverseBlockRecursively(() => (block) => withMetadata({})(block), {})(undefined))
+					.map(
+						traverseBlockRecursively(
+							() => (block) => {
+								//
+
+								// function createParser() {
+								// 	type ParsedType = "command" | "linked-reference";
+								// 	type Parsed = {
+								// 		type: ParsedType;
+								// 	} & (
+								// 		| {
+								// 				pos: "begin";
+								// 		  }
+								// 		| {
+								// 				pos: "end";
+								// 				content: string;
+								// 		  }
+								// 	);
+
+								// 	const createBegin = (rest: Omit<Parsed, "pos">): Parsed => ({
+								// 		pos: "begin",
+								// 		...rest,
+								// 	});
+								// 	const createEnd = (content: string, rest: Omit<Parsed, "pos">): Parsed => ({
+								// 		pos: "end",
+								// 		content,
+								// 		...rest,
+								// 	});
+
+								// 	/**
+								// 	 * not really a stack of how we're parsing it.
+								// 	 *
+								// 	 * it becomes flat, instead of having sub-categories
+								// 	 * if they were to exist (children)
+								// 	 */
+								// 	const parsedStack: Parsed[] = [];
+
+								// 	/** TODO DISALLOW TEXT */
+								// 	const parsedTypesStack: ParsedType[] = [];
+
+								// 	const begin = (type: ParsedType, rest: Omit<Parsed, "pos" | "type"> = {}) => {
+								// 		parsedTypesStack.push(type);
+								// 		parsedStack.push(createBegin({ type, ...rest }));
+								// 		// const end = () => parsedStack.push(createEnd({ type, ...rest }));
+								// 		// return end;
+								// 	};
+
+								// 	const end = (
+								// 		type: ParsedType, //
+								// 		content: string,
+								// 		rest: Omit<Parsed, "pos" | "type"> = {}
+								// 	) => {
+								// 		const lastParsed = parsedTypesStack[parsedTypesStack.length - 1];
+
+								// 		if (!lastParsed || lastParsed !== type) {
+								// 			// TODO
+								// 			throw new Error(
+								// 				`invalid syntax - ending type does not have a proper beginning type (could be miss-placed etc). block.uid = "${block.uid}", block.string (raw) = "${block.string}".`
+								// 			);
+								// 		}
+
+								// 		parsedStack.push(createEnd(content, { type, ...rest }));
+								// 	};
+
+								// 	return function parse(str: string): Parsed[] {
+								// 		let lastLengthOfStartsWith = -1;
+
+								// 		const startsWith = (s: string): boolean => (
+								// 			(lastLengthOfStartsWith = s.length), s === str.slice(0, s.length)
+								// 		);
+
+								// 		const eat = (n: number = lastLengthOfStartsWith): string => str.slice(n);
+
+								// 		/**
+								// 		 * TODO get rid of this & parse properly w/o assuming it ends at first match lol
+								// 		 */
+								// 		// const eatUntilFirst = (s: string, ret: string = ""): string => (
+								// 		// 	// eslint-disable-next-line no-param-reassign
+								// 		// 	(ret = str.split(s)[0]), //
+								// 		// 	// eslint-disable-next-line no-param-reassign
+								// 		// 	(str = [...str].splice(ret.length).join("")),
+								// 		// 	ret
+								// 		// );
+
+								// 		/**
+								// 		 * TODO would likely want to improve parsing
+								// 		 * & NOT assume that the thing goes up until
+								// 		 * the very first counter-match of it
+								// 		 *
+								// 		 * TODO need a state machine to explicitly specify
+								// 		 * what CAN and CANNOT be after what
+								// 		 */
+								// 		while (str.length) {
+								// 			// else if (false) {
+								// 			// 	//
+								// 			// }
+
+								// 			// eslint-disable-next-line no-constant-condition
+								// 			if (false) {
+								// 				//
+								// 			} else if (startsWith("{{")) {
+								// 				// eat(2);
+								// 				// const end = begin("command");
+								// 				// // parse(str);
+								// 				// // end();
+								// 				// const remaining = eatUntilFirst("}}");
+								// 				// parse(remaining);
+								// 				// end();
+
+								// 				begin("command");
+								// 				const rest = eat();
+								// 				parse(rest);
+								// 			} else if (startsWith("}}")) {
+								// 				eat();
+								// 				end("command");
+								// 			} else if (startsWith("#[[")) {
+								// 				begin("linked-reference");
+								// 				const rest = eat();
+								// 				parse(rest);
+								// 			} else if (startsWith("]]")) {
+								// 				eat();
+								// 				end("linked-reference");
+								// 			} else if (startsWith("[[")) {
+								// 				begin("linked-reference");
+								// 				const rest = eat();
+								// 				parse(rest);
+								// 			} else if (startsWith("]]")) {
+								// 				eat();
+								// 				end("linked-reference");
+								// 			} else if (startsWith("#")) {
+								// 				const rest = eat();
+								// 				begin("linked-reference");
+
+								// 				const breakers = [" ", ".", ":", "'"];
+
+								// 				const untilFirstBreaker: string = breakers
+								// 					.map((breaker) =>
+								// 						!rest.includes(breaker) ? "" : rest.split(breaker)[0]
+								// 					)
+								// 					.filter((x) => !!x)
+								// 					.sort((a, b) => a.length - b.length)[0];
+
+								// 				if (!untilFirstBreaker) {
+								// 					// TODO the actual contents of it
+								// 					end("linked-reference", rest);
+								// 				} else {
+								// 				}
+								// 			}
+
+								// 			// else {
+								// 			// 	throw new Error("unhandled syntax");
+								// 			// }
+								// 		}
+
+								// 		return parsedStack;
+								// 	};
+								// }
+
+								// return withMetadata({ ast })(block);
+
+								/**
+								 * ---
+								 */
+
+								/**
+								 * order matters
+								 */
+								const boundaries = [
+									{
+										begin: "```",
+										end: "```",
+										type: "code-block",
+										kind: "whole",
+									},
+									{
+										begin: "`",
+										end: "`",
+										type: "code-block",
+										kind: "inline",
+									},
+									//
+									{
+										// TODO "allow un-beginned" or whatever
+										begin: null,
+										end: "::",
+										// type: "attribute",
+										// // TODO - linked reference w/ kind: attribute?
+										type: "linked-reference", // TODO attribute? or nah? probably not.
+										kind: "::",
+									},
+									{
+										begin: "#[[",
+										end: "]]",
+										type: "linked-reference",
+										kind: "#[[]]",
+										// parse: (s: string): boolean => {
+										// 	//
+										// },
+									},
+									{
+										begin: "[[",
+										end: "]]",
+										type: "linked-reference",
+										kind: "[[]]",
+									},
+									{
+										begin: "#",
+										// end: [" ", ".", ":", "'"],
+										end: " ", // TODO FIXME - use above
+										type: "linked-reference",
+										kind: "#",
+										// TODO "allow unfinished"
+									},
+									//
+									{
+										begin: "{{",
+										end: "}}",
+										type: "command",
+									},
+									//
+								];
+
+								let cursor = 0;
+								const originalString: string = block.string;
+
+								// TODO FIXME
+								const stack: any[] = [];
+
+								// function parseUntil(str: string, current: string | null, until: string | null) {
+								function parseUntil(until: string | null): void {
+									// let lastLengthOfStartsWith = -1;
+									//
+									// const eat = (n: number = lastLengthOfStartsWith): string => str.slice(n);
+									// const advance = (n: number = lastLengthOfStartsWith): string => (
+									const advance = (n: number): string => (
+										(cursor += n), originalString.slice(cursor)
+									);
+
+									const str: string = advance(0);
+
+									const startsWith = (s: string): boolean =>
+										// (lastLengthOfStartsWith = s.length), s === str.slice(0, s.length)
+										s === str.slice(0, s.length);
+
+									//
+									const foundNonText: boolean = !!boundaries.find((b): boolean => {
+										// for (const b of boundaries) {
+										if (b.begin === null && b.end === null) {
+											throw new Error("begin & end cannot both be null");
+										} else if (b.begin === null) {
+											if (startsWith(b.end)) {
+												/**
+												 * need everything from very beginning up until now
+												 */
+
+												stack.unshift(["begin", b]);
+
+												// stack.push(["text", "TODO"]);
+												/**
+												 * text (or other stuff) have already been parsed
+												 */
+
+												stack.push(["end", b]);
+
+												advance(b.end.length);
+
+												return true;
+
+												// return {
+												// 	...b,
+												// 	child: parseUntil(),
+												// };
+											}
+										} else if (b.end === null) {
+											if (startsWith(b.begin)) {
+												/**
+												 * need everything from now up until the very end
+												 */
+												// TODO
+
+												stack.push(["begin", b]);
+												advance(b.begin.length);
+
+												parseUntil(null);
+
+												// stack.push(["text", "TODO"]);
+
+												stack.push(["end", b]);
+
+												return true;
+											}
+										} else if (startsWith(b.begin)) {
+											// advance(b.begin.length);
+
+											stack.push(["begin", b]);
+											advance(b.begin.length);
+
+											parseUntil(b.end);
+
+											stack.push(["end", b]);
+											advance(b.end.length);
+
+											return true;
+
+											// const scopedCursor = cursor + b.begin.length;
+											// const scopedUntil = b.end;
+
+											// const ret = parseUntil(scopedUntil);
+											// const { cursorAdvancedBy, children } = ret;
+
+											// // cursor += cursorAdvancedBy;
+
+											// return {
+											// 	...b,
+											// 	cursorAdvancedBy: scopedCursor + cursorAdvancedBy,
+											// 	children,
+											// };
+										} else if (startsWith(b.end)) {
+											if (until !== b.end) {
+												// TODO INDICATE FAILURE IF NONE MATCH
+												return false;
+												// throw new Error(
+												// 	`unmatched! block.uid = "${block.uid}", block.string (original!) = "${block.string}", cursor was at "${cursor}", until = "${until}", b.end = "${b.end}"`
+												// );
+											} else {
+												/**
+												 * matched!
+												 */
+												return true;
+											}
+										}
+
+										return false;
+									});
+
+									if (!foundNonText) {
+										/**
+										 * regular text
+										 */
+										if (!str.length) return;
+
+										const char = str[0];
+										stack.push(["char", char]);
+										advance(1);
+
+										return parseUntil(until);
+										// }
+									}
+								}
+
+								parseUntil(null);
+
+								// console.log({ stack });
+
+								// return block;
+
+								return withMetadata({
+									stack,
+								})(block);
+							},
+							{}
+						)(undefined)
+					)
 					.map(
 						traverseBlockRecursively(
 							// <
