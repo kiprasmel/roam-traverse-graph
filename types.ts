@@ -1,6 +1,8 @@
 import { RO, WithMetadata } from "./metadata.d";
 import { Page, LinkedReferenceKind, Block } from "./roam.d";
 
+import { Boundary, StackedTreeChild } from "./plugin-export-public-pages/parseASTFromBlockString";
+
 export * from "./metadata.d"; // TODO TS
 export * from "./roam.d"; // TODO REMOVE
 
@@ -125,11 +127,8 @@ export type WithIsPublic = WithMetadata<{
 export type LinkedRef<M0 extends RO = RO, M1 extends RO = RO> = {
 	metaPage: PageWithMetadata<M0, M1>;
 	// candidateLR: LinkedReference;
-	linkedRefNode: any;
-	linkedRefTextNode: {
-		type: "text";
-		content: string;
-	};
+	linkedRefNode: StackedTreeChild;
+	linkedRefTextNode: StackedTreeChild;
 };
 
 export type FindLinkedReferencesProps<M0, M1> = {
