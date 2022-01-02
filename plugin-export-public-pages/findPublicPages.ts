@@ -2,6 +2,7 @@
 
 /* eslint-disable indent */
 
+import { Tuple } from "util/tuple";
 import { traverseBlockRecursively } from "../traverseBlockRecursively";
 import { removeUnknownProperties, markBlockPublic } from "./findPublicBlocks";
 import { findIfPagesHavePublicLinkedReferencesAndLinkThemAsMentions } from "./findLinkedReferencesOfABlock";
@@ -640,7 +641,7 @@ export const findPublicPages = <M0 extends RO>(
 										type: "command",
 									},
 									//
-								];
+								] as const;
 
 								let cursor = 0;
 								const originalString: string = block.string;
@@ -695,6 +696,10 @@ export const findPublicPages = <M0 extends RO>(
 												// };
 											}
 										} else if (b.end === null) {
+											/**
+											 * until we have an actual use case
+											 */
+											// @ts-expect-error
 											if (startsWith(b.begin)) {
 												/**
 												 * need everything from now up until the very end
@@ -702,8 +707,10 @@ export const findPublicPages = <M0 extends RO>(
 												// TODO
 
 												stack.push(["begin", b]);
+												// @ts-expect-error
 												advance(b.begin.length);
 
+												// @ts-expect-error
 												parseUntil(b.begin, null);
 
 												// stack.push(["text", "TODO"]);
@@ -802,7 +809,18 @@ export const findPublicPages = <M0 extends RO>(
 									parseUntil(null, null);
 								}
 								//
-								const [stackWithTextInsteadOfChars, leftoverText] = stack.reduce(
+
+								type Boundary = typeof boundaries[number];
+
+								type StackWithTextItem =
+									| Tuple<"text", string> //
+									| Tuple<"begin" | "end", Boundary>;
+
+								type StackWithText = StackWithTextItem[];
+
+								const [stackWithTextInsteadOfChars, leftoverText] = stack.reduce<
+									Tuple<StackWithText, string>
+								>(
 									([acc, tempString], [beginEndChar, item]) =>
 										beginEndChar === "char"
 											? [acc, tempString + item] //
@@ -817,11 +835,20 @@ export const findPublicPages = <M0 extends RO>(
 
 								let i = 0;
 
-								const stackTree = toTree();
+								type StackedTreeChild =
+									| {
+											type: "text";
+											content: string;
+									  }
+									| (Boundary & {
+											children: StackedTreeChild[];
+									  });
+
+								const stackTree: StackedTreeChild[] = toTree();
 
 								// TODO TS
-								function toTree(): any[] {
-									const childrenAtCurrentLevel = [];
+								function toTree(): StackedTreeChild[] {
+									const childrenAtCurrentLevel: StackedTreeChild[] = [];
 
 									for (; i < stackWithTextInsteadOfChars.length; i++) {
 										const [beginEndText, item] = stackWithTextInsteadOfChars[i];
@@ -833,13 +860,13 @@ export const findPublicPages = <M0 extends RO>(
 											// });
 											childrenAtCurrentLevel.push({
 												type: "text",
-												content: item,
+												content: item as Exclude<typeof item, Boundary>,
 											});
 											// return { item};
 										} else if (beginEndText === "begin") {
 											i++;
 											childrenAtCurrentLevel.push({
-												...item,
+												...(item as Exclude<typeof item, string>),
 												children: toTree(),
 											});
 										} else if (beginEndText === "end") {
