@@ -760,12 +760,23 @@ export const findPublicPages = <M0 extends RO>(
 
 								parseUntil(null);
 
-								// console.log({ stack });
-
-								// return block;
+								let tempString = "";
+								const stackWithTextInsteadOfChars = stack.reduce(
+									(acc, [beginEndChar, item]) =>
+										beginEndChar === "char"
+											? ((tempString += item), acc) //
+											: (tempString && acc.push(["text", tempString]),
+											  (tempString = ""),
+											  acc.push([beginEndChar, item]),
+											  acc), //
+									[]
+								);
+								if (tempString) {
+									stackWithTextInsteadOfChars.push(["text", tempString]);
+								}
 
 								return withMetadata({
-									stack,
+									stack: stackWithTextInsteadOfChars,
 								})(block);
 							},
 							{}
