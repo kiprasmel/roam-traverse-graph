@@ -823,9 +823,7 @@ export const findPublicPages = <M0 extends RO>(
 
 								let i = 0;
 
-								const stackTree = {
-									children: toTree(),
-								};
+								const stackTree = toTree();
 
 								// TODO TS
 								function toTree(): any[] {

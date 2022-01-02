@@ -3,6 +3,7 @@
 import { MutatingActionToExecute } from "../traverseBlockRecursively";
 import { PageWithMetadata } from "../types";
 import { withMetadata } from "../util/withMetadata";
+import { hasLinkedReference } from "./findLinkedReferencesOfABlock";
 
 export const removeUnknownProperties: MutatingActionToExecute<{}> = () => (block) =>
 	!block
@@ -36,7 +37,9 @@ export const markBlockPublic: MutatingActionToExecute<
 		hasPrivateTag: boolean;
 	},
 	{
-		hasCodeBlock: boolean;
+		// hasCodeBlock: boolean;
+		stack: any;
+		stackTree: any;
 	}
 > = ({
 	// parentBlock,
@@ -55,13 +58,12 @@ export const markBlockPublic: MutatingActionToExecute<
 		 * because we might have a #private tag that would affect this)
 		 *
 		 */
-		const hasSubstringNotInsideCode = (tags: string[]): boolean =>
-			!block.metadata.hasCodeBlock && tags.some((tag) => block.string.includes(tag)); //
+		// const hasSubstringNotInsideCode = (tags: string[]): boolean =>
+		// 	!block.metadata.hasCodeBlock && tags.some((tag) => block.string.includes(tag)); //
 
-		const hasPublicTag: boolean = hasSubstringNotInsideCode(publicTags);
-		const hasPublicOnlyTag: boolean = hasSubstringNotInsideCode(publicOnlyTags);
-
-		const hasPrivateTag: boolean = hasSubstringNotInsideCode([privateTag]);
+		const hasPublicTag: boolean = publicTags.some(hasLinkedReference);
+		const hasPublicOnlyTag: boolean = publicOnlyTags.some(hasLinkedReference);
+		const hasPrivateTag: boolean = [privateTag].some(hasLinkedReference);
 
 		/**
 		 * ---
