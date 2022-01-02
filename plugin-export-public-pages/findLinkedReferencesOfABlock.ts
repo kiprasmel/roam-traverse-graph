@@ -1,5 +1,5 @@
 import { MutatingActionToExecute } from "../traverseBlockRecursively";
-import { LinkedMention, LinkedRef, PageWithMetadata } from "../types";
+import { Block, LinkedMention, LinkedRef, PageWithMetadata } from "../types";
 import { withMetadata } from "../util/withMetadata";
 
 import { createLinkedReferences } from "../util";
@@ -124,3 +124,13 @@ function findMatchingLinkedReferences(
 
 	return linkedReferences;
 }
+
+/**
+ * TODO jscodeshift-like .find'ing w/ stack & needle
+ */
+export const hasLinkedReference = (wantedLinkedRef: string) => (block: Block<{ stackTree: any }, {}>): boolean =>
+	block.metadata.stackTree.some(
+		(item: any) =>
+			item.type === "linked-reference" &&
+			item.children.some((child: any) => child.type === "text" && child.content === wantedLinkedRef)
+	);
