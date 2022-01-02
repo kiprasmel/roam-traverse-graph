@@ -124,7 +124,12 @@ export type WithIsPublic = WithMetadata<{
 // TODO TS FIXME
 export type LinkedRef<M0 extends RO = RO, M1 extends RO = RO> = {
 	metaPage: PageWithMetadata<M0, M1>;
-	candidateLR: LinkedReference;
+	// candidateLR: LinkedReference;
+	linkedRefNode: any;
+	linkedRefTextNode: {
+		type: "text";
+		content: string;
+	};
 };
 
 export type FindLinkedReferencesProps<M0, M1> = {
