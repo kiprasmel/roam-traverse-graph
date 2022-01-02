@@ -1,6 +1,7 @@
 import { MutatingActionToExecute } from "../traverseBlockRecursively";
 import { Block, LinkedMention, LinkedRef, PageWithMetadata } from "../types";
 import { withMetadata } from "../util/withMetadata";
+import { StackedTreeChild } from "./parseASTFromBlockString";
 
 export const findIfPagesHavePublicLinkedReferencesAndLinkThemAsMentions: MutatingActionToExecute<
 	{
@@ -15,6 +16,7 @@ export const findIfPagesHavePublicLinkedReferencesAndLinkThemAsMentions: Mutatin
 		isPublic: boolean;
 		isPublicOnly: boolean;
 		depth: number;
+		stackTree: StackedTreeChild[];
 	}
 > = ({
 	allPagesWithMetadata, //
@@ -22,7 +24,7 @@ export const findIfPagesHavePublicLinkedReferencesAndLinkThemAsMentions: Mutatin
 }) => (block) => {
 	const linkedReferences: LinkedRef[] = block.metadata.hasCodeBlock
 		? []
-		: findMatchingLinkedReferences(block.string, allPagesWithMetadata);
+		: findMatchingLinkedReferences(block.metadata.stackTree, allPagesWithMetadata);
 
 	const isBlockPublic = block.metadata.isPublic || block.metadata.isPublicOnly;
 
@@ -96,7 +98,7 @@ export const findIfPagesHavePublicLinkedReferencesAndLinkThemAsMentions: Mutatin
 };
 
 function findMatchingLinkedReferences(
-	blockStackTree: {},
+	blockStackTree: StackedTreeChild[],
 	allPagesWithMetadata: PageWithMetadata<{}, {}>[] // TODO TS
 ): LinkedRef[] {
 	const linkedReferences: LinkedRef[] = [];
