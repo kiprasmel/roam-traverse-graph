@@ -406,167 +406,6 @@ export const findPublicPages = <M0 extends RO>(
 					.map(
 						traverseBlockRecursively(
 							() => (block) => {
-								//
-
-								// function createParser() {
-								// 	type ParsedType = "command" | "linked-reference";
-								// 	type Parsed = {
-								// 		type: ParsedType;
-								// 	} & (
-								// 		| {
-								// 				pos: "begin";
-								// 		  }
-								// 		| {
-								// 				pos: "end";
-								// 				content: string;
-								// 		  }
-								// 	);
-
-								// 	const createBegin = (rest: Omit<Parsed, "pos">): Parsed => ({
-								// 		pos: "begin",
-								// 		...rest,
-								// 	});
-								// 	const createEnd = (content: string, rest: Omit<Parsed, "pos">): Parsed => ({
-								// 		pos: "end",
-								// 		content,
-								// 		...rest,
-								// 	});
-
-								// 	/**
-								// 	 * not really a stack of how we're parsing it.
-								// 	 *
-								// 	 * it becomes flat, instead of having sub-categories
-								// 	 * if they were to exist (children)
-								// 	 */
-								// 	const parsedStack: Parsed[] = [];
-
-								// 	/** TODO DISALLOW TEXT */
-								// 	const parsedTypesStack: ParsedType[] = [];
-
-								// 	const begin = (type: ParsedType, rest: Omit<Parsed, "pos" | "type"> = {}) => {
-								// 		parsedTypesStack.push(type);
-								// 		parsedStack.push(createBegin({ type, ...rest }));
-								// 		// const end = () => parsedStack.push(createEnd({ type, ...rest }));
-								// 		// return end;
-								// 	};
-
-								// 	const end = (
-								// 		type: ParsedType, //
-								// 		content: string,
-								// 		rest: Omit<Parsed, "pos" | "type"> = {}
-								// 	) => {
-								// 		const lastParsed = parsedTypesStack[parsedTypesStack.length - 1];
-
-								// 		if (!lastParsed || lastParsed !== type) {
-								// 			// TODO
-								// 			throw new Error(
-								// 				`invalid syntax - ending type does not have a proper beginning type (could be miss-placed etc). block.uid = "${block.uid}", block.string (raw) = "${block.string}".`
-								// 			);
-								// 		}
-
-								// 		parsedStack.push(createEnd(content, { type, ...rest }));
-								// 	};
-
-								// 	return function parse(str: string): Parsed[] {
-								// 		let lastLengthOfStartsWith = -1;
-
-								// 		const startsWith = (s: string): boolean => (
-								// 			(lastLengthOfStartsWith = s.length), s === str.slice(0, s.length)
-								// 		);
-
-								// 		const eat = (n: number = lastLengthOfStartsWith): string => str.slice(n);
-
-								// 		/**
-								// 		 * TODO get rid of this & parse properly w/o assuming it ends at first match lol
-								// 		 */
-								// 		// const eatUntilFirst = (s: string, ret: string = ""): string => (
-								// 		// 	// eslint-disable-next-line no-param-reassign
-								// 		// 	(ret = str.split(s)[0]), //
-								// 		// 	// eslint-disable-next-line no-param-reassign
-								// 		// 	(str = [...str].splice(ret.length).join("")),
-								// 		// 	ret
-								// 		// );
-
-								// 		/**
-								// 		 * TODO would likely want to improve parsing
-								// 		 * & NOT assume that the thing goes up until
-								// 		 * the very first counter-match of it
-								// 		 *
-								// 		 * TODO need a state machine to explicitly specify
-								// 		 * what CAN and CANNOT be after what
-								// 		 */
-								// 		while (str.length) {
-								// 			// else if (false) {
-								// 			// 	//
-								// 			// }
-
-								// 			// eslint-disable-next-line no-constant-condition
-								// 			if (false) {
-								// 				//
-								// 			} else if (startsWith("{{")) {
-								// 				// eat(2);
-								// 				// const end = begin("command");
-								// 				// // parse(str);
-								// 				// // end();
-								// 				// const remaining = eatUntilFirst("}}");
-								// 				// parse(remaining);
-								// 				// end();
-
-								// 				begin("command");
-								// 				const rest = eat();
-								// 				parse(rest);
-								// 			} else if (startsWith("}}")) {
-								// 				eat();
-								// 				end("command");
-								// 			} else if (startsWith("#[[")) {
-								// 				begin("linked-reference");
-								// 				const rest = eat();
-								// 				parse(rest);
-								// 			} else if (startsWith("]]")) {
-								// 				eat();
-								// 				end("linked-reference");
-								// 			} else if (startsWith("[[")) {
-								// 				begin("linked-reference");
-								// 				const rest = eat();
-								// 				parse(rest);
-								// 			} else if (startsWith("]]")) {
-								// 				eat();
-								// 				end("linked-reference");
-								// 			} else if (startsWith("#")) {
-								// 				const rest = eat();
-								// 				begin("linked-reference");
-
-								// 				const breakers = [" ", ".", ":", "'"];
-
-								// 				const untilFirstBreaker: string = breakers
-								// 					.map((breaker) =>
-								// 						!rest.includes(breaker) ? "" : rest.split(breaker)[0]
-								// 					)
-								// 					.filter((x) => !!x)
-								// 					.sort((a, b) => a.length - b.length)[0];
-
-								// 				if (!untilFirstBreaker) {
-								// 					// TODO the actual contents of it
-								// 					end("linked-reference", rest);
-								// 				} else {
-								// 				}
-								// 			}
-
-								// 			// else {
-								// 			// 	throw new Error("unhandled syntax");
-								// 			// }
-								// 		}
-
-								// 		return parsedStack;
-								// 	};
-								// }
-
-								// return withMetadata({ ast })(block);
-
-								/**
-								 * ---
-								 */
-
 								/**
 								 * order matters
 								 */
@@ -593,21 +432,6 @@ export const findPublicPages = <M0 extends RO>(
 										type: "linked-reference", // TODO attribute? or nah? probably not.
 										kind: "::",
 									},
-									// {
-									// 	// TODO "allow un-beginned" or whatever
-									// 	begin: null,
-									// 	end: "::",
-									// 	extraAdvanceEnd: -2,
-									// 	type: "attribute", // TODO attribute? or nah? probably not.
-									// 	kind: "key",
-									// },
-									// {
-									// 	// TODO "allow un-beginned" or whatever
-									// 	begin: "::",
-									// 	end: null,
-									// 	type: "attribute", // TODO attribute? or nah? probably not.
-									// 	kind: "value",
-									// },
 									{
 										begin: "#[[",
 										end: "]]",
@@ -649,25 +473,16 @@ export const findPublicPages = <M0 extends RO>(
 								// TODO FIXME
 								const stack: any[] = [];
 
-								// function parseUntil(str: string, current: string | null, until: string | null) {
 								function parseUntil(from: string | null, until: string | null): void {
-									// let lastLengthOfStartsWith = -1;
-									//
-									// const eat = (n: number = lastLengthOfStartsWith): string => str.slice(n);
-									// const advance = (n: number = lastLengthOfStartsWith): string => (
 									const advance = (n: number): string => (
 										(cursor += n), originalString.slice(cursor)
 									);
 
 									const str: string = advance(0);
 
-									const startsWith = (s: string): boolean =>
-										// (lastLengthOfStartsWith = s.length), s === str.slice(0, s.length)
-										s === str.slice(0, s.length);
+									const startsWith = (s: string): boolean => s === str.slice(0, s.length);
 
-									//
 									const foundNonText: boolean = boundaries.some((b): boolean => {
-										// for (const b of boundaries) {
 										if (b.begin === null && b.end === null) {
 											throw new Error("begin & end cannot both be null");
 										} else if (b.begin === null) {
@@ -678,22 +493,15 @@ export const findPublicPages = <M0 extends RO>(
 
 												stack.unshift(["begin", b]);
 
-												// stack.push(["text", "TODO"]);
 												/**
 												 * text (or other stuff) have already been parsed
 												 */
 
 												stack.push(["end", b]);
 
-												// advance(b.end.length + (b.extraAdvanceEnd ?? 0));
 												advance(b.end.length);
 
 												return true;
-
-												// return {
-												// 	...b,
-												// 	child: parseUntil(),
-												// };
 											}
 										} else if (b.end === null) {
 											/**
@@ -704,7 +512,6 @@ export const findPublicPages = <M0 extends RO>(
 												/**
 												 * need everything from now up until the very end
 												 */
-												// TODO
 
 												stack.push(["begin", b]);
 												// @ts-expect-error
@@ -713,15 +520,11 @@ export const findPublicPages = <M0 extends RO>(
 												// @ts-expect-error
 												parseUntil(b.begin, null);
 
-												// stack.push(["text", "TODO"]);
-
 												stack.push(["end", b]);
 
 												return true;
 											}
 										} else if (startsWith(b.begin)) {
-											// advance(b.begin.length);
-
 											if (b.begin === b.end && until === b.end) {
 												/**
 												 * do NOT advance NOR push here
@@ -731,7 +534,6 @@ export const findPublicPages = <M0 extends RO>(
 												 */
 
 												stack.push(["end", b]);
-												// advance(b.end.length + (b.extraAdvanceEnd ?? 0));
 												advance(b.end.length);
 
 												return true;
@@ -742,24 +544,7 @@ export const findPublicPages = <M0 extends RO>(
 
 											parseUntil(b.begin, b.end);
 
-											// stack.push(["end", b]);
-											// advance(b.end.length);
-
 											return true;
-
-											// const scopedCursor = cursor + b.begin.length;
-											// const scopedUntil = b.end;
-
-											// const ret = parseUntil(scopedUntil);
-											// const { cursorAdvancedBy, children } = ret;
-
-											// // cursor += cursorAdvancedBy;
-
-											// return {
-											// 	...b,
-											// 	cursorAdvancedBy: scopedCursor + cursorAdvancedBy,
-											// 	children,
-											// };
 										} else if (startsWith(b.end)) {
 											if (
 												// (from !== b.begin && from !== null) ||
@@ -779,7 +564,6 @@ export const findPublicPages = <M0 extends RO>(
 												 * matched!
 												 */
 												stack.push(["end", b]);
-												// advance(b.end.length + (b.extraAdvanceEnd ?? 0));
 												advance(b.end.length);
 
 												return true;
@@ -808,7 +592,6 @@ export const findPublicPages = <M0 extends RO>(
 								while (cursor < originalString.length) {
 									parseUntil(null, null);
 								}
-								//
 
 								type Boundary = typeof boundaries[number];
 
@@ -846,7 +629,6 @@ export const findPublicPages = <M0 extends RO>(
 
 								const stackTree: StackedTreeChild[] = toTree();
 
-								// TODO TS
 								function toTree(): StackedTreeChild[] {
 									const childrenAtCurrentLevel: StackedTreeChild[] = [];
 
@@ -854,15 +636,10 @@ export const findPublicPages = <M0 extends RO>(
 										const [beginEndText, item] = stackWithTextInsteadOfChars[i];
 
 										if (beginEndText === "text") {
-											// childrenAtCurrentLevel.push({
-											// 	type: "text",
-											// 	content: item,
-											// });
 											childrenAtCurrentLevel.push({
 												type: "text",
 												content: item as Exclude<typeof item, Boundary>,
 											});
-											// return { item};
 										} else if (beginEndText === "begin") {
 											i++;
 											childrenAtCurrentLevel.push({
