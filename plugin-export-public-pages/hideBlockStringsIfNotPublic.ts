@@ -1,3 +1,5 @@
+import escapeHtml from "escape-html";
+
 import { MutatingActionToExecute } from "../traverseBlockRecursively";
 import { LinkedRef } from "../types";
 
@@ -17,6 +19,12 @@ export const hideBlockStringsIfNotPublic: MutatingActionToExecute<
 	hiddenStringValue, //
 	doNotHideTodoAndDone,
 }) => (block) => {
+	/**
+	 * TODO put in the correct place uh oh
+	 * TODO rename the plugin
+	 */
+	block.string = escapeHtml(block.string);
+
 	if (block.metadata.isPublic || block.metadata.isPublicOnly) {
 		block.metadata.linkedReferences.forEach((lr) => {
 			/**

@@ -12,6 +12,7 @@
 		"lint:fix": "eslint --ext js,jsx,ts,tsx . --fix"
 	},
 	"devDependencies": {
+		"@types/escape-html": "1.0.1",
 		"@types/fs-extra": "^9.0.13",
 		"@types/node": "16.11.0",
 		"@typescript-eslint/eslint-plugin": "2.34.0",
@@ -44,6 +45,7 @@
 		}
 	},
 	"dependencies": {
+		"escape-html": "1.0.3",
 		"fs-extra": "9.1.0"
 	}
 }
