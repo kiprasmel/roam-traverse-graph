@@ -524,13 +524,22 @@ export const findPublicPages = <M0 extends RO>(
 
 		.map((p) => (!p.page.children?.length && delete p.page.children, p))
 
-		.sort(
+		/**
+		 * TODO automatic forwarding of `_a, _b` in `sortUntilFirstXORMatchUsing`
+		 */
+		.sort((_a, _b) =>
 			sortUntilFirstXORMatchUsing<PageWithMetadata<{}, {}>>(
 				[
 					(AB): boolean => publicTags.some((publicTag) => titleIsPublicTag(AB.page, publicTag)),
-					(AB): boolean => AB.isFullyPublic,
+					(AB): boolean =>
+						AB.isFullyPublic &&
+						/**
+						 * TODO isTerm logic
+						 */
+						[...new Set((AB.linkedMentions || []).map((ref) => ref.uidOfPageContainingBlock))].length > 2,
 					(AB): boolean => doNotHideTodoAndDone && ["TODO", "DONE"].includes(AB.originalTitle),
-					(AB): boolean => !!AB.isDailyNotesPage,
+					//
+					(AB): boolean => !!AB.isDailyNotesPage && new Date(AB.page.uid) <= new Date(),
 					(A, B): number =>
 						A.isDailyNotesPage && B?.isDailyNotesPage
 							? /**
@@ -549,14 +558,34 @@ export const findPublicPages = <M0 extends RO>(
 							   *
 							   */
 							  new Date(B.page.uid).getTime() - new Date(A.page.uid).getTime()
-							: Order.EVEN,
+							: /**
+							   * TODO isTerm right next to the daily notes page
+							   */
+							  // : // sortUntilFirstXORMatchUsing([(AA, BB): number => 1] as const)(_a, _b),
+							  // /**
+							  //  * TODO function to do vice-versa as well
+							  //  * (A, B) => O1 : O2
+							  //  * (B, A) => O2 : O1
+							  //  *   : O.EVEN
+							  //  */
+							  // A.isFullyPublic && B?.isDailyNotesPage
+							  // ? new Date(A.page["create-time"] || -Infinity).getDay() === new Date(B.page.uid).getDay()
+							  // 	? Order.AHEAD
+							  // 	: Order.BEHIND
+							  // : // : Order.EVEN,
+							  // B?.isFullyPublic && A?.isDailyNotesPage
+							  // ? new Date(A.page["create-time"] || -Infinity).getDay() === new Date(B.page.uid).getDay()
+							  // 	? Order.BEHIND
+							  // 	: Order.AHEAD
+							  Order.EVEN,
+
 					(AB): boolean => !!AB.linkedMentions?.length,
 					(A, B): number => (B?.linkedMentions?.length || 0) - (A.linkedMentions?.length || 0),
 					(AB): boolean => AB.hasAtLeastOnePublicBlockAnywhereInTheHierarchy,
 					(A, B): number => (B?.wordCount || -Infinity) - A.wordCount,
 				],
 				{ log: false }
-			)
+			)(_a, _b)
 		)
 );
 
