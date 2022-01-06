@@ -11,6 +11,20 @@ import { createLinkedReferences, readJsonSync, writeJsonSync } from "../util";
 import { Block, LinkedMention, PageWithMetadata, RO } from "../types";
 
 /**
+ * configurables
+ */
+const notesOfName: string = process.env.NOTES_OF_NAME || "";
+
+console.log({ notesOfName });
+
+/**
+ *
+ */
+const pageTitleExtras = "notes" + (!notesOfName ? "" : " | " + notesOfName);
+
+console.log({ pageTitleExtras });
+
+/**
  * there's a difference between reading from a already generated json file,
  * and re-run the function that generates the json file,
  *
@@ -160,7 +174,7 @@ export const pagesWithMetaAndHtml: PageWithMetadata<
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>${page.title} | notes</title>
+		<title>${page.title} | ${pageTitleExtras}</title>
 
 		<link rel="shortcut icon" type="image/x-icon" href="/notes/favicon.ico">
 		${fixStaticHref(1)("/favicon.ico", 'link[type="image/x-icon"]')}
@@ -423,7 +437,7 @@ pagesWithMetaAndHtml.forEach((meta) => {
 const indexHtml: string = `\
 <!DOCTYPE html>
 <html>
-	<title>notes</title>
+	<title>${pageTitleExtras}</title>
 
 	<link rel="shortcut icon" type="image/x-icon" href="/notes/favicon.ico">
 	${fixStaticHref(0)("/favicon.ico", 'link[type="image/x-icon"]')}
