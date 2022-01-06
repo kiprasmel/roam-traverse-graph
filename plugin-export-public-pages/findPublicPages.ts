@@ -533,7 +533,22 @@ export const findPublicPages = <M0 extends RO>(
 					(AB): boolean => !!AB.isDailyNotesPage,
 					(A, B): number =>
 						A.isDailyNotesPage && B?.isDailyNotesPage
-							? (B.page["create-time"] || -Infinity) - (A.page["create-time"] || -Infinity) || Order.EVEN
+							? /**
+							   * using the page's `create-time` is not reliable (for an expected outcome),
+							   * because a daily notes page can get created earlier
+							   * if you reference it (e.g. /tomorrow or /date etc.).
+							   *
+							   * thus the previous implementation is obsolete:
+							   *
+							   * ```js
+							   * (B.page["create-time"] || -Infinity) - (A.page["create-time"] || -Infinity) || Order.EVEN
+							   * ```
+							   *
+							   * and the new one uses the `uid` of the page,
+							   * since it's a valid date and will work as expected.
+							   *
+							   */
+							  new Date(B.page.uid).getTime() - new Date(A.page.uid).getTime()
 							: Order.EVEN,
 					(AB): boolean => !!AB.linkedMentions?.length,
 					(A, B): number => (B?.linkedMentions?.length || 0) - (A.linkedMentions?.length || 0),
