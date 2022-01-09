@@ -61,9 +61,9 @@ export const markBlockPublic: MutatingActionToExecute<
 		// const hasSubstringNotInsideCode = (tags: string[]): boolean =>
 		// 	!block.metadata.hasCodeBlock && tags.some((tag) => block.string.includes(tag)); //
 
-		const hasPublicTag: boolean = publicTags.some(hasLinkedReference);
-		const hasPublicOnlyTag: boolean = publicOnlyTags.some(hasLinkedReference);
-		const hasPrivateTag: boolean = [privateTag].some(hasLinkedReference);
+		const hasPublicTag: boolean = publicTags.some(hasLinkedReference(block));
+		const hasPublicOnlyTag: boolean = publicOnlyTags.some(hasLinkedReference(block));
+		const hasPrivateTag: boolean = [privateTag].some(hasLinkedReference(block));
 
 		/**
 		 * ---
