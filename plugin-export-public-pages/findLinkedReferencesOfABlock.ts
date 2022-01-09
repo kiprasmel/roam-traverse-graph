@@ -1,9 +1,9 @@
 /* eslint-disable indent */
 
 import { MutatingActionToExecute } from "../traverseBlockRecursively";
-import { Block, LinkedMention, LinkedRef, PageWithMetadata } from "../types";
+import { LinkedMention, LinkedRef, PageWithMetadata } from "../types";
 import { withMetadata } from "../util/withMetadata";
-import { StackedTreeChild } from "./parseASTFromBlockString";
+import { StackedTreeChild, StackTree } from "./parseASTFromBlockString";
 
 export const findIfPagesHavePublicLinkedReferencesAndLinkThemAsMentions: MutatingActionToExecute<
 	{
@@ -100,7 +100,7 @@ export const findIfPagesHavePublicLinkedReferencesAndLinkThemAsMentions: Mutatin
 };
 
 function findMatchingLinkedReferences(
-	blockStackTree: StackedTreeChild[],
+	blockStackTree: StackTree,
 	allPagesWithMetadata: PageWithMetadata<{}, {}>[] // TODO TS
 ): LinkedRef[] {
 	const linkedReferences: LinkedRef[] = [];
@@ -132,9 +132,9 @@ function findMatchingLinkedReferences(
 /**
  * TODO jscodeshift-like .find'ing w/ stack & needle
  */
-export const hasLinkedReference = (block: Block<{ stackTree: any }, {}>) => (wantedLinkedRef: string): boolean =>
-	block.metadata.stackTree.some(
-		(item: any) =>
+export const hasLinkedReference = (blockStackTree: StackTree) => (wantedLinkedRef: string): boolean =>
+	blockStackTree.some(
+		(item) =>
 			item.type === "linked-reference" &&
 			/**
 			 * TODO - this is quite fragile lmao

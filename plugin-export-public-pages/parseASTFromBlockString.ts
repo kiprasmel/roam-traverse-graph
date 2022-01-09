@@ -63,9 +63,19 @@ const boundaries = [
 
 export type Boundary = typeof boundaries[number];
 
+export type StackItemWIP =
+	| Tuple<"char", string> //
+	| Tuple<"begin" | "end", Boundary>;
+
+export type StackWIP = StackItemWIP[];
+
 export type StackItem =
 	| Tuple<"text", string> //
 	| Tuple<"begin" | "end", Boundary>;
+
+export type Stack = StackItem[];
+
+//
 
 export type StackedTreeTextChild = {
 	type: "text";
@@ -78,11 +88,13 @@ export type StackedTreeBoundaryChild = Boundary & {
 
 export type StackedTreeChild = StackedTreeTextChild | StackedTreeBoundaryChild;
 
+export type StackTree = StackedTreeChild[];
+
 export const parseASTFromBlockString: MutatingActionToExecute<
 	{},
 	{
-		stack: StackItem[];
-		stackTree: StackedTreeChild[];
+		stack: Stack;
+		stackTree: StackTree;
 	}
 > = () => (block) => {
 	/**
@@ -92,7 +104,7 @@ export const parseASTFromBlockString: MutatingActionToExecute<
 	const originalString: string = block.string;
 
 	// TODO FIXME
-	const stack: any[] = [];
+	const stack: StackWIP = [];
 
 	function parseUntil(from: string | null, until: string | null): void {
 		const advance = (n: number): string => ((cursor += n), originalString.slice(cursor));
@@ -231,7 +243,9 @@ export const parseASTFromBlockString: MutatingActionToExecute<
 		([acc, tempString], [beginEndChar, item]) =>
 			beginEndChar === "char"
 				? [acc, tempString + item] //
-				: (tempString && acc.push(["text", tempString]), acc.push([beginEndChar, item]), [acc, ""]), //
+				: (tempString && acc.push(["text", tempString]), //
+				  acc.push([beginEndChar, item as Exclude<typeof item, string>]),
+				  [acc, ""]),
 		[[], ""]
 	);
 	if (leftoverText) {
