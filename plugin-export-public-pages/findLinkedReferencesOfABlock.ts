@@ -1,7 +1,7 @@
 import { MutatingActionToExecute } from "../traverseBlockRecursively";
 import { LinkedMention, LinkedRef, PageWithMetadata } from "../types";
 import { withMetadata } from "../util/withMetadata";
-import { StackedTreeChild, StackTree } from "./parseASTFromBlockString";
+import { StackTreeItem, StackTree } from "./parseASTFromBlockString";
 
 export const findIfPagesHavePublicLinkedReferencesAndLinkThemAsMentions: MutatingActionToExecute<
 	{
@@ -16,7 +16,7 @@ export const findIfPagesHavePublicLinkedReferencesAndLinkThemAsMentions: Mutatin
 		isPublic: boolean;
 		isPublicOnly: boolean;
 		depth: number;
-		stackTree: StackedTreeChild[];
+		stackTree: StackTreeItem[];
 	}
 > = ({
 	allPagesWithMetadata, //
