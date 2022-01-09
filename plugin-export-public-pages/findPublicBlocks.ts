@@ -3,7 +3,7 @@
 import { MutatingActionToExecute } from "../traverseBlockRecursively";
 import { PageWithMetadata } from "../types";
 import { withMetadata } from "../util/withMetadata";
-import { hasLinkedReference } from "./findLinkedReferencesOfABlock";
+import { findLinkedReference } from "./findLinkedReferencesOfABlock";
 
 export const removeUnknownProperties: MutatingActionToExecute<{}> = () => (block) =>
 	!block
@@ -61,9 +61,9 @@ export const markBlockPublic: MutatingActionToExecute<
 		// const hasSubstringNotInsideCode = (tags: string[]): boolean =>
 		// 	!block.metadata.hasCodeBlock && tags.some((tag) => block.string.includes(tag)); //
 
-		const hasPublicTag: boolean = publicTags.some(hasLinkedReference(block));
-		const hasPublicOnlyTag: boolean = publicOnlyTags.some(hasLinkedReference(block));
-		const hasPrivateTag: boolean = [privateTag].some(hasLinkedReference(block));
+		const hasPublicTag: boolean = publicTags.some(findLinkedReference(block.metadata.stackTree));
+		const hasPublicOnlyTag: boolean = publicOnlyTags.some(findLinkedReference(block.metadata.stackTree));
+		const hasPrivateTag: boolean = [privateTag].some(findLinkedReference(block.metadata.stackTree));
 
 		/**
 		 * ---
