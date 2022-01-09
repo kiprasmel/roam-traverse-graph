@@ -77,18 +77,18 @@ export type Stack = StackItem[];
 
 //
 
-export type StackedTreeTextChild = {
+export type StackTreeTextItem = {
 	type: "text";
 	content: string;
 };
 
-export type StackedTreeBoundaryChild = Boundary & {
-	children: StackedTreeChild[];
+export type StackTreeBoundaryItem = Boundary & {
+	children: StackTreeItem[];
 };
 
-export type StackedTreeChild = StackedTreeTextChild | StackedTreeBoundaryChild;
+export type StackTreeItem = StackTreeTextItem | StackTreeBoundaryItem;
 
-export type StackTree = StackedTreeChild[];
+export type StackTree = StackTreeItem[];
 
 export const parseASTFromBlockString: MutatingActionToExecute<
 	{},
@@ -254,10 +254,10 @@ export const parseASTFromBlockString: MutatingActionToExecute<
 
 	let i = 0;
 
-	const stackTree: StackedTreeChild[] = toTree();
+	const stackTree: StackTreeItem[] = toTree();
 
-	function toTree(): StackedTreeChild[] {
-		const childrenAtCurrentLevel: StackedTreeChild[] = [];
+	function toTree(): StackTreeItem[] {
+		const childrenAtCurrentLevel: StackTreeItem[] = [];
 
 		for (; i < stackWithTextInsteadOfChars.length; i++) {
 			const [beginEndText, item] = stackWithTextInsteadOfChars[i];
