@@ -79,7 +79,7 @@ export type Stack = StackItem[];
 
 export type StackTreeTextItem = {
 	type: "text";
-	content: string;
+	text: string;
 };
 
 export type StackTreeBoundaryItem = Boundary & {
@@ -265,7 +265,7 @@ export const parseASTFromBlockString: MutatingActionToExecute<
 			if (beginEndText === "text") {
 				childrenAtCurrentLevel.push({
 					type: "text",
-					content: item as Exclude<typeof item, Boundary>,
+					text: item as Exclude<typeof item, Boundary>,
 				});
 			} else if (beginEndText === "begin") {
 				i++;
