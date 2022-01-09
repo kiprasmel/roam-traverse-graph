@@ -137,7 +137,7 @@ export const findLinkedReference = (
 			 */
 			item.children.length === 1 &&
 			item.children[0].type === "text" &&
-			item.children[0].content === wantedLinkedRef
+			item.children[0].text === wantedLinkedRef
 				? item.children[0]
 				: undefined
 		)
