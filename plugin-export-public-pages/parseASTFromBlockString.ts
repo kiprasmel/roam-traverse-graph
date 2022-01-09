@@ -198,6 +198,21 @@ export const parseASTFromBlockString: MutatingActionToExecute<
 			if (!foundNonText) {
 				const char = curr[0];
 				stack.push(["char", char]);
+				/**
+				 * TODO optimize, but only after it actually works
+				 *
+				 * instead of advancing by 1, we could safely go as long as there's no special character,
+				 * as specified above.
+				 *
+				 * though parsing links might be hard then.
+				 *
+				 * maybe going with a second step, where you only try to parse the link
+				 * after you've decided that this is "text", would be more efficient
+				 * yet still correct?
+				 *
+				 * i need to read more CS literature on this topic
+				 * because there should be a ton of good resources.
+				 */
 				advance(1);
 
 				return parseUntil(from, until);
