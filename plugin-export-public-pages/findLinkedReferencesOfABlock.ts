@@ -132,9 +132,14 @@ function findMatchingLinkedReferences(
 /**
  * TODO jscodeshift-like .find'ing w/ stack & needle
  */
-export const hasLinkedReference = (wantedLinkedRef: string) => (block: Block<{ stackTree: any }, {}>): boolean =>
+export const hasLinkedReference = (block: Block<{ stackTree: any }, {}>) => (wantedLinkedRef: string): boolean =>
 	block.metadata.stackTree.some(
 		(item: any) =>
 			item.type === "linked-reference" &&
-			item.children.some((child: any) => child.type === "text" && child.content === wantedLinkedRef)
+			/**
+			 * TODO - this is quite fragile lmao
+			 */
+			item.children.length === 1 &&
+			item.children[0].type === "text" &&
+			item.children[0].content === wantedLinkedRef
 	);
