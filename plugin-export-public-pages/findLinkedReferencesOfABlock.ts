@@ -1,7 +1,10 @@
+/* eslint-disable indent */
+/* eslint-disable no-param-reassign */
+
 import { MutatingActionToExecute } from "../traverseBlockRecursively";
 import { LinkedMention, LinkedRef, PageWithMetadata } from "../types";
 import { withMetadata } from "../util/withMetadata";
-import { StackTreeItem, StackTree } from "./parseASTFromBlockString";
+import { StackTreeItem, StackTree, StackTreeTextItem } from "./parseASTFromBlockString";
 
 export const findIfPagesHavePublicLinkedReferencesAndLinkThemAsMentions: MutatingActionToExecute<
 	{
@@ -22,9 +25,7 @@ export const findIfPagesHavePublicLinkedReferencesAndLinkThemAsMentions: Mutatin
 	allPagesWithMetadata, //
 	rootParentPage,
 }) => (block) => {
-	const linkedReferences: LinkedRef[] = block.metadata.hasCodeBlock
-		? []
-		: findMatchingLinkedReferences(block.metadata.stackTree, allPagesWithMetadata);
+	const linkedReferences: LinkedRef[] = findMatchingLinkedReferences(block.metadata.stackTree, allPagesWithMetadata);
 
 	const isBlockPublic = block.metadata.isPublic || block.metadata.isPublicOnly;
 
@@ -101,38 +102,35 @@ function findMatchingLinkedReferences(
 	blockStackTree: StackTree,
 	allPagesWithMetadata: PageWithMetadata<{}, {}>[] // TODO TS
 ): LinkedRef[] {
-	const linkedReferences: LinkedRef[] = [];
+	let current: StackTreeTextItem | undefined;
 
-	/**
-	 * TODO - there's potential for optimization,
-	 * but perhaps w/ a cost of some loss of clarity
-	 * and it isn't an issue at all atm
-	 * so maybe sometime in the future, if even.
-	 */
-	for (const metaPage of allPagesWithMetadata) {
-		if (!metaPage.originalTitle) {
-			/* TODO should never happen */
-			continue;
-		}
-
-		blockStackTree.forEach(
-			(item) =>
-				item.type === "linked-reference" &&
-				item.children
-					.filter((child) => child.type === "text" && child.content === metaPage.originalTitle)
-					.map((child) => linkedReferences.push({ metaPage, linkedRefNode: item, linkedRefTextNode: child }))
-		);
-	}
-
-	return linkedReferences;
+	return allPagesWithMetadata
+		.map((meta): LinkedRef | [] =>
+			!meta.originalTitle
+				? []
+				: ((current = findLinkedReference(blockStackTree)(meta.originalTitle)),
+				  !current
+						? []
+						: {
+								metaPage: meta,
+								textNode: current,
+						  })
+		)
+		.flat();
 }
 
 /**
+ * either finds the linked reference item, or
+ *
  * TODO jscodeshift-like .find'ing w/ stack & needle
  */
-export const hasLinkedReference = (blockStackTree: StackTree) => (wantedLinkedRef: string): boolean =>
-	blockStackTree.some(
-		(item) =>
+export const findLinkedReference = (
+	blockStackTree: StackTree //
+) => (
+	wantedLinkedRef: string //
+): StackTreeTextItem | undefined =>
+	blockStackTree
+		.map((item) =>
 			item.type === "linked-reference" &&
 			/**
 			 * TODO - this is quite fragile lmao
@@ -140,4 +138,7 @@ export const hasLinkedReference = (blockStackTree: StackTree) => (wantedLinkedRe
 			item.children.length === 1 &&
 			item.children[0].type === "text" &&
 			item.children[0].content === wantedLinkedRef
-	);
+				? item.children[0]
+				: undefined
+		)
+		.find((i) => i !== undefined);
