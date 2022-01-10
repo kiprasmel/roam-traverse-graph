@@ -7,7 +7,7 @@ import path from "path";
 
 import { findPublicPages } from "./findPublicPages";
 
-import { createLinkedReferences, readJsonSync, writeJsonSync } from "../util";
+import { readJsonSync, writeJsonSync } from "../util";
 import { Block, LinkedMention, PageWithMetadata, RO } from "../types";
 
 /**
@@ -146,23 +146,12 @@ export const pagesWithMetaAndHtml: PageWithMetadata<
 	 */
 	// let initialOrderOfLinkedMentions: "oldest-first" | "newest-first" = "newest-first";
 	// eslint-disable-next-line prefer-const
-	let initialOrderOfLinkedMentions: "oldest-first" | "newest-first" = (
-		meta.linkedReferencesFromChildren || []
-	).filter(
+	let initialOrderOfLinkedMentions: "oldest-first" | "newest-first" = (meta.linkedReferencesFromChildren || []).some(
 		(lr) =>
 			lr.blockRef.metadata.depth === 1 &&
-			// lr.blockRef.metadata.linkedReferences.map((blr) => blr.candidateLR.origStr).includes("newest-first") && // TODO config
-			// !lr.blockRef.metadata.linkedReferences.map((blr) => blr.candidateLR.origStr).includes("oldest-first") // TODO config
-
-			// // TODO config
-			// createLinkedReferences("newest-first").filter(
-			// 	(candidate) => candidate.fullStr === lr.blockRef.metadata.originalString
-			// ).length &&
 			// TODO config
-			createLinkedReferences("oldest-first").filter(
-				(candidate) => candidate.fullStr === lr.blockRef.metadata.originalString
-			).length
-	).length
+			lr.referencedPageRef.originalTitle === "oldest-first"
+	)
 		? "oldest-first"
 		: "newest-first";
 
