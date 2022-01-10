@@ -144,6 +144,5 @@ export type WithLinkedReferences<M0, M1> = WithIsPublic &
 	}>;
 
 export type HideBlockStringsIfNotPublicProps = {
-	doNotHideTodoAndDone: boolean;
 	hiddenStringValue: string;
 };

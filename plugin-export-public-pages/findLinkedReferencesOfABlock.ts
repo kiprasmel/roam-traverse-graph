@@ -4,7 +4,7 @@
 import { MutatingActionToExecute } from "../traverseBlockRecursively";
 import { LinkedMention, LinkedRef, PageWithMetadata } from "../types";
 import { withMetadata } from "../util/withMetadata";
-import { StackTreeItem, StackTree, StackTreeTextItem } from "./parseASTFromBlockString";
+import { StackTreeItem, StackTree, StackTreeTextItem, Stack, StackTreeBoundaryItem } from "./parseASTFromBlockString";
 
 export const findIfPagesHavePublicLinkedReferencesAndLinkThemAsMentions: MutatingActionToExecute<
 	{
@@ -19,13 +19,16 @@ export const findIfPagesHavePublicLinkedReferencesAndLinkThemAsMentions: Mutatin
 		isPublic: boolean;
 		isPublicOnly: boolean;
 		depth: number;
+		stack: Stack;
 		stackTree: StackTreeItem[];
 	}
 > = ({
 	allPagesWithMetadata, //
 	rootParentPage,
 }) => (block) => {
+	// console.log({allPagesWithMetadata: allPagesWithMetadata.map(meta => meta.originalTitle)});
 	const linkedReferences: LinkedRef[] = findMatchingLinkedReferences(block.metadata.stackTree, allPagesWithMetadata);
+	// console.log({stack: block.metadata.stack, linkedReferences});
 
 	const isBlockPublic = block.metadata.isPublic || block.metadata.isPublicOnly;
 
@@ -102,20 +105,18 @@ function findMatchingLinkedReferences(
 	blockStackTree: StackTree,
 	allPagesWithMetadata: PageWithMetadata<{}, {}>[] // TODO TS
 ): LinkedRef[] {
-	let current: StackTreeTextItem | undefined;
 
 	return allPagesWithMetadata
-		.map((meta): LinkedRef | [] =>
-			!meta.originalTitle
+		.map((meta): LinkedRef | [] => {
+			let current: StackTreeTextItem | undefined = findLinkedReferenceDeep(blockStackTree)(meta.originalTitle);
+
+			return !current
 				? []
-				: ((current = findLinkedReference(blockStackTree)(meta.originalTitle)),
-				  !current
-						? []
-						: {
-								metaPage: meta,
-								textNode: current,
-						  })
-		)
+				: {
+						metaPage: meta,
+						textNode: current,
+				}
+		})
 		.flat();
 }
 
@@ -124,21 +125,23 @@ function findMatchingLinkedReferences(
  *
  * TODO jscodeshift-like .find'ing w/ stack & needle
  */
-export const findLinkedReference = (
+export const findLinkedReferenceDeep = (
 	blockStackTree: StackTree //
 ) => (
 	wantedLinkedRef: string //
-): StackTreeTextItem | undefined =>
-	blockStackTree
-		.map((item) =>
-			item.type === "linked-reference" &&
-			/**
-			 * TODO - this is quite fragile lmao
-			 */
-			item.children.length === 1 &&
-			item.children[0].type === "text" &&
-			item.children[0].text === wantedLinkedRef
-				? item.children[0]
-				: undefined
+): StackTreeTextItem | undefined => {
+
+	const ret = blockStackTree
+		.find((item) =>
+		item.type === "text" ? false :
+			item.type !== "linked-reference" 
+				? findLinkedReferenceDeep(item.children)(wantedLinkedRef)
+				: item.children.length === 1 &&
+					item.children[0].type === "text" &&
+					item.children[0].text === wantedLinkedRef
 		)
-		.find((i) => i !== undefined);
+
+	if (!ret) return undefined;
+
+	return (ret as StackTreeBoundaryItem).children[0] as StackTreeTextItem;
+}
