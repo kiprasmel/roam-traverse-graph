@@ -46,7 +46,9 @@ export const hideBlockStringsIfNotPublic: MutatingActionToExecute<
 		{
 			onNonText = ({ item, walk }: { walk: typeof _walk; item: StackTreeBoundaryItem }): string =>
 				// if (item.type === "command") {
-				(item.begin || "") + walk(item.children, item) + item.end,
+				(item.begin || "") +
+				(item.type === "code-block" ? item.children[0] : walk(item.children, item)) +
+				item.end,
 			// }
 			onIndependentText = ({ item }: { item: StackTreeTextItem }): string =>
 				// if (block.metadata.isPublic || block.metadata.isPublicOnly) {
