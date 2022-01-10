@@ -2,6 +2,8 @@
 
 /* eslint-disable indent */
 
+// import escapeHtml from "escape-html";
+
 import { traverseBlockRecursively } from "../traverseBlockRecursively";
 import { removeUnknownProperties, markBlockPublic } from "./findPublicBlocks";
 import { findIfPagesHavePublicLinkedReferencesAndLinkThemAsMentions } from "./findLinkedReferencesOfABlock";
@@ -77,12 +79,6 @@ export type SettingsForPluginFindPublicPages = {
 	makeThePublicTagPagePublic: boolean;
 
 	/**
-	 * TODO and DONE are more like boolean toggles to indicate if something's done or not,
-	 * and show a visual indicator, thus we have a special case for them
-	 */
-	doNotHideTodoAndDone: boolean;
-
-	/**
 	 * currently blocks', will later apply to pages as well once we implement it properly
 	 */
 	keepMetadata: boolean;
@@ -95,7 +91,6 @@ export const getDefaultSettingsForPluginFindPublicPages = (): SettingsForPluginF
 	privateTag: "#private", // TODO array
 	hiddenStringValue: "hidden",
 	makeThePublicTagPagePublic: false,
-	doNotHideTodoAndDone: true,
 	keepMetadata: false,
 });
 
@@ -173,8 +168,7 @@ export const findPublicPages = <M0 extends RO>(
 		]
 	),
 	{
-		doNotHideTodoAndDone,
-		hiddenStringValue,
+		hiddenStringValue, //
 		keepMetadata,
 		privateTag,
 		publicGlobalTags,
@@ -365,10 +359,9 @@ export const findPublicPages = <M0 extends RO>(
 		 *
 		 */
 		.map((pageMeta) =>
-			pageMeta.isFullyPublic ||
-			(pageMeta as any).isDailyNotesPage || // TODO TS
-			(doNotHideTodoAndDone && ["TODO", "DONE"].includes(pageMeta.originalTitle))
+			pageMeta.isFullyPublic || (pageMeta as any).isDailyNotesPage // TODO TS
 				? ((pageMeta.isTitleHidden = false), //
+				  //   (pageMeta.page.title = escapeHtml(pageMeta.page.title)),
 				  pageMeta)
 				: ((pageMeta.isTitleHidden = true), //
 				  (pageMeta.page.title = `(${hiddenStringValue}) ${pageMeta.page.uid}`),
@@ -480,7 +473,6 @@ export const findPublicPages = <M0 extends RO>(
 					)
 					.map(
 						traverseBlockRecursively(hideBlockStringsIfNotPublic, {
-							doNotHideTodoAndDone,
 							hiddenStringValue,
 						})(undefined)
 					)
@@ -534,7 +526,6 @@ export const findPublicPages = <M0 extends RO>(
 						 * TODO isTerm logic
 						 */
 						[...new Set((AB.linkedMentions || []).map((ref) => ref.uidOfPageContainingBlock))].length > 2,
-					(AB): boolean => doNotHideTodoAndDone && ["TODO", "DONE"].includes(AB.originalTitle),
 					//
 					(AB): boolean => !!AB.isDailyNotesPage && new Date(AB.page.uid) <= new Date(),
 					(A, B): number =>

@@ -1,6 +1,6 @@
 import { MutatingActionToExecute } from "../traverseBlockRecursively";
 
-import { Tuple } from "../util/tuple";
+import { ReadonlyTuple, Tuple } from "../util/tuple";
 import { withMetadata } from "../util/withMetadata";
 
 const boundaries = [
@@ -70,8 +70,8 @@ export type StackItemWIP =
 export type StackWIP = StackItemWIP[];
 
 export type StackItem =
-	| Tuple<"text", string> //
-	| Tuple<"begin" | "end", Boundary>;
+	| ReadonlyTuple<"text", string> //
+	| ReadonlyTuple<"begin" | "end", Boundary>;
 
 export type Stack = StackItem[];
 
@@ -105,6 +105,21 @@ export const parseASTFromBlockString: MutatingActionToExecute<
 
 	// TODO FIXME
 	const stack: StackWIP = [];
+	const stackOfBegins: Boundary[] = [];
+	/**
+	 * returns if end matched begin
+	 */
+	const popStackIfEndMatchesBegin = (b: Boundary): boolean => {
+		const last = stackOfBegins[stackOfBegins.length - 1];
+
+		if (!last || last.begin !== b.begin) {
+			return false;
+		}
+
+		stackOfBegins.pop();
+
+		return true;
+	};
 
 	function parseUntil(from: string | null, until: string | null): void {
 		const advance = (n: number): string => ((cursor += n), originalString.slice(cursor));
@@ -145,6 +160,8 @@ export const parseASTFromBlockString: MutatingActionToExecute<
 					 */
 
 					stack.push(["begin", b]);
+					stackOfBegins.push(b);
+
 					// @ts-expect-error
 					advance(b.begin.length);
 
@@ -153,7 +170,7 @@ export const parseASTFromBlockString: MutatingActionToExecute<
 
 					stack.push(["end", b]);
 
-					return true;
+					return popStackIfEndMatchesBegin(b);
 				}
 			} else if (startsWith(b.begin)) {
 				if (b.begin === b.end && until === b.end) {
@@ -164,6 +181,10 @@ export const parseASTFromBlockString: MutatingActionToExecute<
 					 * & do the work there.
 					 */
 
+					if (!popStackIfEndMatchesBegin(b)) {
+						return false;
+					}
+
 					stack.push(["end", b]);
 					advance(b.end.length);
 
@@ -171,12 +192,29 @@ export const parseASTFromBlockString: MutatingActionToExecute<
 				}
 
 				stack.push(["begin", b]);
+				stackOfBegins.push(b);
+
 				advance(b.begin.length);
 
 				parseUntil(b.begin, b.end);
 
 				return true;
 			} else if (startsWith(b.end)) {
+				// /**
+				//  * TODO apply this for all places where `end` is being pushed
+				//  * TODO have proper stack of what's available & pop it
+				//  */
+				// let lastNonChar;
+				// for (let s = stack.length - 1; s >= 0; s--) {
+				// 	if (stack[s][0] !== "char") {
+				// 		lastNonChar = stack[s];
+				// 		break;
+				// 	}
+				// }
+				// if (!lastNonChar || lastNonChar[0] !== "begin" || lastNonChar[1].type !== b.type) {
+				// 	return false;
+				// }
+
 				if (
 					// (from !== b.begin && from !== null) ||
 					// (until !== b.end && until !== null)
@@ -191,6 +229,10 @@ export const parseASTFromBlockString: MutatingActionToExecute<
 					// 	`unmatched! block.uid = "${block.uid}", block.string (original!) = "${block.string}", cursor was at "${cursor}", until = "${until}", b.end = "${b.end}"`
 					// );
 				} else {
+					if (!popStackIfEndMatchesBegin(b)) {
+						return false;
+					}
+
 					/**
 					 * matched!
 					 */
