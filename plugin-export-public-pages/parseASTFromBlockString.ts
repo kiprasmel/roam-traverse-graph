@@ -125,8 +125,9 @@ export const parseASTFromBlockString: MutatingActionToExecute<
 		const advance = (n: number): string => ((cursor += n), originalString.slice(cursor));
 
 		const str: string = advance(0);
-
 		const startsWith = (s: string): boolean => s === str.slice(0, s.length);
+
+		const startsWithCurr = (s: string): boolean => s === originalString.slice(cursor, s.length);
 
 		const foundNonText: boolean = boundaries.some((b): boolean => {
 			if (b.begin === null && b.end === null) {
@@ -195,6 +196,24 @@ export const parseASTFromBlockString: MutatingActionToExecute<
 				stackOfBegins.push(b);
 
 				advance(b.begin.length);
+
+				if (b.type === "code-block") {
+					while (!startsWithCurr(b.end)) {
+						const char = advance(1);
+						if (!char) break;
+						stack.push(["char", char[0]]);
+					}
+
+					// // TODO TEMP REMOVE
+					// if (!popStackIfEndMatchesBegin(b)) {
+					// 	return false;
+					// }
+
+					// stack.push(["end", b]);
+					// advance(b.end.length);
+
+					// return true;
+				}
 
 				parseUntil(b.begin, b.end);
 

@@ -22,7 +22,7 @@ repo_has_untracked_changes() {
 }
 
 pushd "$PUBLIC_NOTES_DIR"
-
+1
 ls -a | grep ".git" &>/dev/null || {
 	printf "\nerror - PUBLIC_NOTES_DIR ($PUBLIC_NOTES_DIR) _not_ a git repository."
 	printf "\nyou probably forgot to clone the repo & only ran the script to generate html. exiting. \n"
