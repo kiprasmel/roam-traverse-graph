@@ -150,7 +150,7 @@ export const pagesWithMetaAndHtml: PageWithMetadata<
 		"originalTitleOfPageContainingBlock",
 		(meta.linkedMentions || []) //
 			.sort((A, B) => (B.blockRef["create-time"] || -Infinity) - (A.blockRef["create-time"] || -Infinity) || 0)
-	).filter((mentionsGroupedByPage) => mentionsGroupedByPage.length);
+	).filter((mentionsGroupedByPageTmp) => mentionsGroupedByPageTmp.length);
 
 	/**
 	 * TODO - we want static html here. is it time for Svelte?!

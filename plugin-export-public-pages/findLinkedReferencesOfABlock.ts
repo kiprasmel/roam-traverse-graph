@@ -1,6 +1,7 @@
 /* eslint-disable indent */
 /* eslint-disable no-param-reassign */
 
+import { ReadonlyTuple } from "util/tuple";
 import { MutatingActionToExecute } from "../traverseBlockRecursively";
 import { LinkedMention, LinkedRef, PageWithMetadata } from "../types";
 import { withMetadata } from "../util/withMetadata";
@@ -105,43 +106,52 @@ function findMatchingLinkedReferences(
 	blockStackTree: StackTree,
 	allPagesWithMetadata: PageWithMetadata<{}, {}>[] // TODO TS
 ): LinkedRef[] {
+	const linkedRefs: string[] = getLinkedReferences(blockStackTree)
 
 	return allPagesWithMetadata
 		.map((meta): LinkedRef | [] => {
-			let current: StackTreeTextItem | undefined = findLinkedReferenceDeep(blockStackTree)(meta.originalTitle);
+			let current: string | undefined = linkedRefs.find(lr => lr === (meta.originalTitle))
 
 			return !current
 				? []
 				: {
 						metaPage: meta,
-						textNode: current,
+						text: current,
 				}
 		})
 		.flat();
 }
 
 /**
+ * TODO unique? or should keep it this way to resemble how many times linked ref was used?
+ */
+export const getLinkedReferences = (
+	blockStackTree: StackTree //
+): string[] => {
+
+	return (blockStackTree
+		// .filter(item => item.type === "linked-reference" && item.children.length)
+		.map(item => item.type === "linked-reference"
+			? (item.children.filter(c => c.type === "text").map(c => [c, item] as const) as unknown as ReadonlyTuple<StackTreeItem, StackTreeBoundaryItem>[])
+				// .filter(([child, parent]) => parent.type === "linked-reference" && child.type === "text")
+				.map(([child]) => child as StackTreeTextItem).map(ref => ref.text)
+		: "children" in item ? getLinkedReferences(item.children) : [])
+		).flat()
+}
+
+/**
  * either finds the linked reference item, or
  *
  * TODO jscodeshift-like .find'ing w/ stack & needle
+ * 
+ * TODO RENAME findLinkedReferenceDeepWithinBlockString
+ * though, should it be deep?
+ * not an easy answer.
+ * [[a [[b]]]]
+ * 
  */
-export const findLinkedReferenceDeep = (
-	blockStackTree: StackTree //
-) => (
+export const findLinkedReferenceDeep = (	blockStackTree: StackTree ) =>
+(
 	wantedLinkedRef: string //
-): StackTreeTextItem | undefined => {
-
-	const ret = blockStackTree
-		.find((item) =>
-		item.type === "text" ? false :
-			item.type !== "linked-reference" 
-				? findLinkedReferenceDeep(item.children)(wantedLinkedRef)
-				: item.children.length === 1 &&
-					item.children[0].type === "text" &&
-					item.children[0].text === wantedLinkedRef
-		)
-
-	if (!ret) return undefined;
-
-	return (ret as StackTreeBoundaryItem).children[0] as StackTreeTextItem;
-}
+): string | undefined => 
+	getLinkedReferences(blockStackTree).find(ref => ref === wantedLinkedRef)
