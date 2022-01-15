@@ -1,6 +1,7 @@
 /* eslint-disable indent */
+/* eslint-disable react/destructuring-assignment */
 
-import fs from "fs";
+// import fs from "fs";
 
 // import escapeHtml from "escape-html";
 
@@ -43,7 +44,8 @@ export const hideBlockStringsIfNotPublic: MutatingActionToExecute<
 
 	block.string = "";
 
-	const startsWith = (haystack: string) => (needle: string): boolean => haystack.slice(needle.length) === needle;
+	const startsWith = (haystack: string) => (needle: string | null): boolean =>
+		needle !== null && haystack.slice(needle.length) === needle;
 
 	// const findMatchingEnd = (item: StackTreeBoundaryItem, nextItem: StackTreeItem | null): string =>
 	// 	nextItem?.type === "text"
@@ -251,7 +253,9 @@ function extractMetaPagePotentiallyHiddenTitleFromLinkedRef(
 	);
 
 	if (!linkedReference) {
-		fs.writeFileSync(`bad/${item.text}`, "");
+		// fs.mkdirSync("bad", { recursive: true });
+		// fs.writeFileSync(`bad/${item.text}`, "");
+
 		// throw new Error(
 		// 	"linked reference should've been there but wasn't." + //
 		// 		"\n" +
