@@ -1,3 +1,5 @@
+import fs from "fs";
+
 import { MutatingActionToExecute } from "../traverseBlockRecursively";
 
 import { ReadonlyTuple, Tuple } from "../util/tuple";
@@ -44,19 +46,47 @@ const boundaries = [
 	/**
 	 * TODO FIXME:
 	 */
-	// {
-	// 	begin: "#",
-	// 	// end: [" ", ".", ":", "'"],
-	// 	end: " ", // TODO FIXME - use above
-	// 	type: "linked-reference",
-	// 	kind: "#",
-	// 	// TODO "allow unfinished"
-	// },
+	{
+		// TODO FIXME links with #
+		begin: "#",
+		/**
+		 * probably a shitton more -_-
+		 */
+		end: [
+			" ", //
+			",",
+			"~",
+			"!",
+			"#",
+			"$",
+			"%",
+			"^",
+			"&",
+			"(",
+			")",
+			"[",
+			"]",
+			"+",
+			"=",
+			'"',
+			"?",
+			";",
+			">" /** TODO FIXME TEMP until Quote is parsed */,
+			"<",
+			null,
+			// "'" /** TODO FIXME TEMP WORKAROUND */,
+		],
+		// end: " ", // TODO FIXME - use above
+		type: "linked-reference",
+		kind: "#",
+		// allowUnfinished: true,
+	},
 	//
 	{
 		begin: "{{",
 		end: "}}",
 		type: "command",
+		// allowUnfinished: false, // testing
 	},
 	//
 ] as const;
@@ -121,11 +151,12 @@ export const parseASTFromBlockString: MutatingActionToExecute<
 		return true;
 	};
 
-	function parseUntil(from: string | null, until: string | null): void {
+	function parseUntil(from: string | null, until: string | null | readonly string[]): void {
 		const advance = (n: number): string => ((cursor += n), originalString.slice(cursor));
 
 		const str: string = advance(0);
-		const startsWith = (s: string): boolean => s === str.slice(0, s.length);
+		const startsWith = (s: string | readonly string[]): boolean =>
+			Array.isArray(s) ? s.some((ss) => ss === str.slice(0, ss.length)) : s === str.slice(0, s.length);
 
 		const startsWithCurr = (s: string): boolean => s === originalString.slice(cursor, s.length);
 
@@ -139,13 +170,13 @@ export const parseASTFromBlockString: MutatingActionToExecute<
 					 */
 
 					stack.unshift(["begin", b]);
+					advance(0);
 
 					/**
 					 * text (or other stuff) have already been parsed
 					 */
 
 					stack.push(["end", b]);
-
 					advance(b.end.length);
 
 					return true;
@@ -174,7 +205,16 @@ export const parseASTFromBlockString: MutatingActionToExecute<
 					return popStackIfEndMatchesBegin(b);
 				}
 			} else if (startsWith(b.begin)) {
-				if (b.begin === b.end && until === b.end) {
+				if (b.type === "linked-reference" && b.kind === "#") {
+					/**
+					 * cannot start a new tag w/o a space (unless first char)
+					 */
+					if (cursor > 0 && originalString[cursor - 1] !== " ") {
+						return false;
+					}
+				}
+
+				if (b.begin === b.end && b.end === until) {
 					/**
 					 * do NOT advance NOR push here
 					 * because once we return,
@@ -199,20 +239,21 @@ export const parseASTFromBlockString: MutatingActionToExecute<
 
 				if (b.type === "code-block") {
 					while (!startsWithCurr(b.end)) {
-						const char = advance(1);
-						if (!char) break;
+						const char = advance(0);
+						if (!char || !char[0]) break;
 						stack.push(["char", char[0]]);
+						advance(1);
 					}
 
-					// // TODO TEMP REMOVE
-					// if (!popStackIfEndMatchesBegin(b)) {
-					// 	return false;
-					// }
+					// TODO TEMP REMOVE
+					if (!popStackIfEndMatchesBegin(b)) {
+						return false;
+					}
 
-					// stack.push(["end", b]);
-					// advance(b.end.length);
+					stack.push(["end", b]);
+					advance(b.end.length);
 
-					// return true;
+					return true;
 				}
 
 				parseUntil(b.begin, b.end);
@@ -251,10 +292,6 @@ export const parseASTFromBlockString: MutatingActionToExecute<
 					if (!popStackIfEndMatchesBegin(b)) {
 						return false;
 					}
-
-					/**
-					 * matched!
-					 */
 					stack.push(["end", b]);
 					advance(b.end.length);
 
@@ -298,6 +335,33 @@ export const parseASTFromBlockString: MutatingActionToExecute<
 
 	while (cursor < originalString.length) {
 		parseUntil(null, null);
+	}
+
+	while (stackOfBegins.length) {
+		console.log({
+			stackOfBegins: stackOfBegins.map((b) => b.type),
+			blockStrOrig: (block.metadata as any).originalString,
+			blockStr: block.string,
+			block,
+			stack: stack.map((y) => (y[0] === "char" ? y[1] : y[0] + "__" + y[1].type)),
+		});
+
+		const last = stackOfBegins.pop()!;
+
+		if ("allowUnfinished" in last && !!last.allowUnfinished) {
+			stack.push(["end", last]);
+		} else {
+			fs.appendFileSync(`unmatch.off`, last.type + "\n");
+			// throw new Error(
+			// 	"leftover unmatched begin's (no matching end's)" + //
+			// 		"\n" +
+			// 		"last (current) unmatched begin: " +
+			// 		last.type +
+			// 		"\n" +
+			// 		"remaining: " +
+			// 		stackOfBegins.map((begin) => begin.type).join(", ")
+			// );
+		}
 	}
 
 	const [stackWithTextInsteadOfChars, leftoverText] = stack.reduce<Tuple<StackItem[], string>>(
