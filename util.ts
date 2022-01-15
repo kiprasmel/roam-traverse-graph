@@ -3,8 +3,6 @@
 import fs from "fs";
 import path from "path";
 
-import { LinkedReference } from "./types";
-
 /**
  * @param { string } pathToFile
  */
@@ -103,37 +101,3 @@ export const poolPromises = async <T>(
 
 	return results.flat();
 };
-
-/**
- * TODO move together w/ the type definition
- * TODO clear up meanings of `origStr` & `fullStr`
- * TODO `create` -> `createFromStr`
- */
-export function createLinkedReferences(str: string): LinkedReference[] {
-	return [
-		{
-			origStr: str,
-			fullStr: "#" + str, //
-			kind: "#",
-			create: (newStr) => "#[[" + newStr + "]]",
-		},
-		{
-			origStr: str,
-			fullStr: "#[[" + str + "]]", //
-			kind: "#[[]]",
-			create: (newStr) => "#[[" + newStr + "]]",
-		},
-		{
-			origStr: str,
-			fullStr: "[[" + str + "]]", //
-			kind: "[[]]",
-			create: (newStr) => "[[" + newStr + "]]",
-		},
-		{
-			origStr: str,
-			fullStr: str + "::", //
-			kind: "::",
-			create: (newStr) => newStr + "::",
-		},
-	];
-}

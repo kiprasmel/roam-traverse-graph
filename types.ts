@@ -131,7 +131,7 @@ export type LinkedRef<M0 extends RO = RO, M1 extends RO = RO> = {
 	metaPage: PageWithMetadata<M0, M1>;
 	// candidateLR: LinkedReference;
 	// node: StackTreeBoundaryItem;
-	textNode: StackTreeTextItem;
+	text: string;
 };
 
 export type FindLinkedReferencesProps<M0, M1> = {
