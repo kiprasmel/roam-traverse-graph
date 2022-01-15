@@ -50,6 +50,13 @@ const boundaries = [
 		// TODO FIXME links with #
 		begin: "#",
 		/**
+		 * these seem like they should be separated out,
+		 * but actually both of them will always be the same, no?
+		 */
+		// doesNotConsumeEnding: true,
+		// allowUnfinished: true,
+		doesNotConsumeEndingAndThusAlsoAllowsUnfinished: true,
+		/**
 		 * probably a shitton more -_-
 		 */
 		end: [
@@ -73,7 +80,6 @@ const boundaries = [
 			";",
 			">" /** TODO FIXME TEMP until Quote is parsed */,
 			"<",
-			null,
 			// "'" /** TODO FIXME TEMP WORKAROUND */,
 		],
 		// end: " ", // TODO FIXME - use above
@@ -155,10 +161,8 @@ export const parseASTFromBlockString: MutatingActionToExecute<
 		const advance = (n: number): string => ((cursor += n), originalString.slice(cursor));
 
 		const str: string = advance(0);
-		const startsWith = (s: string | readonly (string | null)[]): boolean =>
-			Array.isArray(s)
-				? s.some((ss) => ss !== null && ss === str.slice(0, ss.length))
-				: s === str.slice(0, s.length);
+		const startsWith = (s: string | readonly string[]): boolean =>
+			Array.isArray(s) ? s.some((ss) => ss === str.slice(0, ss.length)) : s === str.slice(0, s.length);
 
 		const startsWithCurr = (s: string): boolean => s === originalString.slice(cursor, s.length);
 
@@ -258,12 +262,7 @@ export const parseASTFromBlockString: MutatingActionToExecute<
 					return true;
 				}
 
-				parseUntil(
-					b.begin,
-					Array.isArray(b.end)
-						? (b.end.filter((e) => e !== null) as Exclude<typeof b.end[number], null>[]) // TODO VERIFY TODO TS
-						: (b.end as Exclude<typeof b.end[number], null>)
-				);
+				parseUntil(b.begin, b.end);
 
 				return true;
 			} else if (startsWith(b.end)) {
@@ -355,7 +354,10 @@ export const parseASTFromBlockString: MutatingActionToExecute<
 
 		const last = stackOfBegins.pop()!;
 
-		if (!Array.isArray(last.end) ? last.end === null : last.end.includes(null)) {
+		if (
+			"doesNotConsumeEndingAndThusAlsoAllowsUnfinished" in last &&
+			last.doesNotConsumeEndingAndThusAlsoAllowsUnfinished
+		) {
 			stack.push(["end", last]);
 		} else {
 			fs.appendFileSync(`unmatch.off`, last.type + "\n");
