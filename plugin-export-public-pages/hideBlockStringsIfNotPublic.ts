@@ -1,12 +1,12 @@
 /* eslint-disable indent */
 /* eslint-disable react/destructuring-assignment */
 
-// import fs from "fs";
+import fs from "fs";
 
 // import escapeHtml from "escape-html";
 
 import { MutatingActionToExecute } from "../traverseBlockRecursively";
-import { LinkedRef, Block } from "../types";
+import { LinkedRef, Block, PageWithMetadata } from "../types";
 
 import {
 	Stack, //
@@ -24,6 +24,7 @@ const assertNever = (_x: never): never => {
 export const hideBlockStringsIfNotPublic: MutatingActionToExecute<
 	{
 		hiddenStringValue: string;
+		rootParentPage: PageWithMetadata<{}, {}>;
 	},
 	{},
 	{
@@ -36,10 +37,15 @@ export const hideBlockStringsIfNotPublic: MutatingActionToExecute<
 	}
 > = ({
 	hiddenStringValue, //
+	rootParentPage,
 }) => (block) => {
 	/**
 	 * TODO rename the plugin
 	 */
+
+	if (!block.string?.trim()) {
+		return block;
+	}
 
 	block.string = "";
 
@@ -54,7 +60,8 @@ export const hideBlockStringsIfNotPublic: MutatingActionToExecute<
 			onNonText = ({ item, walk }: { walk: typeof _walk; item: StackTreeBoundaryItem }): string =>
 				// if (item.type === "command") {
 				(item.begin || "") +
-				(item.type === "code-block" ? item.children[0] : walk(item.children, item)) +
+				// (item.type === "code-block" ? item.children[0].text : walk(item.children, item)) +
+				walk(item.children, item) +
 				("doesNotConsumeEndingAndThusAlsoAllowsUnfinished" in item &&
 				item.doesNotConsumeEndingAndThusAlsoAllowsUnfinished
 					? ""
@@ -90,36 +97,54 @@ export const hideBlockStringsIfNotPublic: MutatingActionToExecute<
 			},
 		} = {}
 	) {
-		let s: string = "";
-
 		function _walk(stackTree: StackTree, parent: null | StackTreeBoundaryItem) {
+			let s: string = "";
+
 			stackTree.forEach((item: StackTreeItem) => {
 				if (item.type !== "text") {
-					s += onNonText({ walk: _walk, item });
+					const r = onNonText({ walk: _walk, item });
+					if (r === undefined) {
+						throw new Error("undefined for onNonText");
+					}
+					s += r;
 				} else {
 					if (parent === null) {
-						s += onIndependentText({ item });
+						const r = onIndependentText({ item });
+						if (r === undefined) {
+							throw new Error("undefined for onIndependentText");
+						}
+						s += r;
 					} else {
-						s += onTextInsideNonText({ item, parent });
+						const r = onTextInsideNonText({ item, parent });
+						if (r === undefined) {
+							throw new Error("undefined for onTextInsideNonText");
+						}
+						s += r;
 					}
 				}
 			});
+
+			return s;
 		}
 
-		_walk(initialStackTree, null);
-		return s;
+		return _walk(initialStackTree, null);
 	}
 
-	if (block.metadata.isPublic || block.metadata.isPublicOnly) {
+	// TODO FIXME UNDO
+	if (block.metadata.isPublic || block.metadata.isPublicOnly || rootParentPage.isFullyPublic) {
+		// if (Math.random() > -1) {
 		block.string = walkStackTree(block.metadata.stackTree).trim();
 		return block;
 	} else {
-		const hiddenLinkedRefPrefix: string = "(" + hiddenStringValue + ")" + " ";
+		const hiddenLinkedRefPrefix: string = "(" + hiddenStringValue + ")" + " " + block.uid + " ";
 
 		block.string = (
 			hiddenLinkedRefPrefix +
 			walkStackTree(block.metadata.stackTree, {
-				onIndependentText: () => "",
+				/**
+				 * TODO figure out private logic
+				 */
+				onIndependentText: ({ item }) => (rootParentPage.isFullyPublic ? item.text : ""),
 				onNonText: ({ item, walk }) =>
 					item.type === "linked-reference" || item.type === "command"
 						? (item.begin || "") + //
@@ -140,14 +165,14 @@ export const hideBlockStringsIfNotPublic: MutatingActionToExecute<
 						// const unwrap = (sr: StackTree): any =>
 						// 	sr.map((tree) => (tree.type === "text" ? tree.text : unwrap(tree.children)));
 
-						console.log({
-							parent,
-							children: parent.children,
-							block,
-							stackTree: block.metadata.stackTree,
-							stackTreeChildren: JSON.stringify(block.metadata.stackTree),
-							stack: block.metadata.stack.map((i) => (i[0] === "text" ? i : JSON.stringify(i))),
-						});
+						// console.log({
+						// 	parent,
+						// 	children: parent.children,
+						// 	block,
+						// 	stackTree: block.metadata.stackTree,
+						// 	stackTreeChildren: JSON.stringify(block.metadata.stackTree),
+						// 	stack: block.metadata.stack.map((i) => (i[0] === "text" ? i : JSON.stringify(i))),
+						// });
 
 						return extractMetaPagePotentiallyHiddenTitleFromLinkedRef(block, item);
 					} else {
@@ -187,8 +212,8 @@ function extractMetaPagePotentiallyHiddenTitleFromLinkedRef(
 	);
 
 	if (!linkedReference) {
-		// fs.mkdirSync("bad", { recursive: true });
-		// fs.writeFileSync(`bad/${item.text}`, "");
+		fs.mkdirSync("bad", { recursive: true });
+		fs.writeFileSync(`bad/${item.text}`, "");
 
 		// throw new Error(
 		// 	"linked reference should've been there but wasn't." + //

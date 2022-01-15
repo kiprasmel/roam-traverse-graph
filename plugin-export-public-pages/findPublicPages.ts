@@ -4,6 +4,8 @@
 
 // import escapeHtml from "escape-html";
 
+import fs from "fs";
+
 import { traverseBlockRecursively } from "../traverseBlockRecursively";
 import { removeUnknownProperties, markBlockPublic } from "./findPublicBlocks";
 import { findIfPagesHavePublicLinkedReferencesAndLinkThemAsMentions } from "./findLinkedReferencesOfABlock";
@@ -86,9 +88,9 @@ export type SettingsForPluginFindPublicPages = {
 
 export const getDefaultSettingsForPluginFindPublicPages = (): SettingsForPluginFindPublicPages => ({
 	publicGlobalTags: [],
-	publicTags: ["#public"],
+	publicTags: ["public"],
 	publicOnlyTags: [],
-	privateTag: "#private", // TODO array
+	privateTag: "private", // TODO array
 	hiddenStringValue: "hidden",
 	makeThePublicTagPagePublic: false,
 	keepMetadata: false,
@@ -184,6 +186,19 @@ export const findPublicPages = <M0 extends RO>(
 		settingsFromSettingsPage,
 		merged: settings,
 	}),
+	fs.writeFileSync(
+		"debug.json",
+		JSON.stringify(
+			{
+				defaultOptions: getDefaultSettingsForPluginFindPublicPages(),
+				optionsOrig,
+				settingsFromSettingsPage,
+				merged: settings,
+			},
+			null,
+			2
+		)
+	),
 	/**
 	 * TODO: move page.children into some temporary page._children or similar
 	 * to make sure we delete it at the end,
@@ -474,6 +489,7 @@ export const findPublicPages = <M0 extends RO>(
 					.map(
 						traverseBlockRecursively(hideBlockStringsIfNotPublic, {
 							hiddenStringValue,
+							rootParentPage: currentPageWithMeta,
 						})(undefined)
 					)
 					// .map((block) => block.metadata.)
