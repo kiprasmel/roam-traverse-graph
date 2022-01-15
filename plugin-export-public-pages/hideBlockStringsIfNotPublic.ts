@@ -44,8 +44,7 @@ export const hideBlockStringsIfNotPublic: MutatingActionToExecute<
 
 	block.string = "";
 
-	const startsWith = (haystack: string) => (needle: string | null): boolean =>
-		needle !== null && haystack.slice(needle.length) === needle;
+	const startsWith = (haystack: string) => (needle: string): boolean => haystack.slice(needle.length) === needle;
 
 	// const findMatchingEnd = (item: StackTreeBoundaryItem, nextItem: StackTreeItem | null): string =>
 	// 	nextItem?.type === "text"
@@ -61,6 +60,9 @@ export const hideBlockStringsIfNotPublic: MutatingActionToExecute<
 	// // Array.isArray(item.end) ?
 	// // : "allowUnfinished" in item ? ;
 
+	/**
+	 * is this even needed?
+	 */
 	const findMatchingEnd = (end: Boundary["end"], nextItem: StackTreeItem | null): string =>
 		// nextItem === null
 		// 	? Array.isArray(end)
@@ -129,7 +131,11 @@ export const hideBlockStringsIfNotPublic: MutatingActionToExecute<
 				// if (item.type === "command") {
 				(item.begin || "") +
 				(item.type === "code-block" ? item.children[0] : walk(item.children, item)) +
-				findMatchingEnd(item.end, nextItem),
+				("doesNotConsumeEndingAndThusAlsoAllowsUnfinished" in item &&
+				item.doesNotConsumeEndingAndThusAlsoAllowsUnfinished
+					? ""
+					: findMatchingEnd(item.end, nextItem)),
+
 			// }
 			onIndependentText = ({ item }: { item: StackTreeTextItem }): string =>
 				// if (block.metadata.isPublic || block.metadata.isPublicOnly) {
