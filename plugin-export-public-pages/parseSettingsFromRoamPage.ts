@@ -33,7 +33,7 @@ export const parseSettingsFromRawString = (
  */
 export const parseRoamTraverseGraphSettingsFromRoamPage = <M0 extends RO, M1 extends RO>(
 	somePages: Page<M0, M1>[] = [], //
-	latestSupportedSettingsVersion = 0,
+	latestSupportedSettingsVersion = 1,
 	roamSettingsPageTitle: string = defaultRoamSettingsPageTitle,
 	settingsPage: Page<M0, M1> | undefined = somePages.find((page) => page.title === roamSettingsPageTitle),
 	allSettingsFromSettingsPage: SomeSettingsWithVersion[] = (settingsPage?.children || [])
