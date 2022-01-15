@@ -9,7 +9,6 @@ import { MutatingActionToExecute } from "../traverseBlockRecursively";
 import { LinkedRef, Block } from "../types";
 
 import {
-	Boundary,
 	Stack, //
 	StackTree,
 	StackTreeBoundaryItem,
@@ -44,74 +43,7 @@ export const hideBlockStringsIfNotPublic: MutatingActionToExecute<
 
 	block.string = "";
 
-	const startsWith = (haystack: string) => (needle: string): boolean => haystack.slice(needle.length) === needle;
-
-	// const findMatchingEnd = (item: StackTreeBoundaryItem, nextItem: StackTreeItem | null): string =>
-	// 	nextItem?.type === "text"
-	// 		? "allowUnfinished" in item && item.allowUnfinished
-	// 			? // ? Array.isArray(item.end)
-	// 			  item.end.find(startsWith(nextItem.text)) ?? ""
-	// 			: // :
-	// 			//  (item.end as string)
-	// 			startsWith(nextItem.text)(item.end)
-	// 			? item.end
-	// 			: ""
-	// 		: "TODO";
-	// // Array.isArray(item.end) ?
-	// // : "allowUnfinished" in item ? ;
-
-	/**
-	 * is this even needed?
-	 */
-	const findMatchingEnd = (end: Boundary["end"], nextItem: StackTreeItem | null): string =>
-		// nextItem === null
-		// 	? Array.isArray(end)
-		// 		?
-		// 		: end === null
-		// 			?
-		// :
-		nextItem === null || nextItem.type !== "text"
-			? // = is another boundary (or is empty), nope
-			  !Array.isArray(end)
-				? end === null
-					? ""
-					: "<ERROR unmatched end - item.end === null, nextItem.type !== 'text'>"
-				: // = is array
-				end.some((e) => e === null)
-				? // = allow empty
-				  ""
-				: "<ERROR unmatched end(s) - end.some(e => e === null) !== true (no 'allow empty'), nextItem.type !== 'text'>"
-			: // = nextItem is text
-			!Array.isArray(end)
-			? end === null // = allow empty (only)
-				? nextItem === null // = empty (never true)
-					? "" // never
-					: "<ERROR unmatched (empty) ending - item.end === null, nextItem !== null>"
-				: startsWith(nextItem.text)(end as Exclude<typeof end, readonly any[] | null>) // TODO TS AUTO (should be)
-				? end
-				: ""
-			: // = item.end is array
-			  // : end.some(e => e === null)
-			  // 	? "<ERROR nextItem.type === 'text', end.some(e => e === )>"
-
-			  end.find(startsWith(nextItem.text)) ??
-			  "<ERROR nextItem.type === 'text', end.find(e => startsWith(nextItem.text)) !== true>";
-
-	// 	// TODO RM:
-	// ? nextItem === null
-	// 	? Array.isArray(item.end)
-	// 		? item.end.includes(null)
-	// 			? ""
-	// 			: "TODO"
-	// 		: Array.isArray(item.end)
-	// 		? item.end.find(startsWith(nextItem.text)) ?? ""
-	// 		: item.end
-	// 	: startsWith(nextItem.text)(item.end)
-	// 	? item.end
-	// 	: ""
-	// : "TODO";
-	// Array.isArray(item.end) ?
-	// : "allowUnfinished" in item ? ;
+	const nonDeterministicItemEndArrayBug = "<BUG item.end should NEVER be an array if it does consume it's ending, because then choosing the ending is non-deterministic.>" as const;
 
 	/**
 	 * TODO convertStackTreeItemsIntoStrings
@@ -119,23 +51,16 @@ export const hideBlockStringsIfNotPublic: MutatingActionToExecute<
 	function walkStackTree(
 		initialStackTree: StackTree,
 		{
-			onNonText = ({
-				item,
-				walk,
-				nextItem,
-			}: {
-				walk: typeof _walk;
-				item: StackTreeBoundaryItem;
-				nextItem: StackTreeItem | null;
-			}): string =>
+			onNonText = ({ item, walk }: { walk: typeof _walk; item: StackTreeBoundaryItem }): string =>
 				// if (item.type === "command") {
 				(item.begin || "") +
 				(item.type === "code-block" ? item.children[0] : walk(item.children, item)) +
 				("doesNotConsumeEndingAndThusAlsoAllowsUnfinished" in item &&
 				item.doesNotConsumeEndingAndThusAlsoAllowsUnfinished
 					? ""
-					: findMatchingEnd(item.end, nextItem)),
-
+					: Array.isArray(item.end)
+					? nonDeterministicItemEndArrayBug
+					: item.end),
 			// }
 			onIndependentText = ({ item }: { item: StackTreeTextItem }): string =>
 				// if (block.metadata.isPublic || block.metadata.isPublicOnly) {
@@ -168,11 +93,9 @@ export const hideBlockStringsIfNotPublic: MutatingActionToExecute<
 		let s: string = "";
 
 		function _walk(stackTree: StackTree, parent: null | StackTreeBoundaryItem) {
-			stackTree.forEach((item: StackTreeItem, i) => {
-				const nextItem: StackTreeItem | null = i + 1 >= stackTree.length - 1 ? null : stackTree[i + 1];
-
+			stackTree.forEach((item: StackTreeItem) => {
 				if (item.type !== "text") {
-					s += onNonText({ walk: _walk, item, nextItem });
+					s += onNonText({ walk: _walk, item });
 				} else {
 					if (parent === null) {
 						s += onIndependentText({ item });
@@ -197,11 +120,16 @@ export const hideBlockStringsIfNotPublic: MutatingActionToExecute<
 			hiddenLinkedRefPrefix +
 			walkStackTree(block.metadata.stackTree, {
 				onIndependentText: () => "",
-				onNonText: ({ item, walk, nextItem }) =>
+				onNonText: ({ item, walk }) =>
 					item.type === "linked-reference" || item.type === "command"
 						? (item.begin || "") + //
 						  walk(item.children, item) +
-						  findMatchingEnd(item.end, nextItem)
+						  ("doesNotConsumeEndingAndThusAlsoAllowsUnfinished" in item &&
+						  item.doesNotConsumeEndingAndThusAlsoAllowsUnfinished
+								? ""
+								: Array.isArray(item.end)
+								? nonDeterministicItemEndArrayBug
+								: item.end)
 						: "",
 				onTextInsideNonText: ({ item, parent }) => {
 					if (parent.type === "code-block") {
