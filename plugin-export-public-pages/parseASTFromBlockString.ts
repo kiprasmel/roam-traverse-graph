@@ -55,6 +55,13 @@ const boundaries = [
 		 */
 		// doesNotConsumeEnding: true,
 		// allowUnfinished: true,
+		/**
+		 * furthermore, this should implicitly be assumed true
+		 * if the `end` is an array, instead of a string,
+		 * because what it comes down to is being able to
+		 * deterministically select the ending token,
+		 * and that's only possible if there's only 1 of them.
+		 */
 		doesNotConsumeEndingAndThusAlsoAllowsUnfinished: true,
 		/**
 		 * probably a shitton more -_-
