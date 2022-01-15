@@ -155,8 +155,10 @@ export const parseASTFromBlockString: MutatingActionToExecute<
 		const advance = (n: number): string => ((cursor += n), originalString.slice(cursor));
 
 		const str: string = advance(0);
-		const startsWith = (s: string | readonly string[]): boolean =>
-			Array.isArray(s) ? s.some((ss) => ss === str.slice(0, ss.length)) : s === str.slice(0, s.length);
+		const startsWith = (s: string | readonly (string | null)[]): boolean =>
+			Array.isArray(s)
+				? s.some((ss) => ss !== null && ss === str.slice(0, ss.length))
+				: s === str.slice(0, s.length);
 
 		const startsWithCurr = (s: string): boolean => s === originalString.slice(cursor, s.length);
 
@@ -256,7 +258,12 @@ export const parseASTFromBlockString: MutatingActionToExecute<
 					return true;
 				}
 
-				parseUntil(b.begin, b.end);
+				parseUntil(
+					b.begin,
+					Array.isArray(b.end)
+						? (b.end.filter((e) => e !== null) as Exclude<typeof b.end[number], null>[]) // TODO VERIFY TODO TS
+						: (b.end as Exclude<typeof b.end[number], null>)
+				);
 
 				return true;
 			} else if (startsWith(b.end)) {
@@ -348,7 +355,7 @@ export const parseASTFromBlockString: MutatingActionToExecute<
 
 		const last = stackOfBegins.pop()!;
 
-		if ("allowUnfinished" in last && !!last.allowUnfinished) {
+		if (!Array.isArray(last.end) ? last.end === null : last.end.includes(null)) {
 			stack.push(["end", last]);
 		} else {
 			fs.writeFileSync(`unmatch/${last.type}`, "");
