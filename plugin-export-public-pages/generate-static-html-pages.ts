@@ -243,6 +243,16 @@ export const pagesWithMetaAndHtml: PageWithMetadata<
 				position: absolute;
 			}
 
+			/*
+				links
+			*/
+			a {
+				text-decoration: none;
+			}
+			a:hover {
+				text-decoration: underline;
+			}
+
 		</style>
 
 		<script type="text/javascript">
