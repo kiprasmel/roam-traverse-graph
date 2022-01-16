@@ -3,7 +3,7 @@
 
 import fs from "fs";
 
-// import escapeHtml from "escape-html";
+import escapeHtml from "escape-html";
 
 import { MutatingActionToExecute } from "../traverseBlockRecursively";
 import { LinkedRef, Block, PageWithMetadata } from "../types";
@@ -57,18 +57,20 @@ export const hideBlockStringsIfNotPublic: MutatingActionToExecute<
 	function walkStackTree(
 		initialStackTree: StackTree,
 		{
-			onNonText = ({ item, walk }: { walk: typeof _walk; item: StackTreeBoundaryItem }): string =>
+			onNonText = ({ item, walk }: { walk: typeof _walk; item: StackTreeBoundaryItem }): string => (
+				void 0,
 				// if (item.type === "command") {
-				(item.begin || "") +
-				// (item.type === "code-block" ? item.children[0].text : walk(item.children, item)) +
-				walk(item.children, item) +
-				("doesNotConsumeEndingAndThusAlsoAllowsUnfinished" in item &&
-				item.doesNotConsumeEndingAndThusAlsoAllowsUnfinished
-					? ""
-					: Array.isArray(item.end)
-					? nonDeterministicItemEndArrayBug
-					: item.end),
-			// }
+				`<span style="color: hsl(207,18%,71%);">${item.begin || ""}</span>` +
+					// (item.type === "code-block" ? item.children[0].text : walk(item.children, item)) +
+					walk(item.children, item) +
+					("doesNotConsumeEndingAndThusAlsoAllowsUnfinished" in item &&
+					item.doesNotConsumeEndingAndThusAlsoAllowsUnfinished
+						? ""
+						: Array.isArray(item.end)
+						? nonDeterministicItemEndArrayBug
+						: `<span style="color: grey;">${item.end}</span>`)
+				// }
+			),
 			onIndependentText = ({ item }: { item: StackTreeTextItem }): string =>
 				// if (block.metadata.isPublic || block.metadata.isPublicOnly) {
 				// escapeHtml(item.text),
@@ -82,14 +84,20 @@ export const hideBlockStringsIfNotPublic: MutatingActionToExecute<
 				item: StackTreeTextItem;
 				parent: StackTreeBoundaryItem;
 			}): string => {
+				const escapedText = escapeHtml(item.text);
+
 				if (parent.type === "code-block") {
-					// return escapeHtml(item.text);
-					return item.text;
+					return escapedText;
 				} else if (parent.type === "command") {
-					// return escapeHtml(item.text);
-					return item.text;
+					return escapedText;
+					// return item.text;
 				} else if (parent.type === "linked-reference") {
-					return item.text; // TODO FIXME
+					/**
+					 * TODO proper href (fix title, also hiding, etc.)
+					 */
+					return `<a href="/${escapedText}.html">${escapedText}</a>`;
+
+					// return item.text; // TODO FIXME
 					// return extractMetaPagePotentiallyHiddenTitleFromLinkedRef(block, item);
 				} else {
 					return assertNever(parent);
@@ -124,10 +132,12 @@ export const hideBlockStringsIfNotPublic: MutatingActionToExecute<
 		block.string = walkStackTree(block.metadata.stackTree).trim();
 		return block;
 	} else {
-		const hiddenLinkedRefPrefix: string = "(" + hiddenStringValue + ")" + " " + block.uid + " ";
+		const hiddenLinkedRefPrefix: string = "(" + hiddenStringValue + ")" + " ";
 
 		block.string = (
 			hiddenLinkedRefPrefix +
+			block.uid +
+			" " +
 			walkStackTree(block.metadata.stackTree, {
 				/**
 				 * TODO figure out private logic
@@ -209,7 +219,7 @@ function extractMetaPagePotentiallyHiddenTitleFromLinkedRef(
 		// 		"item.text = " +
 		// 		item.text +
 		// 		"\n" +
-		// 		"block.metadata.linkedReferences = " +
+		// 		"block.metadata.linkedReferences = " +item
 		// 		block.metadata.linkedReferences.map((lr) => lr.textNode.text)
 		// );
 		// TODO FIXME HACK
