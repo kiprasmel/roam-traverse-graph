@@ -201,6 +201,59 @@ export const pagesWithMetaAndHtml: PageWithMetadata<
 				color: blue;
 				*/
 			}
+
+			/*
+				works almost exactly how it should
+				but the problem is -- the href element should only appear
+				when you hover the __list-style item of the li__,
+				and __not__ the li itself.
+
+				that would also fix the problem that
+				the :hover propagates up into higher li's.
+			*/
+			/*
+			ul > li[id]:hover {
+				list-style: none;
+			}
+			*/
+			/*
+				we used these 2 w/ the previous one,
+				but turns out it's pretty meh,
+				& also the links are not clickable unless you're hovering,
+				which is not ideal, e.g. screen readers, or even vimium
+			*/
+			/*
+			ul > li[id] a {
+				visibility: hidden;
+			}
+
+			ul > li[id]:hover > a {
+				visibility: initial;
+			}
+			*/
+
+			/*
+				simply become an invisible, empty, yet clickable, element,
+				& hide right behind the list-style'ing of the <li>
+			*/
+			a.block-ref {
+				/* ensure moves left */
+				float: left;
+
+				/* moves right around the list-style'ing */
+				margin-left: -21px;
+				margin-top: -1px;
+
+				width: 20px;
+				height: 20px;
+
+				/*
+					become clickable, even if hovering on the li's list-style'ing
+					does not seem to be going in weird places, surprisingly just works
+				*/
+				position: absolute;
+			}
+
 		</style>
 
 		<script type="text/javascript">
@@ -448,7 +501,7 @@ const indexHtml: string = `\
 	${pagesWithMetaAndHtml
 		.map(
 			(meta): string => `\
-		<li>
+		<li id="${meta.page.uid}">
 			<a href="${fixTitle(meta.page.title)}">
 				${meta.page.title}
 			</a>
@@ -486,8 +539,10 @@ function blockRecursively<M0, M1>(block: Block<M0, M1>, existingTabCount: number
 
 	const joinedChildrenHtml: string = !block.children?.length ? "" : joinChildren(childrenHtml, 1);
 
-	return `<li>
-${selfHtml}
+	return `<li id="${block.uid}">
+	<a href="#${block.uid}" class="block-ref"></a>
+
+	${selfHtml}
 
 ${joinedChildrenHtml}
 </li>` //
@@ -563,7 +618,9 @@ function drawLinkedMentions<M0 extends RO, M1 extends RO>(mentionsGroupedByPage:
 		${mentionsOfAPage
 			.map(
 				(mention) => `\
-		<li>
+		<li id="${mention.blockRef.uid}">
+			<a href="#${mention.blockRef.uid}" class="block-ref"></a>
+
 			<!--
 				TODO <h4> for semantics
 			-->
