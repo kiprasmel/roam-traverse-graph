@@ -6,6 +6,7 @@ dist.*
 
 secrets.json
 temp/
+*.off
 
 *.json
 *.edn
