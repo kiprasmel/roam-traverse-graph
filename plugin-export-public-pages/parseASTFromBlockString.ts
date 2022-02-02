@@ -11,12 +11,14 @@ const boundaries = [
 		end: "```",
 		type: "code-block",
 		kind: "whole",
+		utype: "code-block/whole",
 	},
 	{
 		begin: "`",
 		end: "`",
 		type: "code-block",
 		kind: "inline",
+		utype: "code-block/inline",
 	},
 	//
 	{
@@ -27,12 +29,14 @@ const boundaries = [
 		// // TODO - linked reference w/ kind: attribute?
 		type: "linked-reference", // TODO attribute? or nah? probably not.
 		kind: "::",
+		utype: "linked-reference/::",
 	},
 	{
 		begin: "#[[",
 		end: "]]",
 		type: "linked-reference",
 		kind: "#[[]]",
+		utype: "linked-reference/#[[]]",
 		// parse: (s: string): boolean => {
 		// 	//
 		// },
@@ -42,6 +46,7 @@ const boundaries = [
 		end: "]]",
 		type: "linked-reference",
 		kind: "[[]]",
+		utype: "linked-reference/[[]]",
 	},
 	/**
 	 * TODO FIXME:
@@ -92,6 +97,7 @@ const boundaries = [
 		// end: " ", // TODO FIXME - use above
 		type: "linked-reference",
 		kind: "#",
+		utype: "linked-reference/#",
 		// allowUnfinished: true,
 	},
 	//
@@ -99,6 +105,7 @@ const boundaries = [
 		begin: "{{",
 		end: "}}",
 		type: "command",
+		utype: "command",
 		// allowUnfinished: false, // testing
 	},
 	//
