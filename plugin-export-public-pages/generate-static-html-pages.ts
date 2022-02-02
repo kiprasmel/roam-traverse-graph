@@ -257,6 +257,52 @@ export const pagesWithMetaAndHtml: PageWithMetadata<
 		</style>
 
 		<script type="text/javascript">
+			highlightElementIfIdMatchesHash()
+
+			// function highlightElementIfIdMatchesHash(fromBg = "#fbf2d4", toBg = "initial") {
+			function highlightElementIfIdMatchesHash(fromBg = "#fbf2d4") {
+				window.addEventListener("popstate", (event) => {
+				  console.log("location: " + document.location + ", state: " + JSON.stringify(event.state))
+
+				  const id = window.location.hash.slice(1)
+				  console.log({id})
+				  if (!id) return
+
+				  var el = document.getElementById(id)
+				  console.log({el})
+				  if (!el) return
+
+				  el.style.transition = ""
+				  var toBg = el.style.backgroundColor
+				  el.style.backgroundColor = fromBg
+				  console.log("highlighted el", el)
+
+				  setTimeout(() => {
+				  	el.style.transition = "background 2s ease-out 1s"
+					el.style.backgroundColor = toBg
+					console.log("transitioning el", el)
+
+					setTimeout(() => {
+						console.log("cleaning up el", el)
+						el.style.transition = ""
+						delete el.style.transition
+
+						if (toBg) {
+							el.style.backgroundColor = toBg
+						} else {
+							delete el.style.backgroundColor
+						}
+
+						if (!el.style.length) {
+							delete el.style
+						}
+					}, 2000)
+				  }, 1)
+				});
+			}
+		</script>
+
+		<script type="text/javascript">
 			/** note - interval won't work because of this - if enabling again (unlikely), disable this: */
 			var pageLoadTime = new Date();
 
