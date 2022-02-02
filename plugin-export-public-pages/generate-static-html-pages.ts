@@ -201,7 +201,106 @@ export const pagesWithMetaAndHtml: PageWithMetadata<
 				color: blue;
 				*/
 			}
+
+			/*
+				works almost exactly how it should
+				but the problem is -- the href element should only appear
+				when you hover the __list-style item of the li__,
+				and __not__ the li itself.
+
+				that would also fix the problem that
+				the :hover propagates up into higher li's.
+			*/
+			ul > li[id] a {
+				visibility: hidden;
+			}
+			/*
+			ul > li[id]:hover {
+				list-style: none;
+			}
+			*/
+			ul > li[id]:hover > a {
+				visibility: initial;
+			}
+
+			a.block-ref {
+				/* ensure moves left */
+				float: left;
+
+				/* moves right around the list-style'ing */
+				margin-left: -21px;
+				margin-top: -1px;
+
+				width: 20px;
+				height: 20px;
+
+				/*
+					become clickable, even if hovering on the li's list-style'ing
+					does not seem to be going in weird places, surprisingly just works
+				*/
+				position: absolute;
+			}
+
+			/*
+			ul > li[id] a {
+				visibility: hidden;
+			}
+			ul > li[id] a:hover {
+				list-style: none;
+			}
+			ul > li[id] a:hover {
+				visibility: initial;
+			}
+			*/
+
+			/*
+			ul > li[id]::before {
+				content: " ";
+			}
+			ul > li[id]::before:hover {
+				content: "###";
+			}
+			*/
+
 		</style>
+		<script type="text/javascript">
+			highlightElementIfIdMatchesHash()
+
+			// function highlightElementIfIdMatchesHash(fromBg = "#fbf2d4", toBg = "initial") {
+			function highlightElementIfIdMatchesHash(fromBg = "#fbf2d4") {
+				window.addEventListener("popstate", (event) => {
+				  console.log("location: " + document.location + ", state: " + JSON.stringify(event.state))
+
+				  const id = window.location.hash.slice(1)
+				  console.log({id})
+				  if (!id) return
+
+				  var el = document.getElementById(id)
+				  console.log({el})
+				  if (!el) return
+
+				  el.style.transition = ""
+				  var toBg = el.style.backgroundColor
+				  el.style.backgroundColor = fromBg
+
+				  setTimeout(() => {
+				  	el.style.transition = "background 2s ease-out 1s"
+					el.style.backgroundColor = toBg
+
+					setTimeout(() => {
+						el.style.transition = ""
+						delete el.style.transition
+
+						if (toBg) {
+							el.style.backgroundColor = toBg
+						} else {
+							delete el.style.backgroundColor
+						}
+					}, 2000)
+				  }, 1)
+				});
+			}
+		</script>
 
 		<script type="text/javascript">
 			/** note - interval won't work because of this - if enabling again (unlikely), disable this: */
@@ -448,8 +547,8 @@ const indexHtml: string = `\
 	${pagesWithMetaAndHtml
 		.map(
 			(meta): string => `\
-		<li>
-			<a href="${fixTitle(meta.page.title)}">
+		<li id="${meta.page.uid}">
+			<a href="#${fixTitle(meta.page.title)}">
 				${meta.page.title}
 			</a>
 		</li>`
@@ -486,8 +585,14 @@ function blockRecursively<M0, M1>(block: Block<M0, M1>, existingTabCount: number
 
 	const joinedChildrenHtml: string = !block.children?.length ? "" : joinChildren(childrenHtml, 1);
 
-	return `<li>
-${selfHtml}
+	const begin = !block.string
+		? `<li>`
+		: `\
+<li id="${block.uid}">
+<a href="#${block.uid}" class="block-ref"></a>`;
+
+	return `${begin}
+	${selfHtml}
 
 ${joinedChildrenHtml}
 </li>` //
@@ -563,7 +668,9 @@ function drawLinkedMentions<M0 extends RO, M1 extends RO>(mentionsGroupedByPage:
 		${mentionsOfAPage
 			.map(
 				(mention) => `\
-		<li>
+		<li ${!mention.blockRef.string ? "" : `id="${mention.blockRef.uid}"`}>
+			<a href="#${mention.blockRef.uid}" class="block-ref"></a>
+
 			<!--
 				TODO <h4> for semantics
 			-->
