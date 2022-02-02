@@ -210,8 +210,7 @@ function extractMetaPagePotentiallyHiddenTitleFromLinkedRef(
 	);
 
 	if (!linkedReference) {
-		fs.mkdirSync("bad", { recursive: true });
-		fs.writeFileSync(`bad/${item.text}`, "");
+		fs.appendFileSync("bad.off", item.text + "\n");
 
 		// throw new Error(
 		// 	"linked reference should've been there but wasn't." + //
