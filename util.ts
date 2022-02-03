@@ -115,7 +115,7 @@ export function createLinkedReferences(str: string): LinkedReference[] {
 			origStr: str,
 			fullStr: "#" + str, //
 			kind: "#",
-			create: (newStr) => "#[[" + newStr + "]]",
+			create: (newStr) => (newStr.includes(" ") ? "#[[" + newStr + "]]" : "#" + newStr),
 		},
 		{
 			origStr: str,
