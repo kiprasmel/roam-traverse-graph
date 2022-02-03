@@ -26,9 +26,9 @@ const createBlock = <M0 = {}, M1 = {}>(string: string, extra = {}): Block<M0, M1
 	...extra,
 });
 
-const input1 = "{{[[TODO]]}} [[roam-traverse-graph]] aayyyy lmao kek, #nice wait [[oh fuck [[what is this]]]] #sweet";
+export const input1 = "{{[[TODO]]}} [[roam-traverse-graph]] aayyyy lmao kek, #nice wait [[oh fuck [[what is this]]]] #sweet";
 
-const expected: AST = [
+export const expected1: AST = [
 	["command", ["linked-reference/[[]]", ["text", "TODO"]]], //
 	["text", " "],
 	["linked-reference/[[]]", ["text", "roam-traverse-graph"]],
@@ -39,7 +39,7 @@ const expected: AST = [
 	["text", " "],
 	["linked-reference/#", ["text", "sweet"]],
 ];
-console.log(expected);
+console.log(expected1);
 
 const createBlockWithAST = (input: string) => parseASTFromBlockString({})(createBlock(input), undefined, Depth.ROOT_LEVEL_BLOCK);
 const blockWithAST = createBlockWithAST(input1)
@@ -88,8 +88,9 @@ fs.writeFileSync("meta.json", JSON.stringify((blockWithAST as any).metadata, nul
 
 // assert.deepStrictEqual(stackMapped, expected)
 
-export const testcase = input => {
+export const testcase = (input: string): AST => {
 	const blockWithAST = createBlockWithAST(input1)
 	const stackTree: StackTree = (blockWithAST as any).metadata.stackTree;
 	const stackMapped = mapStackTreeToCleanAST(stackTree)
+	return stackMapped
 }
