@@ -14,8 +14,8 @@ import { Boundary, parseASTFromBlockString, StackTree } from "./parseASTFromBloc
 // // type ASTNode = [ASTNodeKey, ASTNodeValue, ASTNode[]?]
 // // type ASTNode = [ASTNodeKey, ASTNodeValue]
 // type ASTNode = [Boundary["type"], string | ASTNode] | ["text", string] | ["text", string, ASTNode]
-type ASTNode = [Boundary["utype"], string | ASTNode] | ["text", string] | ["text", string, ASTNode /* for nested linked references (TODO) */]
-type AST = ASTNode[]
+export type ASTNode = [Boundary["utype"], ASTNode] | ["text", string] | ["text", string, ASTNode /* for nested linked references (TODO) */]
+export type AST = ASTNode[]
 
 const createBlock = <M0 = {}, M1 = {}>(string: string, extra = {}): Block<M0, M1> => ({
 	"edit-email": "",
@@ -33,7 +33,7 @@ export const expected1: AST = [
 	["text", " "],
 	["linked-reference/[[]]", ["text", "roam-traverse-graph"]],
 	["text", " aayyyy lmao kek, "],
-	["linked-reference/#", "nice"],
+	["linked-reference/#", ["text", "nice"]],
 	["text", " wait "],
 	["linked-reference/[[]]", ["text", "oh fuck ", ["linked-reference/[[]]", ["text", "what is this"]]]],
 	["text", " "],
@@ -89,7 +89,7 @@ fs.writeFileSync("meta.json", JSON.stringify((blockWithAST as any).metadata, nul
 // assert.deepStrictEqual(stackMapped, expected)
 
 export const testcase = (input: string): AST => {
-	const blockWithAST = createBlockWithAST(input1)
+	const blockWithAST = createBlockWithAST(input)
 	const stackTree: StackTree = (blockWithAST as any).metadata.stackTree;
 	const stackMapped = mapStackTreeToCleanAST(stackTree)
 	return stackMapped
