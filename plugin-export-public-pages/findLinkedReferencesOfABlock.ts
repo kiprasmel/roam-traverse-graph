@@ -1,3 +1,5 @@
+/* eslint-disable indent */
+
 import { MutatingActionToExecute } from "../traverseBlockRecursively";
 import { LinkedMention, LinkedRef, PageWithMetadata } from "../types";
 import { withMetadata } from "../util/withMetadata";
@@ -97,30 +99,60 @@ export const findIfPagesHavePublicLinkedReferencesAndLinkThemAsMentions: Mutatin
 	// };
 };
 
+/**
+ * #parent
+ * #pa
+ * #rent
+ *
+ * #parent -> #parent, not #pa, not #rent, not combination of multiple
+ *
+ * ---
+ *
+ * racecar::
+ * race::
+ * car::
+ *
+ * racecar:: -> racecar::, not race::, not car::, not combination of multiple
+ *
+ * ---
+ *
+ * impl:
+ * 1. sort all candidates by length (longest to shortest)
+ * 2. go 1 by 1 from longest to shortest
+ * 2.1 check if the block string includes the candidate
+ * 2.2 (!) check if the candidate is not already included in the end result (as a substring)
+ * 2.3 add candidate to end result
+ *
+ */
+
 function findMatchingLinkedReferences(
 	blockString: string,
 	allPagesWithMetadata: PageWithMetadata<{}, {}>[] // TODO TS
 ): LinkedRef[] {
-	const linkedReferences: LinkedRef[] = [];
-
-	/**
-	 * TODO - there's potential for optimization,
-	 * but perhaps w/ a cost of some loss of clarity
-	 * and it isn't an issue at all atm
-	 * so maybe sometime in the future, if even.
-	 */
-	for (const metaPage of allPagesWithMetadata) {
-		if (!metaPage.originalTitle) {
-			/* TODO should never happen */
-			continue;
-		}
-
-		for (const candidateLR of createLinkedReferences(metaPage.originalTitle)) {
-			if (blockString.includes(candidateLR.fullStr)) {
-				linkedReferences.push({ metaPage, candidateLR });
-			}
-		}
-	}
-
-	return linkedReferences;
+	return (
+		allPagesWithMetadata
+			/** begin collection (could be done once for all blocks, except the filter part) */
+			.map((metaPage) =>
+				createLinkedReferences(metaPage.originalTitle)
+					.filter((candidate) => blockString.includes(candidate.fullStr))
+					.map((candidateLR) => ({ metaPage, candidateLR }))
+			)
+			.flat()
+			.sort((a, b) => b.candidateLR.origStr.length - a.candidateLR.origStr.length)
+			/** end collection */
+			.reduce(
+				(acc, candidate) => (
+					!(
+						acc.alreadyTakenLinkedRefs.includes(candidate.candidateLR.fullStr) ||
+						acc.alreadyTakenLinkedRefs.some((linkedRef) =>
+							/* partial match */ linkedRef.includes(candidate.candidateLR.fullStr)
+						)
+					) &&
+						(acc.uniqueLinkedReferences.push(candidate),
+						acc.alreadyTakenLinkedRefs.push(candidate.candidateLR.fullStr)),
+					acc
+				),
+				{ uniqueLinkedReferences: [] as LinkedRef[], alreadyTakenLinkedRefs: [] as string[] }
+			).uniqueLinkedReferences
+	);
 }
