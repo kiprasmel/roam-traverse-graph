@@ -1,5 +1,3 @@
-// import { runMany } from "jest-sucks";
-
 import { testcase, input1, expected1 } from "./test-utils";
 
 // runMany([["should yeet", testcase(input1), expected1]]);

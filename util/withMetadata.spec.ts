@@ -2,9 +2,11 @@
 
 /* eslint-disable import/no-extraneous-dependencies */
 
-import { expectToError, noop } from "jest-sucks";
-
 import { withMetadata } from "./withMetadata";
+
+export const noop = (...args: any[]): void => {
+	//
+};
 
 const blockBase = {
 	"create-time": 69,
@@ -15,41 +17,49 @@ const blockBase = {
 	//
 } as const;
 
-expectToError(() => {
-	const duplicateKey = "key" as const;
+describe("withMetadata", () => {
+	it("errors when the metadata gets overwritten (assigned a new reference)", () => {
+		const fn = () => {
+			const duplicateKey = "key" as const;
 
-	const ret1 = withMetadata({ [duplicateKey]: "value" })({
-		...blockBase,
-		metadata: { [duplicateKey]: "different" }, //
+			const ret1 = withMetadata({ [duplicateKey]: "value" })({
+				...blockBase,
+				metadata: { [duplicateKey]: "different" }, //
+			});
+
+			// @ts-expect-error
+			noop(ret1.metadata.kek);
+		};
+
+		expect(fn).toThrowError();
 	});
 
-	// @ts-expect-error
-	noop(ret1.metadata.kek);
+	it("ts types work fine", () => {
+		const ret2 = withMetadata({
+			baz: "ooka",
+		})({
+			...blockBase,
+			metadata: {
+				foo: "bar",
+			},
+		});
+
+		// ret2.metadata.baz = "XD";
+
+		// @ts-expect-error
+		ret2.metadata.foo = "nope";
+		// @ts-expect-error
+		ret2.metadata.baz = "nope";
+
+		noop(ret2.metadata.foo, ret2.metadata.baz);
+
+		const ret3 = withMetadata({ kurwa: "mac" })({
+			...blockBase,
+			...ret2,
+		});
+
+		// @ts-expect-error
+		ret3.metadata.baz = "ke";
+		noop(ret3.metadata.baz);
+	});
 });
-
-const ret2 = withMetadata({
-	baz: "ooka",
-})({
-	...blockBase,
-	metadata: {
-		foo: "bar",
-	},
-});
-
-// ret2.metadata.baz = "XD";
-
-// @ts-expect-error
-ret2.metadata.foo = "nope";
-// @ts-expect-error
-ret2.metadata.baz = "nope";
-
-noop(ret2.metadata.foo, ret2.metadata.baz);
-
-const ret3 = withMetadata({ kurwa: "mac" })({
-	...blockBase,
-	...ret2,
-});
-
-// @ts-expect-error
-ret3.metadata.baz = "ke";
-noop(ret3.metadata.baz);
