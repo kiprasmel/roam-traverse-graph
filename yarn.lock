@@ -3582,11 +3582,6 @@ jest-snapshot@^27.5.1:
     pretty-format "^27.5.1"
     semver "^7.3.2"
 
-jest-sucks@0.6.1:
-  version "0.6.1"
-  resolved "https://registry.yarnpkg.com/jest-sucks/-/jest-sucks-0.6.1.tgz#bf923859de66e52cf19149496b0f29db7885b1c2"
-  integrity sha512-AJrM8wuCb6fSMDVozl6VgvUO5bOWVZlW9lmQ9Kab2wB/DqqqLsi6foEniMUNzwcsexwbGAtqU/Xg3EgahpFdLQ==
-
 jest-util@^27.5.1:
   version "27.5.1"
   resolved "https://registry.yarnpkg.com/jest-util/-/jest-util-27.5.1.tgz#3ba9771e8e31a0b85da48fe0b0891fb86c01c2f9"
