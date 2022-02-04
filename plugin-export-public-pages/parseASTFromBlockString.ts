@@ -178,7 +178,7 @@ export const parseASTFromBlockString: MutatingActionToExecute<
 		const startsWith = (s: string | readonly string[]): boolean =>
 			Array.isArray(s) ? s.some((ss) => ss === str.slice(0, ss.length)) : s === str.slice(0, s.length);
 
-		const startsWithCurr = (s: string): boolean => s === originalString.slice(cursor, s.length);
+		const startsWithCurr = (s: string): boolean => s === originalString.slice(cursor, cursor + s.length);
 
 		const foundNonText: boolean = boundaries.some((b): boolean => {
 			if (b.begin === null && b.end === null) {
