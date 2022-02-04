@@ -58,24 +58,24 @@ describe("block string AST parser", () => {
 			["text", " done"]
 		]],
 		*/
-		// TODO
-		/*
 		[
 			"parses inline code block",
 			"hello inline `code block` haha",
 			[
 				["text", "hello inline "],
 				["code-block/inline", ["text", "code block"]],
-				["text", " haha"]
+				["text", " haha"],
 			],
 		],
-		//
-		["parses whole code block", "hello whole ```code block hehe\nnice``` mhm", [
-			["text", "hello whole "],
-			["code-block/whole", ["text", "code block hehe\nnice"]],
-			["text", " mhm"]
-		]],
-		*/
+		[
+			"parses whole code block",
+			"hello whole ```code block hehe\nnice``` mhm",
+			[
+				["text", "hello whole "],
+				["code-block/whole", ["text", "code block hehe\nnice"]],
+				["text", " mhm"],
+			],
+		],
 	];
 
 	for (const [should, input, expectedOutput] of testcases) {
