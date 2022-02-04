@@ -276,6 +276,11 @@ export const pagesWithMetaAndHtml: PageWithMetadata<
 				text-decoration: underline;
 			}
 
+			/* same color for visited & non visited */
+			a, a:visited {
+				color: blue;
+			}
+
 		</style>
 
 		<script type="text/javascript">
