@@ -282,6 +282,49 @@ export const pagesWithMetaAndHtml: PageWithMetadata<
 				color: blue;
 			}
 
+			pre {
+				border: 1px solid;
+				border-radius: 4px;
+				position: relative;
+			}
+			pre > .lang {
+				position: absolute;
+				top: 0;
+				right: 0;
+				padding: 0.3em;
+				border-bottom: 1px solid black;
+				border-left: 1px solid black;
+
+				pointer-events: none;
+				user-select: none;
+
+				color: black;
+			}
+			pre[data-line-count="1"] > .lang,
+			pre[data-line-count="2"] > .lang {
+				padding: 0.2em;
+			}
+			pre > code {
+				display: block;
+				padding: 1em;
+			}
+			pre[data-first-line-clashes] > code {
+  				margin-top: 1.8em;
+			}
+			code.inline {
+				/*
+				padding: 0.1em 0.4em;
+				background-color: hsl(35, 100%, 80%);
+				*/
+				padding: 0em 0.4em;
+				border: 2px solid hsl(35, 100%, 80%);
+				color: black;
+				border-radius: 3px;
+			}
+			code {
+				overflow-x: auto;
+			}
+
 		</style>
 
 		<script type="text/javascript">
