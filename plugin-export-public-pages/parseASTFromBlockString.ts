@@ -119,6 +119,27 @@ const boundaries = [
 	 * so unless we make block === page (which they are, they are just different depth,
 	 * but not necessarily in roam's terms (string vs title),
 	 * so we need to either adopt it everywhere or nowhere.)
+	 *
+	 * we could, instead of `linkedReference.metaPage`,
+	 * do `linkedReference.target`,
+	 * & instead of `metaPage.originalString`,
+	 * we could unify both `string` & `title` into one
+	 * so that Blocks & Pages become interoperable,
+	 * & then we'd be good.
+	 *
+	 * we'd have to resolve the `target` differently though -
+	 * for linked references to pages,
+	 * you reference the actual title of the page,
+	 * whereas with a block, you reference it's uid.
+	 *
+	 * so, a problem would only come up if a page has an identical title
+	 * to that of an existing block uid,
+	 * which you ofc could, but why would you?
+	 * also, if we differentiate between a page & a block
+	 * by having checking their "type" or "kind",
+	 * then it wouldn't be ambiguous at all,
+	 * thus problem solved.
+	 *
 	 */
 	/*
 	{
