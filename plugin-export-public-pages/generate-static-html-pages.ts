@@ -592,9 +592,9 @@ function blockRecursively<M0, M1>(block: Block<M0, M1>, existingTabCount: number
 	const joinedChildrenHtml: string = !block.children?.length ? "" : joinChildren(childrenHtml, 1);
 
 	return `<li id="${block.uid}">
-	<a href="#${block.uid}" class="block-ref"></a>
+<a href="#${block.uid}" class="block-ref"></a>
 
-	${selfHtml}
+${selfHtml}
 
 ${joinedChildrenHtml}
 </li>` //
@@ -607,18 +607,19 @@ ${joinedChildrenHtml}
 		.replace(/<li>\n\t*<\/li>/, "<li></li>");
 }
 
-function joinChildren(childrenHtmls: string[], existingTabCount: number): string {
-	return `${"\t".repeat(existingTabCount)}<ul>
+function joinChildren(childrenHtmls: string[], _existingTabCount: number): string {
+	return `${"\t".repeat(0)}<ul>
 ${childrenHtmls
 	.filter((html) => !!html)
 	.map((html) =>
 		html
 			.split("\n")
-			.map((line) => "\t".repeat(existingTabCount + 1) + line)
+			// .map((line) => "\t".repeat(0 + 1) + line)
+			.map((line) => "\t".repeat(0 + 0) + line)
 			.join("\n")
 	)
 	.join("\n")}
-${"\t".repeat(existingTabCount)}</ul>`;
+${"\t".repeat(0)}</ul>`;
 
 	// ${childrenHtmls.map((html) => "\t".repeat(existingTabCount + 1) + html).join("\n")}
 }
