@@ -6,6 +6,7 @@ import fs from "fs-extra";
 import path from "path";
 
 import { findPublicPages } from "./findPublicPages";
+import { maxWidthOfLine } from "./hideBlockStringsIfNotPublic";
 
 import { readJsonSync, writeJsonSync } from "../util";
 import { Block, LinkedMention, PageWithMetadata, RO } from "../types";
@@ -538,7 +539,7 @@ function blockRecursively<M0, M1>(block: Block<M0, M1>, existingTabCount: number
 	const selfHtml: string = !block.string
 		? ""
 		: `
-	<div style="max-width: 65ch;">
+	<div style="max-width: ${maxWidthOfLine}ch;">
 			${block.string}
 	</div>
 	`;
@@ -641,7 +642,7 @@ function drawLinkedMentions<M0 extends RO, M1 extends RO>(mentionsGroupedByPage:
 			${
 				!mention.blockRef.string
 					? ""
-					: `<div style="max-width: 65ch; ">
+					: `<div style="max-width: ${maxWidthOfLine}ch; ">
 				${mention.blockRef.string}
 			</div>`
 			}
