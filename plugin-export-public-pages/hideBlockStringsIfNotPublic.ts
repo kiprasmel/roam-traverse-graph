@@ -67,7 +67,7 @@ export const hideBlockStringsIfNotPublic: MutatingActionToExecute<
 			onNonText = ({ item, walk }: { walk: typeof _walk; item: StackTreeBoundaryItem }): string => (
 				void 0,
 				// if (item.type === "command") {
-				(item.type === "formatting"
+				(item.type === "formatting" || item.type === "code-block"
 					? ""
 					: `<span style="color: hsl(207,18%,71%);">${item.begin || ""}</span>`) +
 					// (item.type === "code-block" ? item.children[0].text : walk(item.children, item)) +
@@ -77,7 +77,7 @@ export const hideBlockStringsIfNotPublic: MutatingActionToExecute<
 						? ""
 						: Array.isArray(item.end)
 						? nonDeterministicItemEndArrayBug
-						: item.type === "formatting"
+						: item.type === "formatting" || item.type === "code-block"
 						? ""
 						: `<span style="color: grey;">${item.end}</span>`)
 				// }
@@ -98,7 +98,30 @@ export const hideBlockStringsIfNotPublic: MutatingActionToExecute<
 				const escapedText = escapeHtml(item.text);
 
 				if (parent.type === "code-block") {
-					return escapedText;
+					if (parent.kind === "inline") {
+						return `<code class="inline">${escapedText}</code>`;
+					} else if (parent.kind === "whole") {
+						const lines = escapedText.split("\n");
+
+						const lang: string = lines[0];
+						lines.splice(0, 1); // remove 1st
+						const code: string = lines.join("\n");
+
+						let preSuffix: string = "";
+
+						preSuffix += ` data-lang="${lang}"`;
+						preSuffix += ` data-line-count="${lines.length}"`;
+
+						const remainingWidthOfLine = maxWidthOfLine - lang.length - 6;
+						const firstLineClashesWithLang = lines[0].length > remainingWidthOfLine;
+						if (firstLineClashesWithLang) {
+							preSuffix += ` data-first-line-clashes`;
+						}
+
+						return `<pre${preSuffix}><div class="lang">${lang}</div><code>${code}</code></pre>`;
+					} else {
+						return assertNever(parent);
+					}
 				} else if (parent.type === "command") {
 					return escapedText;
 					// return item.text;
