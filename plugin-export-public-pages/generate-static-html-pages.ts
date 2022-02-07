@@ -69,7 +69,13 @@ export const pluginInfo: PluginInfo = {
 	},
 };
 
-const footerContent: string = `
+const footerContent = ({
+	pageSourceUrl, //
+	pageHistoryUrl,
+}: {
+	pageSourceUrl: string; //
+	pageHistoryUrl: string;
+}): string => `
 			<center>
 				exported from
 				<a target="_blank" rel="noopener" href="http://roamresearch.com">
@@ -79,10 +85,29 @@ const footerContent: string = `
 					roam-traverse-graph</a>'s
 				plugin
 				<a target="_blank" rel="noopener" href="${pluginInfo.sourceUrl}">
-					${pluginInfo.displayName}</a>
+					${pluginInfo.displayName}</a>.
+
+				<!--
+				<span style="display: block; width: 1px; height: 100%;"></span>.
+				-->
+
+				view
+				<a target="_blank" rel="noopener" href="${pageSourceUrl}">source</a>.
+
+				<!--
+					TODO ENABLE when we update the pages lazily,
+					i.e. the history isn't spammed by irrelevant updates every 1h.
+				-->
+				<!--
+				&
+				<a target="_blank" rel="noopener" href="${pageHistoryUrl}">history</a>.
+				-->
+
+				<!--
 				by
 				<a target="_blank" rel="noopener" href="${pluginInfo.originalAuthor.githubUrl}">
-					${pluginInfo.originalAuthor.displayName}</a>.
+					${pluginInfo.originalAuthor.displayName}</a>,
+				-->
 			</center>
 `;
 
@@ -454,7 +479,14 @@ ${joinChildren(
 		</aside>
 
 		<footer>
-			${footerContent}
+			<!--
+				TODO FIXME - fix the title into proper filename/url in a central place
+				& use it here.
+			-->
+			${footerContent({
+				pageSourceUrl: `http://github.com/kiprasmel/notes/tree/master/${page.title}.html`,
+				pageHistoryUrl: `https://github.com/kiprasmel/notes/commits/master/${page.title}.html`,
+			})}
 		</footer>
 	</body>
 </html>`;
@@ -511,7 +543,11 @@ const indexHtml: string = `\
 	</ol>
 
 	<footer>
-		${footerContent}
+		${footerContent({
+			pageSourceUrl: `http://github.com/kiprasmel/notes/tree/master/index.html`,
+			pageHistoryUrl: `https://github.com/kiprasmel/notes/commits/master/index.html`,
+		})}
+		
 	</footer>
 </body>
 `;
