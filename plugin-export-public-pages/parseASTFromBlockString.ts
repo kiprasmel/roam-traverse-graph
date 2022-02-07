@@ -109,6 +109,59 @@ const boundaries = [
 		// allowUnfinished: false, // testing
 	},
 	//
+	/**
+	 * block-level linked reference
+	 *
+	 * TODO not sure if we can consider this a "linked reference"
+	 * since e.g. `extractMetaPagePotentiallyHiddenTitleFromLinkedRef`
+	 * relies on having the linked reference's metaPage's title.
+	 *
+	 * so unless we make block === page (which they are, they are just different depth,
+	 * but not necessarily in roam's terms (string vs title),
+	 * so we need to either adopt it everywhere or nowhere.)
+	 */
+	/*
+	{
+		begin: "((",
+		end: "))",
+		type: "linked-reference",
+		kind: "(())",
+		utype: "linked-reference/(())",
+	},
+	*/
+	//
+	/**
+	 * formattings
+	 */
+	{
+		begin: "__",
+		end: "__",
+		type: "formatting",
+		kind: "____",
+		utype: "formatting/____",
+	},
+	{
+		begin: "**",
+		end: "**",
+		type: "formatting",
+		kind: "****",
+		utype: "formatting/****",
+	},
+	{
+		begin: "~~",
+		end: "~~",
+		type: "formatting",
+		kind: "~~~~",
+		utype: "formatting/~~~~",
+	},
+	{
+		begin: "^^",
+		end: "^^",
+		type: "formatting",
+		kind: "^^^^",
+		utype: "formatting/^^^^",
+	},
+	//
 ] as const;
 
 export type Boundary = typeof boundaries[number];

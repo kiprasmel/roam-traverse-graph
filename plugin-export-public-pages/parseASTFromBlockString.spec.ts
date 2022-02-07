@@ -76,6 +76,52 @@ describe("block string AST parser", () => {
 				["text", " mhm"],
 			],
 		],
+		[
+			"parses block-level linked reference (())",
+			"hey there block ((yWLdNLpH0)) good lookin", //
+			[
+				["text", "hey there block "], //
+				["linked-reference/(())", ["text", "yWLdNLpH0"]],
+				["text", " good lookin"], //
+			],
+		],
+		//
+		[
+			"parses italics formatting",
+			"free __icecream__ everybody!",
+			[
+				["text", "free "],
+				["formatting/____", ["text", "icecream"]],
+				["text", " everybody!"],
+			],
+		],
+		[
+			"parses bold formatting",
+			"free **icecream** everybody!",
+			[
+				["text", "free "],
+				["formatting/****", ["text", "icecream"]],
+				["text", " everybody!"],
+			],
+		],
+		[
+			"parses strike-thru formatting",
+			"free ~~icecream~~ everybody!",
+			[
+				["text", "free "],
+				["formatting/~~~~", ["text", "icecream"]],
+				["text", " everybody!"],
+			],
+		],
+		[
+			"parses highlight (mark) formatting",
+			"free ^^icecream^^ everybody!",
+			[
+				["text", "free "],
+				["formatting/^^^^", ["text", "icecream"]],
+				["text", " everybody!"],
+			],
+		],
 	];
 
 	for (const [should, input, expectedOutput] of testcases) {
