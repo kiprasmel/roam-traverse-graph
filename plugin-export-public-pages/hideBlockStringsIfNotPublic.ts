@@ -16,6 +16,13 @@ import {
 	StackTreeTextItem,
 } from "./parseASTFromBlockString";
 
+/**
+ * TODO move into `generate-static-html-pages`,
+ * but only after it won't invoke the generation process
+ * unless module.parent is empty.
+ */
+export const maxWidthOfLine: number = Number(process.env.NOTES_MAX_WIDTH_OF_LINE) || 65;
+
 // const isNotString = <T>(item: T | string): item is T => typeof item !== "string";
 const assertNever = (_x: never): never => {
 	throw new Error("never");
