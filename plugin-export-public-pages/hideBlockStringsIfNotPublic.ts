@@ -60,7 +60,9 @@ export const hideBlockStringsIfNotPublic: MutatingActionToExecute<
 			onNonText = ({ item, walk }: { walk: typeof _walk; item: StackTreeBoundaryItem }): string => (
 				void 0,
 				// if (item.type === "command") {
-				`<span style="color: hsl(207,18%,71%);">${item.begin || ""}</span>` +
+				(item.type === "formatting"
+					? ""
+					: `<span style="color: hsl(207,18%,71%);">${item.begin || ""}</span>`) +
 					// (item.type === "code-block" ? item.children[0].text : walk(item.children, item)) +
 					walk(item.children, item) +
 					("doesNotConsumeEndingAndThusAlsoAllowsUnfinished" in item &&
@@ -68,6 +70,8 @@ export const hideBlockStringsIfNotPublic: MutatingActionToExecute<
 						? ""
 						: Array.isArray(item.end)
 						? nonDeterministicItemEndArrayBug
+						: item.type === "formatting"
+						? ""
 						: `<span style="color: grey;">${item.end}</span>`)
 				// }
 			),
@@ -99,6 +103,18 @@ export const hideBlockStringsIfNotPublic: MutatingActionToExecute<
 
 					// return item.text; // TODO FIXME
 					// return extractMetaPagePotentiallyHiddenTitleFromLinkedRef(block, item);
+				} else if (parent.type === "formatting") {
+					if (parent.kind === "****") {
+						return `<b>${escapedText}</b>`;
+					} else if (parent.kind === "____") {
+						return `<i>${escapedText}</i>`;
+					} else if (parent.kind === "~~~~") {
+						return `<s>${escapedText}</s>`;
+					} else if (parent.kind === "^^^^") {
+						return `<mark>${escapedText}</mark>`;
+					} else {
+						return assertNever(parent);
+					}
 				} else {
 					return assertNever(parent);
 				}
@@ -173,6 +189,8 @@ export const hideBlockStringsIfNotPublic: MutatingActionToExecute<
 						// });
 
 						return extractMetaPagePotentiallyHiddenTitleFromLinkedRef(block, item);
+					} else if (parent.type === "formatting") {
+						return ""; // TODO
 					} else {
 						return assertNever(parent);
 					}
