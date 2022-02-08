@@ -3,7 +3,7 @@
 import { MutatingActionToExecute } from "../traverseBlockRecursively";
 import { PageWithMetadata } from "../types";
 import { withMetadata } from "../util/withMetadata";
-import { findLinkedReferenceDeep, getLinkedReferences } from "./findLinkedReferencesOfABlock";
+import { getLinkedReferences } from "./findLinkedReferencesOfABlock";
 
 export const removeUnknownProperties: MutatingActionToExecute<{}> = () => (block) =>
 	!block
@@ -25,7 +25,7 @@ export const markBlockPublic: MutatingActionToExecute<
 	{
 		publicTags: string[];
 		publicOnlyTags: string[];
-		privateTag: string;
+		privateTags: string[];
 
 		// parentBlock: Block | null;
 		rootParentPage: PageWithMetadata<{}, {}>; // TODO FIXME
@@ -34,6 +34,7 @@ export const markBlockPublic: MutatingActionToExecute<
 		isPublic: boolean; //
 		isPublicOnly: boolean;
 		hasPublicTag: boolean;
+		hasPublicOnlyTag: boolean;
 		hasPrivateTag: boolean;
 	},
 	{
@@ -46,7 +47,7 @@ export const markBlockPublic: MutatingActionToExecute<
 	rootParentPage,
 	publicTags,
 	publicOnlyTags,
-	privateTag,
+	privateTags,
 }) =>
 	// parentBlock
 	(block, parentBlock) => {
@@ -64,12 +65,8 @@ export const markBlockPublic: MutatingActionToExecute<
 		const linkedRefs: string[] = getLinkedReferences(block.metadata.stackTree);
 
 		const hasPublicTag: boolean = publicTags.some((tag) => linkedRefs.includes(tag));
-		const hasPublicOnlyTag: boolean = publicOnlyTags.some(
-			(tag) => !!findLinkedReferenceDeep(block.metadata.stackTree)(tag)
-		);
-		const hasPrivateTag: boolean = [privateTag].some(
-			(tag) => !!findLinkedReferenceDeep(block.metadata.stackTree)(tag)
-		);
+		const hasPublicOnlyTag: boolean = publicOnlyTags.some((tag) => linkedRefs.includes(tag));
+		const hasPrivateTag: boolean = privateTags.some((tag) => linkedRefs.includes(tag));
 
 		/**
 		 * ---
@@ -102,6 +99,8 @@ export const markBlockPublic: MutatingActionToExecute<
 			isPublicOnly,
 			isPublic,
 			hasPublicTag,
+			hasPublicOnlyTag,
 			hasPrivateTag,
+			linkedRefs, // TODO REMOVE
 		})(block);
 	};

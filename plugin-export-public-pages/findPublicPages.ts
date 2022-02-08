@@ -69,7 +69,7 @@ export type SettingsForPluginFindPublicPages = {
 	 * see the source code of the plugin itself to understand better.
 	 *
 	 */
-	privateTag: string; // TODO ARRAY
+	privateTags: string[];
 	/**
 	 * TODO DEPRECATE - use the .uid instead! (will work for pages too to avoid merging them lol)
 	 * (or keep and concat w/ the .title / .string to make obvious it's hidden)
@@ -90,7 +90,7 @@ export const getDefaultSettingsForPluginFindPublicPages = (): SettingsForPluginF
 	publicGlobalTags: [],
 	publicTags: ["public"],
 	publicOnlyTags: [],
-	privateTag: "private", // TODO array
+	privateTags: ["private"], // TODO array
 	hiddenStringValue: "hidden",
 	makeThePublicTagPagePublic: false,
 	keepMetadata: false,
@@ -166,13 +166,27 @@ export const findPublicPages = <M0 extends RO>(
 		getDefaultSettingsForPluginFindPublicPages(),
 		[
 			optionsOrig, //
-			settingsFromSettingsPage,
+			// settingsFromSettingsPage, // TODO FIXME BRING BACK
+			{
+				// TODO FIXME REMOVE
+				publicGlobalTags: ["#public"],
+				publicTags: [
+					"public",
+					"codemods",
+					"roam-traverse-graph",
+					"git-rebase",
+					"git-stacked-rebase",
+					"software i hate (public)",
+				],
+				publicOnlyTags: ["po", "tp"],
+				privateTags: ["private", "ppl", "pipedrive"],
+			},
 		]
 	),
 	{
 		hiddenStringValue, //
 		keepMetadata,
-		privateTag,
+		privateTags,
 		publicGlobalTags,
 		publicOnlyTags,
 		publicTags,
@@ -428,7 +442,7 @@ export const findPublicPages = <M0 extends RO>(
 								rootParentPage: currentPageWithMeta,
 								publicTags, // TODO CONFIRM
 								publicOnlyTags,
-								privateTag: privateTag as string, // TODO TS wtf
+								privateTags,
 							}
 						)(undefined)
 					)

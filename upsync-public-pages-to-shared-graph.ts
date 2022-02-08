@@ -1,5 +1,7 @@
 #!/usr/bin/env ts-node-dev
 
+/* eslint-disable indent */
+
 import path from "path";
 
 import RoamPrivateApi from "./roam-research-private-api";
@@ -13,10 +15,16 @@ import { readJsonSync, startTimerMs /* getAllBlocksFromPages, poolPromises */, w
 
 console.log({ PATH_TO_ROAM_GRAPH: process.env.PATH_TO_ROAM_GRAPH });
 
-let publicOnlyTags = (process.env.ROAM_PUBLIC_ONLY_TAGS || "").split(",").filter((po) => !!po);
-if (!publicOnlyTags.length) {
-	publicOnlyTags = getDefaultSettingsForPluginFindPublicPages().publicOnlyTags;
-}
+export const parseArrFromCsv = (
+	str: string | undefined,
+	fallback: string[],
+	ret: string[] = str === undefined
+		? fallback
+		: str
+				.split(",")
+				.map((x) => x.trim())
+				.filter((x) => !!x)
+): string[] => (!ret.length ? fallback : ret);
 
 let publicPagesRaw = findPublicPages(
 	readJsonSync(
@@ -26,12 +34,18 @@ let publicPagesRaw = findPublicPages(
 		)
 	),
 	{
-		publicTags: (
-			process.env.ROAM_PUBLIC_TAGS || getDefaultSettingsForPluginFindPublicPages().publicTags.join(",")
-		) /* TODO FIXME careful w/ this join lol */
-			.split(","), // custom for testing
-		privateTag: process.env.ROAM_PRIVATE_TAG || getDefaultSettingsForPluginFindPublicPages().privateTag,
-		publicOnlyTags,
+		publicTags: parseArrFromCsv(
+			process.env.ROAM_PUBLIC_TAGS,
+			getDefaultSettingsForPluginFindPublicPages().publicTags
+		),
+		privateTags: parseArrFromCsv(
+			process.env.ROAM_PRIVATE_TAGS,
+			getDefaultSettingsForPluginFindPublicPages().privateTags
+		),
+		publicOnlyTags: parseArrFromCsv(
+			process.env.ROAM_PUBLIC_ONLY_TAGS,
+			getDefaultSettingsForPluginFindPublicPages().publicOnlyTags
+		),
 		// keepMetadata: true, // TODO DEBUG
 	}
 );
