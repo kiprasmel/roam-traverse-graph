@@ -197,8 +197,12 @@ export const pagesWithMetaAndHtml: PageWithMetadata<
 
 	(meta as any).html = `\
 <!DOCTYPE html>
-<html>
+<html lang="en">
 	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
 		<title>${page.title} | ${pageTitleExtras}</title>
 
 		<link rel="shortcut icon" type="image/x-icon" href="/notes/favicon.ico">
@@ -521,35 +525,41 @@ pagesWithMetaAndHtml.forEach((meta) => {
 
 const indexHtml: string = `\
 <!DOCTYPE html>
-<html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<title>${pageTitleExtras}</title>
 
 	<link rel="shortcut icon" type="image/x-icon" href="/notes/favicon.ico">
 	${fixStaticHref(0)("/favicon.ico", 'link[type="image/x-icon"]')}
+
+	</head>
+
+	<body>
+		<ol>
+		${pagesWithMetaAndHtml
+			.map(
+				(meta): string => `\
+			<li id="${meta.page.uid}">
+				<a href="${fixTitle(meta.page.title)}">
+					${meta.page.title}
+				</a>
+			</li>`
+			)
+			.join("\n")}
+		</ol>
+
+		<footer>
+			${footerContent({
+				pageSourceUrl: `http://github.com/kiprasmel/notes/tree/master/index.html`,
+				pageHistoryUrl: `https://github.com/kiprasmel/notes/commits/master/index.html`,
+			})}
+			
+		</footer>
+	</body>
 </html>
-
-<body>
-	<ol>
-	${pagesWithMetaAndHtml
-		.map(
-			(meta): string => `\
-		<li id="${meta.page.uid}">
-			<a href="${fixTitle(meta.page.title)}">
-				${meta.page.title}
-			</a>
-		</li>`
-		)
-		.join("\n")}
-	</ol>
-
-	<footer>
-		${footerContent({
-			pageSourceUrl: `http://github.com/kiprasmel/notes/tree/master/index.html`,
-			pageHistoryUrl: `https://github.com/kiprasmel/notes/commits/master/index.html`,
-		})}
-		
-	</footer>
-</body>
 `;
 
 fs.writeFileSync(path.join(prefix, "index.html"), indexHtml);
