@@ -138,20 +138,3 @@ export const getLinkedReferences = (
 		: "children" in item ? getLinkedReferences(item.children) : [])
 		).flat()
 }
-
-/**
- * either finds the linked reference item, or
- *
- * TODO jscodeshift-like .find'ing w/ stack & needle
- * 
- * TODO RENAME findLinkedReferenceDeepWithinBlockString
- * though, should it be deep?
- * not an easy answer.
- * [[a [[b]]]]
- * 
- */
-export const findLinkedReferenceDeep = (	blockStackTree: StackTree ) =>
-(
-	wantedLinkedRef: string //
-): string | undefined => 
-	getLinkedReferences(blockStackTree).find(ref => ref === wantedLinkedRef)
