@@ -118,10 +118,42 @@ fi
 
 pushd "$PUBLIC_NOTES_DIR"
 
-git add .
-diffy
+# returns 0 (success) if any meaningful changes exist
+# after cleaning up the meaningless ones.
+# otherwise, returns 1
+meaningless_change_cleanup() {
+	NEEDLE="GIT_MEANINGLESS_CHANGE"
 
-commit_push "deploy (manual): http://github.com/$PRIVATE_NOTES_USERNAME/$PRIVATE_NOTES_REPO_NAME/commit/$COMMIT_SHA"
+	COUNT="$(git diff -I "$NEEDLE" | wc -l)"
+	[ $COUNT -eq 0 ] && {
+		printf "\n0 meaningful changes.\n\n"
+		return 1
+	}
+
+	return 0
+}
+add_meaningful_files() {
+	git status --porcelain=1 | grep "^ M" | cut -d"M" -f2 | git --no-pager diff -I "GIT_MEANINGLESS_CHANGE" --stat=1000 | head -n -1 | cut -d"|" -f1 | while read line; do line="$(sed 's/^"//g; s/"$//g;' <<< $line)"; git add "$line"; done
+}
+# must be done __after__ comitting
+remove_meaningless_files() {
+	git add .
+	git reset --hard HEAD
+}
+
+meaningless_change_cleanup && {
+	add_meaningful_files
+	diffy
+
+	COUNT="$(git diff --staged | wc -l)"
+	if [ $COUNT -eq 0 ]; then
+		printf "\n0 meaningful changes after individual file examination.\n\n"
+	else
+		commit_push "deploy (manual): http://github.com/$PRIVATE_NOTES_USERNAME/$PRIVATE_NOTES_REPO_NAME/commit/$COMMIT_SHA"
+	fi
+
+	remove_meaningless_files
+}
 
 popd
  
