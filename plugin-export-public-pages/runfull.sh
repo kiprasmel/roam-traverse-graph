@@ -118,10 +118,27 @@ fi
 
 pushd "$PUBLIC_NOTES_DIR"
 
-git add .
-diffy
+# returns 0 (success) if any meaningful changes exist
+# after cleaning up the meaningless ones.
+# otherwise, returns 1
+meaningless_change_cleanup() {
+	NEEDLE="GIT_MEANINGLESS_CHANGE"
 
-commit_push "deploy (manual): http://github.com/$PRIVATE_NOTES_USERNAME/$PRIVATE_NOTES_REPO_NAME/commit/$COMMIT_SHA"
+	COUNT="$(git diff -I "$NEEDLE" | wc -l)"
+	[ $COUNT -eq 0 ] && {
+		printf "\n0 meaningful changes.\n\n"
+		return 1
+	}
+
+	return 0
+}
+
+meaningless_change_cleanup && {
+	git add .
+	diffy
+
+	commit_push "deploy (manual): http://github.com/$PRIVATE_NOTES_USERNAME/$PRIVATE_NOTES_REPO_NAME/commit/$COMMIT_SHA"
+}
 
 popd
  
