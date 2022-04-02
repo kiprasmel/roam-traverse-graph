@@ -364,7 +364,7 @@ export const pagesWithMetaAndHtml: PageWithMetadata<
 							= <span>${meta.wordCountTotal}</span>
 						</td>
 					</tr>
-					<tr title="${startTime.toISOString()} (only self: ${lastSignificantUpdate.toISOString()})">
+					<tr title="${startTime.toISOString()} (only self: ${lastSignificantUpdate.toISOString()})"> <!-- GIT_MEANINGLESS_CHANGE -->
 						<td>last update:</td>
 						<td>
 							<span id="ago-2"></span>
@@ -374,7 +374,7 @@ export const pagesWithMetaAndHtml: PageWithMetadata<
 			</table>
 
 			<script type="text/javascript">
-				updateAndSetIntervalToUpdateFor("ago-2", ${startTime.getTime()});
+				updateAndSetIntervalToUpdateFor("ago-2", ${startTime.getTime()}); /** GIT_MEANINGLESS_CHANGE */
 			</script>
 		</small>
 
