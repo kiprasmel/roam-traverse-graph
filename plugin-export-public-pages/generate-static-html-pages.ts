@@ -354,63 +354,27 @@ export const pagesWithMetaAndHtml: PageWithMetadata<
 		</h1>
 
 		<small>
-			<div>
-
-				<table>
-					<caption style="text-align: left; ">
-						word count:
-					</caption>
-
-					<tbody>
-						<tr>
-							<td style="text-align: right; ">${meta.wordCount}</td>
-							<td>(self)</td>
-						</tr>
-
-						<tr>
-							<td style="text-align: right; ">
-							${meta.wordCountOfLinkedMentions}
-							</td>
-							<td>
-							(linked mentions)
-							</td>
-						</tr>
-
-						<tr>
-							<td style="text-align: right; ">
-							${meta.wordCountTotal}
-							</td>
-							<td>
-							(both)
-							</td>
-						</tr>
-					</tbody>
-				</table>
-
-			</div>
-
-			<div style="margin-top: 0.5rem; ">
-				last edit (excluding linked mentions) on: <!-- TODO linked mentions too -->
-				<br/>
-				<span>${lastSignificantUpdate.toISOString()}</span>
-				--
-				<span id="ago-1"></span>
-
-			</div>
-
-			<div style="margin-top: 0.5rem; ">
-				re-generated & exported on:
-				<br/>
-				<span>${startTime.toISOString()}</span>
-				--
-				<span id="ago-2"></span>
-
-			</div>
+			<table>
+				<tbody>
+					<tr title="self + linked mentions = total">
+						<td>words:</td>
+						<td>
+							<span>${meta.wordCount}</span>
+							+ <span>${meta.wordCountOfLinkedMentions}</span>
+							= <span>${meta.wordCountTotal}</span>
+						</td>
+					</tr>
+					<tr title="${startTime.toISOString()} (only self: ${lastSignificantUpdate.toISOString()})">
+						<td>last update:</td>
+						<td>
+							<span id="ago-2"></span>
+						</td>
+					</tr>
+				</tbody>
+			</table>
 
 			<script type="text/javascript">
-				updateAndSetIntervalToUpdateFor("ago-1", ${lastSignificantUpdate.getTime()});
 				updateAndSetIntervalToUpdateFor("ago-2", ${startTime.getTime()});
-
 			</script>
 		</small>
 
