@@ -92,16 +92,10 @@ const footerContent = ({
 				-->
 
 				view
-				<a target="_blank" rel="noopener" href="${pageSourceUrl}">source</a>.
+				<a target="_blank" rel="noopener" href="${pageSourceUrl}">source</a>
 
-				<!--
-					TODO ENABLE when we update the pages lazily,
-					i.e. the history isn't spammed by irrelevant updates every 1h.
-				-->
-				<!--
 				&
 				<a target="_blank" rel="noopener" href="${pageHistoryUrl}">history</a>.
-				-->
 
 				<!--
 				by
