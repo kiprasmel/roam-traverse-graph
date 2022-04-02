@@ -353,11 +353,10 @@ export const pagesWithMetaAndHtml: PageWithMetadata<
 			${page.title}
 		</h1>
 
-		<small>
-			<div>
+		<small style="position: absolute; right: 8px; text-align">
 
 				<table>
-					<caption style="text-align: left; ">
+					<caption style="text-align: right; ">
 						word count:
 					</caption>
 
@@ -387,14 +386,12 @@ export const pagesWithMetaAndHtml: PageWithMetadata<
 					</tbody>
 				</table>
 
-			</div>
-
 			<div style="margin-top: 0.5rem; ">
 				last edit (excluding linked mentions) on: <!-- TODO linked mentions too -->
 				<br/>
 				<span>${lastSignificantUpdate.toISOString()}</span>
-				--
-				<span id="ago-1"></span>
+				<br/>
+				(<span id="ago-1"></span>)
 
 			</div>
 
@@ -402,8 +399,8 @@ export const pagesWithMetaAndHtml: PageWithMetadata<
 				re-generated & exported on:
 				<br/>
 				<span>${startTime.toISOString()}</span>
-				--
-				<span id="ago-2"></span>
+				<br/>
+				(<span id="ago-2"></span>)
 
 			</div>
 
