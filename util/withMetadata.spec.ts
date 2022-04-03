@@ -4,7 +4,7 @@
 
 import { withMetadata } from "./withMetadata";
 
-export const noop = (...args: any[]): void => {
+export const noop = (..._args: any[]): void => {
 	//
 };
 

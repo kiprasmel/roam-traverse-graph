@@ -76,15 +76,15 @@ describe("block string AST parser", () => {
 				["text", " mhm"],
 			],
 		],
-		[
-			"parses block-level linked reference (())",
-			"hey there block ((yWLdNLpH0)) good lookin", //
-			[
-				["text", "hey there block "], //
-				["linked-reference/(())", ["text", "yWLdNLpH0"]],
-				["text", " good lookin"], //
-			],
-		],
+		// [
+		// 	"parses block-level linked reference (())",
+		// 	"hey there block ((yWLdNLpH0)) good lookin", //
+		// 	[
+		// 		["text", "hey there block "], //
+		// 		["linked-reference/(())", ["text", "yWLdNLpH0"]],
+		// 		["text", " good lookin"], //
+		// 	],
+		// ],
 		//
 		[
 			"parses italics formatting",

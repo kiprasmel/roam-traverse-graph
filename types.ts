@@ -1,11 +1,6 @@
 import { RO, WithMetadata } from "./metadata.d";
 import { Page, LinkedReferenceKind, Block } from "./roam.d";
 
-import {
-	// StackTreeBoundaryItem, //
-	StackTreeTextItem,
-} from "./plugin-export-public-pages/parseASTFromBlockString";
-
 export * from "./metadata.d"; // TODO TS
 export * from "./roam.d"; // TODO REMOVE
 

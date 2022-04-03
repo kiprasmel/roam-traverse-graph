@@ -8,6 +8,7 @@
 	"scripts": {
 		"ts": "npx tsc",
 		"tss": "npx tsc -w",
+		"build": "npx tsc -b",
 		"lint": "eslint --ext js,jsx,ts,tsx .",
 		"lint:fix": "eslint --ext js,jsx,ts,tsx . --fix",
 		"test": "jest"
@@ -18,7 +19,7 @@
 		"@babel/preset-typescript": "^7.16.7",
 		"@types/escape-html": "1.0.1",
 		"@types/fs-extra": "^9.0.13",
-		"@types/jest": "^27.4.0",
+		"@types/jest": "^27.4.1",
 		"@types/node": "16.11.0",
 		"@typescript-eslint/eslint-plugin": "2.34.0",
 		"@typescript-eslint/parser": "2.34.0",
