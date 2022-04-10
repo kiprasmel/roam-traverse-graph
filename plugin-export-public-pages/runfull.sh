@@ -84,10 +84,10 @@ commit_push() {
 
 ###
  
+pushd "$PRIVATE_NOTES_DIR"
+
 if [ "$DO_NOT_RUN_PRIVATE_NOTES" = 0 ]; then
 	printf "\nrunning run.sh in private notes dir\n\n"
-
-	pushd "$PRIVATE_NOTES_DIR"
 	
 	! [ -f "./run.sh" ] && {
 		printf "\nerror - run.sh file missing in PRIVATE_NOTES_DIR ($PRIVATE_NOTES_DIR)"
@@ -108,13 +108,13 @@ if [ "$DO_NOT_RUN_PRIVATE_NOTES" = 0 ]; then
 	diffy
 	
 	commit_push
-	
-	COMMIT_SHA="$(git show --pretty=format:'%H' | head -n 1)"
-	 
-	popd
 else
 	printf "\nNOT running run.sh in private notes dir (skipped because DO_NOT_RUN_PRIVATE_NOTES set).\n\n"
 fi
+
+COMMIT_SHA="$(git show --pretty=format:'%H' | head -n 1)"
+
+popd
 
 ###
  
