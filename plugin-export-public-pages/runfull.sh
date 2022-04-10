@@ -151,7 +151,7 @@ meaningless_change_cleanup() {
 add_meaningful_files() {
 	# modified, if modifications include changes
 	# outside of lines tagged with the "GIT_MEANINGLESS_CHANGE" string
-	git status --porcelain=1 | grep "^ M" | cut -d"M" -f2 | git --no-pager diff -I "GIT_MEANINGLESS_CHANGE" --stat=1000 | head -n -1 | cut -d"|" -f1 | while read line; do line="$(sed 's/^"//g; s/"$//g;' <<< $line)"; git add "$line"; done
+	git status --porcelain=1 | grep "^ M" | sed 's/^ M //g;' | git --no-pager diff -I "GIT_MEANINGLESS_CHANGE" --stat=1000 | head -n -1 | cut -d"|" -f1 | sed 's/^\s*//g; s/\s*$//g; s/^"//g; s/"$//g; s/\\"/"/g;' > /tmp/gsr-new && git add --pathspec-from-file=/tmp/gsr-new
 
 	# untracked files
 	git status --porcelain=1 | grep "^??" | sed "s/^?? //g;" | xargs git add
