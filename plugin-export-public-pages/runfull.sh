@@ -15,6 +15,18 @@ DO_NOT_REGENERATE_IF_NO_NEW_CHANGES_IN_PRIVATE_NOTES_REPO="${7:-0}"
 # & place that json in the private notes repo.
 DO_NOT_RUN_PRIVATE_NOTES="${DO_NOT_RUN_PRIVATE_NOTES:-0}"
 
+[ -z "$NOTES_OF_NAME" ] && {
+	cache_file="cache--NOTES_OF_NAME"
+	if [ -f "$cache_file" ]; then
+		export NOTES_OF_NAME="$(cat "$cache_file")"
+	else
+		printf "NOTES_OF_NAME? "
+		read NOTES_OF_NAME
+		export NOTES_OF_NAME="$NOTES_OF_NAME"
+		printf "$NOTES_OF_NAME" > "$cache_file"
+	fi
+}
+
 ###
 
 repo_has_untracked_changes() {
