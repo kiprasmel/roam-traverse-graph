@@ -137,7 +137,12 @@ meaningless_change_cleanup() {
 	return 0
 }
 add_meaningful_files() {
+	# modified, if modifications include changes
+	# outside of lines tagged with the "GIT_MEANINGLESS_CHANGE" string
 	git status --porcelain=1 | grep "^ M" | cut -d"M" -f2 | git --no-pager diff -I "GIT_MEANINGLESS_CHANGE" --stat=1000 | head -n -1 | cut -d"|" -f1 | while read line; do line="$(sed 's/^"//g; s/"$//g;' <<< $line)"; git add "$line"; done
+
+	# untracked files
+	git status --porcelain=1 | grep "^??" | sed "s/^?? //g;" | xargs git add
 }
 # must be done __after__ comitting
 remove_meaningless_files() {
