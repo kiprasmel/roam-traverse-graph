@@ -124,9 +124,15 @@ else
 	printf "\nNOT running run.sh in private notes dir (skipped because DO_NOT_RUN_PRIVATE_NOTES set).\n\n"
 fi
 
-COMMIT_SHA="$(git show --pretty=format:'%H' | head -n 1)"
+get_git_sha() {
+	git show --pretty=format:'%H' | head -n 1
+}
+
+NOTES_COMMIT_SHA="$(get_git_sha)"
 
 popd
+
+ROAM_TRAVERSE_GRAPH_COMMIT_SHA="$(get_git_sha)"
 
 ###
  
@@ -173,7 +179,12 @@ COUNT="$(git diff --staged | wc -l)"
 if [ $COUNT -eq 0 ]; then
 	printf "\n0 meaningful changes after individual file examination.\n\n"
 else
-	commit_push "deploy (manual): http://github.com/$PRIVATE_NOTES_USERNAME/$PRIVATE_NOTES_REPO_NAME/commit/$COMMIT_SHA"
+	MSG="\
+deploy (manual): http://github.com/$PRIVATE_NOTES_USERNAME/$PRIVATE_NOTES_REPO_NAME/commit/$NOTES_COMMIT_SHA
+
+http://github.com/kiprasmel/roam-traverse-graph/commit/$ROAM_TRAVERSE_GRAPH_COMMIT_SHA
+"
+	commit_push "$MSG"
 fi
 
 remove_meaningless_files
