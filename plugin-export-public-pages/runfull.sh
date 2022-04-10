@@ -134,20 +134,24 @@ popd
 
 pushd "$PUBLIC_NOTES_DIR"
 
-# returns 0 (success) if any meaningful changes exist
-# after cleaning up the meaningless ones.
-# otherwise, returns 1
-meaningless_change_cleanup() {
-	NEEDLE="GIT_MEANINGLESS_CHANGE"
-
-	COUNT="$(git diff -I "$NEEDLE" | wc -l)"
-	[ $COUNT -eq 0 ] && {
-		printf "\n0 meaningful changes.\n\n"
-		return 1
-	}
-
-	return 0
-}
+# disabled because would not take into account untracked changes,
+# and since we significantly improved the speed of "add_meaningful_files",
+# we do the proper checking there.
+#
+## returns 0 (success) if any meaningful changes exist
+## after cleaning up the meaningless ones.
+## otherwise, returns 1
+#meaningless_change_cleanup() {
+#	NEEDLE="GIT_MEANINGLESS_CHANGE"
+#
+#	COUNT="$(git diff -I "$NEEDLE" | wc -l)"
+#	[ $COUNT -eq 0 ] && {
+#		printf "\n0 meaningful changes.\n\n"
+#		return 1
+#	}
+#
+#	return 0
+#}
 add_meaningful_files() {
 	# modified, if modifications include changes
 	# outside of lines tagged with the "GIT_MEANINGLESS_CHANGE" string
@@ -162,19 +166,17 @@ remove_meaningless_files() {
 	git reset --hard HEAD
 }
 
-meaningless_change_cleanup && {
-	add_meaningful_files
-	diffy
+add_meaningful_files
+diffy
 
-	COUNT="$(git diff --staged | wc -l)"
-	if [ $COUNT -eq 0 ]; then
-		printf "\n0 meaningful changes after individual file examination.\n\n"
-	else
-		commit_push "deploy (manual): http://github.com/$PRIVATE_NOTES_USERNAME/$PRIVATE_NOTES_REPO_NAME/commit/$COMMIT_SHA"
-	fi
+COUNT="$(git diff --staged | wc -l)"
+if [ $COUNT -eq 0 ]; then
+	printf "\n0 meaningful changes after individual file examination.\n\n"
+else
+	commit_push "deploy (manual): http://github.com/$PRIVATE_NOTES_USERNAME/$PRIVATE_NOTES_REPO_NAME/commit/$COMMIT_SHA"
+fi
 
-	remove_meaningless_files
-}
+remove_meaningless_files
 
 popd
  
