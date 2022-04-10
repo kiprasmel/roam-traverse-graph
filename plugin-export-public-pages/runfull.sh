@@ -21,6 +21,10 @@ repo_has_untracked_changes() {
 	[ -z "$(git status -s)" ] && return 1 || return 0
 }
 
+! [ -d "$PUBLIC_NOTES_DIR" ] && {
+	printf "\nPUBLIC_NOTES_DIR ($PUBLIC_NOTES_DIR) not found. cloning.\n\n"
+	git clone --depth=1 "$PUBLIC_NOTES_GITHUB_URL"
+}
 pushd "$PUBLIC_NOTES_DIR"
 
 ls -a | grep ".git" &>/dev/null || {
