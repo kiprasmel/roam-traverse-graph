@@ -113,6 +113,21 @@ if [ "$DO_NOT_RUN_PRIVATE_NOTES" = 0 ]; then
 		exit 1
 	}
 
+	repo_has_untracked_changes && {
+		printf "\nuncommitted changes in PRIVATE_NOTES_DIR ($PRIVATE_NOTES_DIR) ($(pwd))\n"
+	
+		printf "\nthe changes are most likely auto-generated."
+		printf "\ndiscard with 'git reset --hard HEAD'? [y/N] "
+		read -r answer
+	
+		if [ "$answer" = "y" ] || [ "$answer" = "Y" ]; then
+			printf "\n"
+			git reset --hard HEAD
+		else
+			exit 0
+		fi
+	}
+
 	# create one yourself, until maybe we do a generalised one, hehe.
 	bash ./run.sh
 	
