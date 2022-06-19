@@ -179,7 +179,8 @@ add_meaningful_files() {
 	git status --porcelain=1 | grep "^ M" | sed 's/^ M //g;' | git --no-pager diff -I "GIT_MEANINGLESS_CHANGE" --stat=1000 | head -n -1 | cut -d"|" -f1 | sed 's/^\s*//g; s/\s*$//g; s/^"//g; s/"$//g; s/\\"/"/g;' > /tmp/gsr-new && git add --pathspec-from-file=/tmp/gsr-new
 
 	# untracked files
-	git status --porcelain=1 | grep "^??" | sed "s/^?? //g;" | xargs git add
+	untracked_path="/tmp/git-meaningful-files--untracked"
+	git status --porcelain=1 | grep "^??" | sed "s/^?? //g;" > "$untracked_path" && git add --pathspec-from-file="$untracked_path"
 }
 # must be done __after__ comitting
 remove_meaningless_files() {
