@@ -23,20 +23,20 @@ const beginBoundaries = {
 type Boundary = keyof typeof beginBoundaries
 
 enum B {
-	// "text"  = 0,
+	"text"  = 0,
 	"begin" = 1,
 	"end"   = 2,
 }
 
-type TextNode = string
-// type TextNode = readonly [B.text, string]
+// type TextNode = string
+type TextNode = readonly [B.text, string]
 type BoundaryNode = readonly [B.begin | B.end, Boundary]
 
 type StackNode = TextNode | BoundaryNode
 /** abstract syntax __stack__ */
 type ASS = StackNode[]
 
-type TreeNode = TextNode | [Boundary, TreeNode]
+type TreeNode = string | [Boundary, TreeNode]
 /** abstract syntax __tree__ */
 type AST = TreeNode[]
 
@@ -81,14 +81,16 @@ export function test(): TestRet {
 		[
 			"#foo bar baz",
 			[
-				["#", "foo"],
+				["#",
+					"foo"
+				],
 				" bar baz"
 			],
 			[
 				[B.begin, "#"],
-				"foo",
+					[B.text, "foo"],
 				[B.end, "#"],
-				" bar baz",
+				[B.text, " bar baz"],
 			],
 		],
 	]
