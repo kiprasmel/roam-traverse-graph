@@ -56,6 +56,8 @@ type TestData = readonly [str: string, expTree: AST, expStack?: ASS]
 type TestRet = TestData[]
 
 function runTest([str, expTree, expStack]: TestData) {
+	console.log("run test:", str)
+
 	const assert = require("assert")
 
 	const outStack: ASS = blockStringToASS(str)
