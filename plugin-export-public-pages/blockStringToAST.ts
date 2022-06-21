@@ -267,15 +267,17 @@ export function assertNever(x: never): never {
 noop(log)
 function log(...xs: any[]): void {
 	if (!!process.env.DEBUG) {
-		console.log(...xs)
+		// allow lazy if heavy computation
+		const called = xs.map(x => x instanceof Function ? x() : x)
+
+		console.log(...called)
 	}
 }
 
 export function ASStoAST(ass: ASS): AST {
-	return loop(0)[0]
-	//const r = loop(0)
-	//log(JSON.stringify(r, null, 2))
-	//return r[0]
+	const r = loop(0)
+	log(() => JSON.stringify(r, null, 4))
+	return r[0]
 
 	function loop(initialPos: number): [ast: AST, processedCount: number] {
 		let ast: AST = []
