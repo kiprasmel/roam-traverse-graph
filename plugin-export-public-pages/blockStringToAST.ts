@@ -1,32 +1,57 @@
 import assert from "assert"
 
-const LLBeginBoundaries = {
-	"::": {},
-	"#[[": {},
-	"[[": {},
-	"#": {},
-}
 const codeblockBeginBoundaries = {
-	"`": {},
-	"```": {},
-}
+	"```": "```",
+	"`": "`",
+} as const
+const LLBeginBoundaries = {
+	"::": null,
+	"#[[": "]]",
+	"[[": "]]",
+	"#": null,
+} as const
 const formattingBeginBoundaries = {
-	"__": {},
-	"**": {},
-	"~~": {},
-	"^^": {},
-}
+	"__": "__",
+	"**": "**",
+	"~~": "~~",
+	"^^": "^^",
+} as const
 const beginBoundaries = {
-	...LLBeginBoundaries,
 	...codeblockBeginBoundaries,
+	...LLBeginBoundaries,
 	...formattingBeginBoundaries,
 } as const
 
-const boundaries = {
-	...beginBoundaries
+const codeblockEndBoundaries = {
+	[codeblockBeginBoundaries["```"]]: "`",
+	[codeblockBeginBoundaries["`"]]: "`",
+} as const
+const LLEndBoundaries = {
+	// // "::": {}, // edge-case
+	[LLBeginBoundaries["[["]]: "[[", // "]]": {},
+	// // "]]": {}, // duplicate
+	// // "#": {}, // edge-case
+} as const
+const formattingEndBoundaries = {
+	[formattingBeginBoundaries["__"]]: {},
+	[formattingBeginBoundaries["**"]]: {},
+	[formattingBeginBoundaries["~~"]]: {},
+	[formattingBeginBoundaries["^^"]]: {},
+} as const
+const endBoundaries = {
+	...codeblockEndBoundaries,
+	...LLEndBoundaries,
+	...formattingEndBoundaries,
 } as const
 
-type Boundary = keyof typeof boundaries
+const boundaries = {
+	...beginBoundaries,
+	...endBoundaries,
+} as const
+
+type BeginBoundary = keyof typeof beginBoundaries
+type EndBoundary = keyof typeof endBoundaries
+type Boundary = BeginBoundary | EndBoundary
 
 function is(b: Boundary, pos: number, str: string): boolean {
 	//if (b.length === 1) {
@@ -117,10 +142,104 @@ export function blockStringToASS(str: string): ASS {
 		 * & re-run 1 additional loop cycle
 		*/
 		if (token) {
-			log({ pos, str_pos: str[pos], token })
+			/**
+			 * edge-cases
+			 */
+			if (token === "```" || token === "`") {
+				/**
+				 * everything inside should be considered as regular text,
+				 * instead of continuing to parse the contents.
+				 *
+				*/
 
-			tokens.push([B.begin, token])
-			pos += token.length - 1;
+				const wanted = token === "```"	
+					? "```"
+					: token === "`"
+					? "`"
+					: assertNever(token)
+
+				tokens.push([B.begin, token])
+				pos += token.length
+
+				const origPos = pos
+				
+				while (!is(wanted, ++pos, str) && pos < str.length) {
+					log({ pos, str_pos: str[pos] })
+				}
+
+				if (!is(wanted, pos, str)) {
+					// EOF, incorrect syntax (no finish)
+					throw new Error(`reached EOF and couldn't find ${wanted}. str = ${str}`)
+				} else {
+					tokens.push([B.text, str.slice(origPos, pos)])
+
+					tokens.push([B.end, wanted])
+					pos += wanted.length
+				}
+
+				--pos // next loop cycle
+			} else {
+				const isBegin = token in beginBoundaries
+				const isEnd = token in endBoundaries
+				const isBoth = isBegin && isEnd
+
+				log({ isBegin, isEnd, isBoth })
+
+				if (isBoth) {
+					/**
+					 * TODO currently assumes that no nesting
+					 *
+					 * tho this should be fine? i.e.:
+					 * for formatting - you don't nest
+					 * for code blocks - neither
+					 * only other repeating option would be linked references [[]] or #[[]],
+					 * but imo the nesting there would be broken by design,
+					 * so then fine afaik
+					 *
+					*/
+					
+					let found = false
+					for (let tmp = tokens.length - 1; tmp >= 0; tmp--) {
+						const [kind, value] = tokens[tmp]
+
+						if (value === token) { // TODO check for opposite
+							if (kind === B.begin) {
+								tokens.push([B.end, token])
+								found = true
+								break
+							} else if (kind === B.end) {
+								tokens.push([B.begin, token])
+								found = true
+								break
+							} else if (kind === B.text) {
+								// TODO should be impossible / never
+								throw new Error("should be impossible to have a token w/ a `kind` of `text`")
+							} else {
+								assertNever(kind)
+							}
+						}
+					}
+
+					if (!found) {
+						tokens.push([B.begin, token])
+						pos += token.length
+					}
+				}
+				else if (isBegin) {
+					tokens.push([B.begin, token])
+					pos += token.length
+				}
+				else if (isEnd) {
+					tokens.push([B.end, token])
+					pos += token.length
+				} else {
+					throw new Error("impossible")
+				}
+
+				--pos // next loop cycle
+
+				log({ pos, str_pos: str[pos], token })
+			}
 		}
 	}
 
@@ -160,7 +279,7 @@ export function ASStoAST(ass: ASS): AST {
 
 	function loop(initialPos: number): [ast: AST, processedCount: number] {
 		let ast: AST = []
-		let stack: Boundary[] = [] // when to return
+		let stack: BeginBoundary[] = [] // when to return
 	
 		for (let pos = initialPos; pos < ass.length; pos++) {
 			const node: StackNode = ass[pos]
@@ -171,7 +290,7 @@ export function ASStoAST(ass: ASS): AST {
 			if (kind === B.text) {
 				ast.push(value)
 			} else if (kind === B.begin) {
-				stack.push(value as Boundary) // TODO TS `is`
+				stack.push(value as BeginBoundary) // TODO TS `is`
 				const [childAST, processedCount] = loop(pos + 1)
 
 				const tmp: TreeBoundaryNode = [value as Boundary, ...childAST] // TODO OPTIMIZE // TODO TS `is`
@@ -180,8 +299,9 @@ export function ASStoAST(ass: ASS): AST {
 				pos += processedCount - 1 // -1 because next loop cycle will increment
 			} else if (kind === B.end) {
 				if (stack.length) {
-					const last = stack.pop()
-					assert.deepStrictEqual(last, value)
+					const last: BeginBoundary = stack.pop()! // TODO TS
+					const lastTarget: EndBoundary = beginBoundaries[last] as EndBoundary // TODO TS
+					assert.deepStrictEqual(lastTarget, value)
 
 					/** can continue parsing */
 				} else {
@@ -230,7 +350,7 @@ function runTests() {
 
 export const tests: TestRet = [
 	[
-		"[[foo `kek` w]] bar baz",
+		"[[foo `kek` w]] bar baz ```javascript\nconsole.log('#hajeet')```yes",
 		[
 			["[[",
 				"foo ",
@@ -239,17 +359,11 @@ export const tests: TestRet = [
 				],
 				" w",
 			],
-			" bar baz"
-		],
-		[
-			[B.begin, "[["],
-				[B.text, "foo "],
-				[B.begin, "`"],
-					[B.text, "kek"],
-				[B.end, "`"],
-				[B.text, " w"],
-			[B.end, "[["],
-			[B.text, " bar baz"],
+			" bar baz ",
+			["```",
+				"javascript\nconsole.log('#hajeet')"
+			],
+			"yes",
 		],
 	],
 ]
