@@ -78,17 +78,17 @@ function runTests() {
 
 export const tests: TestRet = [
 	[
-		"#foo bar baz",
+		"[[foo]] bar baz",
 		[
-			["#",
+			["[[",
 				"foo"
 			],
 			" bar baz"
 		],
 		[
-			[B.begin, "#"],
+			[B.begin, "[["],
 				[B.text, "foo"],
-			[B.end, "#"],
+			[B.end, "[["],
 			[B.text, " bar baz"],
 		],
 	],
