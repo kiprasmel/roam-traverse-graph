@@ -71,30 +71,28 @@ function runTest([str, expTree, expStack]: TestData) {
 }
 
 function runTests() {
-	for (const testData of test()) {
+	for (const testData of tests) {
 		runTest(testData)
 	}
 }
 
-export function test(): TestRet {
-	return [
+export const tests: TestRet = [
+	[
+		"#foo bar baz",
 		[
-			"#foo bar baz",
-			[
-				["#",
-					"foo"
-				],
-				" bar baz"
+			["#",
+				"foo"
 			],
-			[
-				[B.begin, "#"],
-					[B.text, "foo"],
-				[B.end, "#"],
-				[B.text, " bar baz"],
-			],
+			" bar baz"
 		],
-	]
-}
+		[
+			[B.begin, "#"],
+				[B.text, "foo"],
+			[B.end, "#"],
+			[B.text, " bar baz"],
+		],
+	],
+]
 
 if (!module.parent) {
 	runTests()
