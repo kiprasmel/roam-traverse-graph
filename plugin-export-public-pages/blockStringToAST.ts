@@ -52,37 +52,47 @@ export function blockStringToAST(str: string): AST {
 	return ASStoAST(blockStringToASS(str))
 }
 
-type TestRet = Array<() => any>
+type TestData = readonly [str: string, expTree: AST, expStack?: ASS]
+type TestRet = TestData[]
+
+function runTest([str, expTree, expStack]: TestData) {
+	const assert = require("assert")
+
+	const outStack: ASS = blockStringToASS(str)
+	const outTree: AST = ASStoAST(outStack)
+
+	assert.deepStrictEqual(outTree, expTree)
+
+	if (expStack) {
+		assert.deepStrictEqual(outStack, expStack)
+	}
+}
+
+function runTests() {
+	for (const testData of test()) {
+		runTest(testData)
+	}
+}
 
 export function test(): TestRet {
-	const assert = require("assert")
-	
 	return [
-		() => {
-			const str      = "#foo bar baz" as const
-
-			const expS: ASS = [
+		[
+			"#foo bar baz",
+			[
+				["#", "foo"],
+				" bar baz"
+			],
+			[
 				[B.begin, "#"],
 				"foo",
 				[B.end, "#"],
 				" bar baz",
-			]
-			const outS: ASS = blockStringToASS(str)
-			assert.deepStrictEqual(outS, expS)
-
-			const expT: AST = [
-				["#", "foo"],
-				" bar baz"
-			]
-			const outT: AST = ASStoAST(outS)
-			assert.deepStrictEqual(outT, expT)
-		},
+			],
+		],
 	]
 }
 
 if (!module.parent) {
-	for (const t of test()) {
-		t()
-	}
+	runTests()
 }
 
