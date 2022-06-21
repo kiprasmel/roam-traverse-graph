@@ -22,7 +22,52 @@ const beginBoundaries = {
 	...formattingBeginBoundaries,
 } as const
 
-type Boundary = keyof typeof beginBoundaries
+const boundaries = {
+	...beginBoundaries
+} as const
+
+type Boundary = keyof typeof boundaries
+
+function is(b: Boundary, pos: number, str: string): boolean {
+	//if (b.length === 1) {
+	//	return str[pos] === b
+	//}
+
+	for (let i = 0; i < b.length; i++) {
+		if (str[pos + i] !== b[i]) {
+			return false
+		}
+	}
+	return true
+}
+
+const boundaryKeys: Boundary[] = Object.keys(boundaries) as Boundary[] // TODO TS
+
+function isToken(pos: number, str: string): false | Boundary {
+	// TODO OPTIMIZE
+	for (const key of boundaryKeys) {
+		if (is(key, pos, str)) return key
+	}
+	return false
+
+	// if (is("::", pos, str)) return [true, "::"]
+	// if (is("#[[", pos, str)) return [true, "#[["]
+	// if (is("[[", pos, str)) return [true, "[["]
+	// if (is("#", pos, str)) return [true, "#"]
+	// if (is("`", pos, str)) return [true, "`"]
+	// if (is("```", pos, str)) return [true, "```"]
+	// if (is("__", pos, str)) return [true, "__"]
+	// if (is("**", pos, str)) return [true, "**"]
+	// if (is("~~", pos, str)) return [true, "~~"]
+	// if (is("^^", pos, str)) return [true, "^^"]
+	// /**
+	//  * TODO: verify that all tokens have been checked w/ types
+	//  * (or just have tests?)
+	// */
+	// else {
+	// 	return [false, null]
+	// }
+}
 
 enum B {
 	"text"  = 0,
@@ -48,9 +93,41 @@ type TreeNode = TreeTextNode | TreeBoundaryNode
 /** abstract syntax __tree__ */
 type AST = TreeNode[]
 
-export function blockStringToASS(_str: string): ASS {
-	// return [] // TODO
+export function blockStringToASS(str: string): ASS {
+	const tokens: ASS = []
 
+	for (let pos = 0; pos < str.length; pos++) {
+		let token = isToken(pos, str)
+		log({ token, tokens })
+
+		if (!token) {
+			const origPos = pos
+
+			do {
+				log({ pos, str_pos: str[pos] })
+				token = isToken(++pos, str)
+			} while (!token && pos < str.length)
+
+			tokens.push([B.text, str.slice(origPos, pos)])
+		}
+
+		/**
+		 * decouple from previous to make faster,
+		 * instead of having to decrement `pos`
+		 * & re-run 1 additional loop cycle
+		*/
+		if (token) {
+			log({ pos, str_pos: str[pos], token })
+
+			tokens.push([B.begin, token])
+			pos += token.length - 1;
+		}
+	}
+
+	log("ret tokens", tokens)
+
+	return tokens
+	/*
 	return [ // TODO
 			[B.begin, "[["],
 				[B.text, "foo"],
@@ -61,6 +138,7 @@ export function blockStringToASS(_str: string): ASS {
 			[B.end, "[["],
 			[B.text, " bar baz"],
 		]
+	*/
 }
 
 export function assertNever(x: never): never {
@@ -155,21 +233,21 @@ export const tests: TestRet = [
 		"[[foo `kek` w]] bar baz",
 		[
 			["[[",
-				"foo",
+				"foo ",
 				["`",
 					"kek"
 				],
-				"w",
+				" w",
 			],
 			" bar baz"
 		],
 		[
 			[B.begin, "[["],
-				[B.text, "foo"],
+				[B.text, "foo "],
 				[B.begin, "`"],
 					[B.text, "kek"],
 				[B.end, "`"],
-				[B.text, "w"],
+				[B.text, " w"],
 			[B.end, "[["],
 			[B.text, " bar baz"],
 		],
