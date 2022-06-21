@@ -5,10 +5,10 @@ const codeblockBeginBoundaries = {
 	"`": "`",
 } as const
 const LLBeginBoundaries = {
-	"::": null,
+	"::": "::", // edge-case
 	"#[[": "]]",
 	"[[": "]]",
-	"#": null,
+	"#": "#", // edge-case
 } as const
 const formattingBeginBoundaries = {
 	"__": "__",
@@ -53,13 +53,13 @@ type BeginBoundary = keyof typeof beginBoundaries
 type EndBoundary = keyof typeof endBoundaries
 type Boundary = BeginBoundary | EndBoundary
 
-function is(b: Boundary, pos: number, str: string): boolean {
+function is(substr: string, pos: number, str: string): boolean {
 	//if (b.length === 1) {
 	//	return str[pos] === b
 	//}
 
-	for (let i = 0; i < b.length; i++) {
-		if (str[pos + i] !== b[i]) {
+	for (let i = 0; i < substr.length; i++) {
+		if (str[pos + i] !== substr[i]) {
 			return false
 		}
 	}
@@ -178,6 +178,56 @@ export function blockStringToASS(str: string): ASS {
 				}
 
 				--pos // next loop cycle
+			} else if (token === "::") {
+				// add to very beginning
+				tokens.unshift([B.begin, token])
+				// does not modify `pos`
+
+				tokens.push([B.end, token])
+				pos += token.length
+
+				--pos // next loop cycle
+			} else if (token === "#") {
+				// probably the worst to parse
+
+				const discontinueIfEncounter: string[] = [
+					...boundaryKeys,
+					" ",
+				]
+
+				const isLastChar = pos + 1 === str.length
+				const willInstantlyDiscontinue = discontinueIfEncounter.includes(str[pos + 1])
+				if (isLastChar) {
+					// TODO: will require to have an extra step to check if >1 "text"s are next to each other, & join them
+					tokens.push([B.text, token])
+					pos += token.length
+				} else if (willInstantlyDiscontinue) {
+					// TODO: same as above ?
+					tokens.push([B.text, token])
+					pos += token.length
+				} 
+				// TODO think about more edge cases 
+				else {
+					tokens.push([B.begin, token])
+					pos += token.length
+
+					const origPos = pos
+
+					// TODO make work w/ any length in `discontinueIfEncounter`
+					while (++pos < str.length && !discontinueIfEncounter.some(x => is(x, pos, str))) {
+						log({ pos, str_pos: str[pos] })
+					}
+
+					// if (!discontinueIfEncounter.includes(str[pos])) {
+					// 	// EOF
+					// } else {
+					// }
+					tokens.push([B.text, str.slice(origPos, pos)])
+					tokens.push([B.end, token])
+				}
+
+				// TODO confirm
+				--pos // next loop cycle
 			} else {
 				const isBegin = token in beginBoundaries
 				const isEnd = token in endBoundaries
@@ -267,7 +317,7 @@ export function assertNever(x: never): never {
 noop(log)
 function log(...xs: any[]): void {
 	if (!!process.env.DEBUG) {
-		// allow lazy if heavy computation
+		// allow lazy if heavy computation (so that won't affect if DEBUG disabled)
 		const called = xs.map(x => x instanceof Function ? x() : x)
 
 		console.log(...called)
@@ -318,7 +368,7 @@ export function ASStoAST(ass: ASS): AST {
 			}
 		}
 
-		assert.deepStrictEqual(stack.length, 0)
+		assert.deepStrictEqual(stack.length, 0, `stack not empty, but should be. ${stack}`)
 	
 		return [ast, ass.length - 1]
 	}
@@ -332,7 +382,7 @@ type TestData = readonly [str: string, expTree: AST, expStack?: ASS]
 type TestRet = TestData[]
 
 function runTest([str, expTree, expStack]: TestData) {
-	console.log("run test:", str)
+	console.log("\nrun test:", str)
 
 	const outStack: ASS = blockStringToASS(str)
 	const outTree: AST = ASStoAST(outStack)
@@ -367,6 +417,69 @@ export const tests: TestRet = [
 			],
 			"yes",
 		],
+	],
+
+	[
+		"ayyy `lmao` xdd:: waddup?",
+		[
+			["::",
+				"ayyy ",
+				["`",
+					"lmao",
+				],
+				" xdd",
+			],
+			" waddup?",
+		]
+	],
+
+	[
+		"this is working pretty well! #roam-traverse-graph lfg",
+		[
+			"this is working pretty well! ",
+			["#",
+				"roam-traverse-graph",
+			],
+			" lfg",
+		]
+	],
+	[
+		"#lets#do #some[[weird]] #stuff#[[yo]] #[[ho]] #yes hehe # #",
+		[
+			["#",
+				"lets",
+			],
+			["#",
+				"do",
+			],
+			" ",
+			["#",
+				"some",
+			],
+			["[[",
+				"weird",
+			],
+			" ",
+			["#",
+				"stuff",
+			],
+			["#[[",
+				"yo",
+			],
+			" ",
+			["#[[",
+				"ho",
+			],
+			" ",
+			["#",
+				"yes",
+			],
+			// TODO everything below should be combined into 1
+			" hehe ",
+			"#",
+			" ",
+			"#",
+		]
 	],
 ]
 
