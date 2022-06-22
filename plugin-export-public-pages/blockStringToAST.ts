@@ -53,7 +53,19 @@ type BeginBoundary = keyof typeof beginBoundaries
 type EndBoundary = keyof typeof endBoundaries
 type Boundary = BeginBoundary | EndBoundary
 
-function is(substr: string, pos: number, str: string): boolean {
+const boundaryKeys: Boundary[] = Object.keys(boundaries) as Boundary[] // TODO TS
+
+const extras = {
+	["#"]: {
+		discontinueIfEncounter: [
+			...boundaryKeys,
+			" ",
+		] as string[]
+	},
+} as const
+
+// TODO rename to "isSubstr"
+function is(substr: string, pos: number, str: string): substr is Boundary {
 	//if (b.length === 1) {
 	//	return str[pos] === b
 	//}
@@ -66,12 +78,25 @@ function is(substr: string, pos: number, str: string): boolean {
 	return true
 }
 
-const boundaryKeys: Boundary[] = Object.keys(boundaries) as Boundary[] // TODO TS
-
 function isToken(pos: number, str: string): false | Boundary {
 	// TODO OPTIMIZE
 	for (const key of boundaryKeys) {
-		if (is(key, pos, str)) return key
+		if (is(key, pos, str)) {
+			/** yes, it is, unless an edge-case says it's not */
+
+			/** edge-cases */
+			if (key === "#") {
+				const isLastChar: boolean = pos + 1 === str.length
+				const willInstantlyDiscontinue: boolean = extras["#"].discontinueIfEncounter.includes(str[pos + 1])
+
+				const isNotAToken = isLastChar || willInstantlyDiscontinue
+
+				return isNotAToken ? false : key
+			}
+
+			return key
+		}
+
 	}
 	return false
 
@@ -133,6 +158,7 @@ export function blockStringToASS(str: string): ASS {
 				token = isToken(++pos, str)
 			} while (!token && pos < str.length)
 
+			/** everything before & up until, but not including, the current pos */
 			tokens.push([B.text, str.slice(origPos, pos)])
 		}
 
@@ -190,43 +216,18 @@ export function blockStringToASS(str: string): ASS {
 			} else if (token === "#") {
 				// probably the worst to parse
 
-				const discontinueIfEncounter: string[] = [
-					...boundaryKeys,
-					" ",
-				]
+				tokens.push([B.begin, token])
+				pos += token.length
 
-				const isLastChar = pos + 1 === str.length
-				const willInstantlyDiscontinue = discontinueIfEncounter.includes(str[pos + 1])
-				if (isLastChar) {
-					// TODO: will require to have an extra step to check if >1 "text"s are next to each other, & join them
-					tokens.push([B.text, token])
-					pos += token.length
-				} else if (willInstantlyDiscontinue) {
-					// TODO: same as above ?
-					tokens.push([B.text, token])
-					pos += token.length
-				} 
-				// TODO think about more edge cases 
-				else {
-					tokens.push([B.begin, token])
-					pos += token.length
+				const origPos = pos
 
-					const origPos = pos
-
-					// TODO make work w/ any length in `discontinueIfEncounter`
-					while (++pos < str.length && !discontinueIfEncounter.some(x => is(x, pos, str))) {
-						log({ pos, str_pos: str[pos] })
-					}
-
-					// if (!discontinueIfEncounter.includes(str[pos])) {
-					// 	// EOF
-					// } else {
-					// }
-					tokens.push([B.text, str.slice(origPos, pos)])
-					tokens.push([B.end, token])
+				while (++pos < str.length && !extras["#"].discontinueIfEncounter.some(x => is(x, pos, str))) {
+					log({ pos, str_pos: str[pos] })
 				}
 
-				// TODO confirm
+				tokens.push([B.text, str.slice(origPos, pos)])
+				tokens.push([B.end, token])
+
 				--pos // next loop cycle
 			} else {
 				const isBegin = token in beginBoundaries
@@ -444,7 +445,7 @@ export const tests: TestRet = [
 		]
 	],
 	[
-		"#lets#do #some[[weird]] #stuff#[[yo]] #[[ho]] #yes hehe # #",
+		"#lets#do #some[[weird]] #stuff#[[yo]] #[[ho]] #yes hehe #  x# # ###",
 		[
 			["#",
 				"lets",
@@ -474,11 +475,7 @@ export const tests: TestRet = [
 			["#",
 				"yes",
 			],
-			// TODO everything below should be combined into 1
-			" hehe ",
-			"#",
-			" ",
-			"#",
+			" hehe #  x# # ###",
 		]
 	],
 ]
