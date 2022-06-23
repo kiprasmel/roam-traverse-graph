@@ -4,6 +4,9 @@ const codeblockBeginBoundaries = {
 	"```": "```",
 	"`": "`",
 } as const
+const commandBeginBoundaries = {
+	"{{": "}}",
+} as const
 const LLBeginBoundaries = {
 	"::": "::", // edge-case
 	"#[[": "]]",
@@ -18,6 +21,7 @@ const formattingBeginBoundaries = {
 } as const
 const beginBoundaries = {
 	...codeblockBeginBoundaries,
+	...commandBeginBoundaries,
 	...LLBeginBoundaries,
 	...formattingBeginBoundaries,
 } as const
@@ -25,6 +29,9 @@ const beginBoundaries = {
 const codeblockEndBoundaries = {
 	[codeblockBeginBoundaries["```"]]: "`",
 	[codeblockBeginBoundaries["`"]]: "`",
+} as const
+const commandEndBoundaries = {
+	[commandBeginBoundaries["{{"]]: "{{",
 } as const
 const LLEndBoundaries = {
 	// // "::": {}, // edge-case
@@ -40,6 +47,7 @@ const formattingEndBoundaries = {
 } as const
 const endBoundaries = {
 	...codeblockEndBoundaries,
+	...commandEndBoundaries,
 	...LLEndBoundaries,
 	...formattingEndBoundaries,
 } as const
@@ -478,6 +486,24 @@ export const tests: TestRet = [
 			" hehe #  x# # ###",
 		]
 	],
+	[
+		"{{[[TODO]]}} #read about the good stuff [[high signal]]",
+		[
+			["{{",
+				["[[",
+					"TODO"
+				]
+			],
+			" ",
+			["#",
+				"read"
+			],
+			" about the good stuff ",
+			["[[",
+				"high signal"
+			]
+		]
+	]
 ]
 
 export function noop(..._xs: any[]): void {
@@ -487,4 +513,3 @@ export function noop(..._xs: any[]): void {
 if (!module.parent) {
 	runTests()
 }
-
