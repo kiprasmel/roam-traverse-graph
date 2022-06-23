@@ -10,8 +10,6 @@ export const parseASTFromBlockString: MutatingActionToExecute<
 		AST: AST;
 	}
 > = () => (block) => {
-	console.log("block.string", block.string);
-
 	// TODO REMOVE ME
 	const tmpBlacklist = [
 		"it gets called multiple times. i might as well stick to my", //
@@ -25,8 +23,6 @@ export const parseASTFromBlockString: MutatingActionToExecute<
 
 	const ass: ASS = blockStringToASS(str);
 	const ast: AST = ASStoAST(ass);
-
-	console.log("ast", ast);
 
 	return withMetadata({
 		ASS: ass,
