@@ -190,7 +190,7 @@ export const hideBlockStringsIfNotPublic: MutatingActionToExecute<
 			return s;
 		}
 
-		console.log({ initialStackTree });
+		// console.log({ initialStackTree });
 
 		return _walk(initialStackTree, null);
 	}
