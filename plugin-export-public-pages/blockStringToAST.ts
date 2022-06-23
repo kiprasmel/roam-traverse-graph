@@ -40,10 +40,10 @@ const LLEndBoundaries = {
 	// // "#": {}, // edge-case
 } as const
 const formattingEndBoundaries = {
-	[formattingBeginBoundaries["__"]]: {},
-	[formattingBeginBoundaries["**"]]: {},
-	[formattingBeginBoundaries["~~"]]: {},
-	[formattingBeginBoundaries["^^"]]: {},
+	[formattingBeginBoundaries["__"]]: "__",
+	[formattingBeginBoundaries["**"]]: "**",
+	[formattingBeginBoundaries["~~"]]: "~~",
+	[formattingBeginBoundaries["^^"]]: "^^",
 } as const
 const endBoundaries = {
 	...codeblockEndBoundaries,
@@ -104,27 +104,9 @@ function isToken(pos: number, str: string): false | Boundary {
 
 			return key
 		}
-
 	}
-	return false
 
-	// if (is("::", pos, str)) return [true, "::"]
-	// if (is("#[[", pos, str)) return [true, "#[["]
-	// if (is("[[", pos, str)) return [true, "[["]
-	// if (is("#", pos, str)) return [true, "#"]
-	// if (is("`", pos, str)) return [true, "`"]
-	// if (is("```", pos, str)) return [true, "```"]
-	// if (is("__", pos, str)) return [true, "__"]
-	// if (is("**", pos, str)) return [true, "**"]
-	// if (is("~~", pos, str)) return [true, "~~"]
-	// if (is("^^", pos, str)) return [true, "^^"]
-	// /**
-	//  * TODO: verify that all tokens have been checked w/ types
-	//  * (or just have tests?)
-	// */
-	// else {
-	// 	return [false, null]
-	// }
+	return false
 }
 
 enum B {
@@ -264,10 +246,12 @@ export function blockStringToASS(str: string): ASS {
 						if (value === token) { // TODO check for opposite
 							if (kind === B.begin) {
 								tokens.push([B.end, token])
+								pos += token.length
 								found = true
 								break
 							} else if (kind === B.end) {
 								tokens.push([B.begin, token])
+								pos += token.length
 								found = true
 								break
 							} else if (kind === B.text) {
@@ -503,7 +487,29 @@ export const tests: TestRet = [
 				"high signal"
 			]
 		]
-	]
+	],
+
+	[
+		"**hello** there, __how__ are ^^you^^ ~~feeling~~ doing?",
+		[
+			["**",
+				"hello"
+			],
+			" there, ",
+			["__",
+				"how"
+			],
+			" are ",
+			["^^",
+				"you"
+			],
+			" ",
+			["~~",
+				"feeling"
+			],
+			" doing?"
+		]
+	],
 ]
 
 export function noop(..._xs: any[]): void {
