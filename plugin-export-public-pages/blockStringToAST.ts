@@ -27,7 +27,7 @@ export const beginBoundaries = {
 } as const
 
 export const codeblockEndBoundaries = {
-	[codeblockBeginBoundaries["```"]]: "`",
+	[codeblockBeginBoundaries["```"]]: "```",
 	[codeblockBeginBoundaries["`"]]: "`",
 } as const
 export const commandEndBoundaries = {
