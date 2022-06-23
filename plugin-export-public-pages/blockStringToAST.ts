@@ -1,67 +1,67 @@
 import assert from "assert"
 
-const codeblockBeginBoundaries = {
+export const codeblockBeginBoundaries = {
 	"```": "```",
 	"`": "`",
 } as const
-const commandBeginBoundaries = {
+export const commandBeginBoundaries = {
 	"{{": "}}",
 } as const
-const LLBeginBoundaries = {
+export const LLBeginBoundaries = {
 	"::": "::", // edge-case
 	"#[[": "]]",
 	"[[": "]]",
 	"#": "#", // edge-case
 } as const
-const formattingBeginBoundaries = {
+export const formattingBeginBoundaries = {
 	"__": "__",
 	"**": "**",
 	"~~": "~~",
 	"^^": "^^",
 } as const
-const beginBoundaries = {
+export const beginBoundaries = {
 	...codeblockBeginBoundaries,
 	...commandBeginBoundaries,
 	...LLBeginBoundaries,
 	...formattingBeginBoundaries,
 } as const
 
-const codeblockEndBoundaries = {
+export const codeblockEndBoundaries = {
 	[codeblockBeginBoundaries["```"]]: "`",
 	[codeblockBeginBoundaries["`"]]: "`",
 } as const
-const commandEndBoundaries = {
+export const commandEndBoundaries = {
 	[commandBeginBoundaries["{{"]]: "{{",
 } as const
-const LLEndBoundaries = {
+export const LLEndBoundaries = {
 	// // "::": {}, // edge-case
 	[LLBeginBoundaries["[["]]: "[[", // "]]": {},
 	// // "]]": {}, // duplicate
 	// // "#": {}, // edge-case
 } as const
-const formattingEndBoundaries = {
+export const formattingEndBoundaries = {
 	[formattingBeginBoundaries["__"]]: "__",
 	[formattingBeginBoundaries["**"]]: "**",
 	[formattingBeginBoundaries["~~"]]: "~~",
 	[formattingBeginBoundaries["^^"]]: "^^",
 } as const
-const endBoundaries = {
+export const endBoundaries = {
 	...codeblockEndBoundaries,
 	...commandEndBoundaries,
 	...LLEndBoundaries,
 	...formattingEndBoundaries,
 } as const
 
-const boundaries = {
+export const boundaries = {
 	...beginBoundaries,
 	...endBoundaries,
 } as const
 
-type BeginBoundary = keyof typeof beginBoundaries
-type EndBoundary = keyof typeof endBoundaries
-type Boundary = BeginBoundary | EndBoundary
+export type BeginBoundary = keyof typeof beginBoundaries
+export type EndBoundary = keyof typeof endBoundaries
+export type Boundary = BeginBoundary | EndBoundary
 
-const boundaryKeys: Boundary[] = Object.keys(boundaries) as Boundary[] // TODO TS
+export const boundaryKeys: Boundary[] = Object.keys(boundaries) as Boundary[] // TODO TS
 
 const extras = {
 	["#"]: {
@@ -120,18 +120,18 @@ function humanKind(b: B): "text" | "begin" | "end" {
 }
 
 // type TextNode = string
-type TextNode = readonly [B.text, string]
-type BoundaryNode = readonly [B.begin | B.end, Boundary]
+export type TextNode = readonly [B.text, string]
+export type BoundaryNode = readonly [B.begin | B.end, Boundary]
 
-type StackNode = TextNode | BoundaryNode
+export type StackNode = TextNode | BoundaryNode
 /** abstract syntax __stack__ */
-type ASS = StackNode[]
+export type ASS = StackNode[]
 
-type TreeTextNode = string
-type TreeBoundaryNode = [Boundary, ...TreeNode[]]
-type TreeNode = TreeTextNode | TreeBoundaryNode
+export type TreeTextNode = string
+export type TreeBoundaryNode = [Boundary, ...TreeNode[]]
+export type TreeNode = TreeTextNode | TreeBoundaryNode
 /** abstract syntax __tree__ */
-type AST = TreeNode[]
+export type AST = TreeNode[]
 
 export function blockStringToASS(str: string): ASS {
 	const tokens: ASS = []
