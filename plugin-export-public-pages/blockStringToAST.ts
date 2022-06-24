@@ -35,7 +35,7 @@ export const commandEndBoundaries = {
 } as const
 export const LLEndBoundaries = {
 	// // "::": {}, // edge-case
-	[LLBeginBoundaries["[["]]: "[[", // "]]": {},
+	[LLBeginBoundaries["[["]]: ["[[", "#[["], // "]]": {},
 	// // "]]": {}, // duplicate
 	// // "#": {}, // edge-case
 } as const
@@ -63,13 +63,17 @@ export type Boundary = BeginBoundary | EndBoundary
 
 export const boundaryKeys: Boundary[] = Object.keys(boundaries) as Boundary[] // TODO TS
 
-const extras = {
+export const extras = {
 	["#"]: {
 		discontinueIfEncounter: [
 			...boundaryKeys,
 			" ",
-		] as string[]
+		] as string[],
+		doesNotHaveEnd: true,
 	},
+	["::"]: {
+		doesNotHaveBegin: true,
+	}
 } as const
 
 // TODO rename to "isSubstr"
@@ -175,9 +179,9 @@ export function blockStringToASS(str: string): ASS {
 					: assertNever(token)
 
 				tokens.push([B.begin, token])
-				pos += token.length
+				pos += token.length - 1
 
-				const origPos = pos
+				const origPos = pos + 1
 				
 				while (!is(wanted, ++pos, str) && pos < str.length) {
 					log({ pos, str_pos: str[pos] })
@@ -245,6 +249,10 @@ export function blockStringToASS(str: string): ASS {
 
 						if (value === token) { // TODO check for opposite
 							if (kind === B.begin) {
+								if (isWithoutText(tokens, token)) {
+									tokens.push([B.text, ""])
+								}
+
 								tokens.push([B.end, token])
 								pos += token.length
 								found = true
@@ -273,6 +281,11 @@ export function blockStringToASS(str: string): ASS {
 					pos += token.length
 				}
 				else if (isEnd) {
+
+					if (isWithoutText(tokens, token)) {
+						tokens.push([B.text, ""])
+					}
+
 					tokens.push([B.end, token])
 					pos += token.length
 				} else {
@@ -301,6 +314,70 @@ export function blockStringToASS(str: string): ASS {
 			[B.text, " bar baz"],
 		]
 	*/
+}
+
+/**
+ * [[]]  -> true
+ * [[a]] -> false
+ * 
+ * {{[[]]}}  -> true
+ * {{[[a]]}} -> false
+ * 
+ * __**^^~~{{[[]]}}~~^^**__  -> true
+ * 
+ * __a**^^~~{{[[]]}}~~^^**__ -> false
+ * __**a^^~~{{[[]]}}~~^^**__ -> false
+ * __**^^a~~{{[[]]}}~~^^**__ -> false
+ * __**^^~~a{{[[]]}}~~^^**__ -> false
+ * __**^^~~{{a[[]]}}~~^^**__ -> false
+ * __**^^~~{{[[a]]}}~~^^**__ -> false
+ * __**^^~~{{[[]]a}}~~^^**__ -> false
+ * __**^^~~{{[[]]}}a~~^^**__ -> false
+ * __**^^~~{{[[]]}}~~a^^**__ -> false
+ * __**^^~~{{[[]]}}~~^^a**__ -> false
+ * __**^^~~{{[[]]}}~~^^**a__ -> false
+ * 
+ * 
+ * 
+ * 
+ *  TODO OPTIMIZE:
+ * - take in the `latestIndexWithText` (track in caller)
+ * - take in a `latestBeginningOfKind` (track in caller)
+ * 
+ */
+function isWithoutText(tokens: ASS, token: Boundary): boolean {
+	let latestIndexWithText = -1;
+	for (let x = tokens.length - 1; x >= 0; x--) {
+		const t = tokens[x]
+		if (t && t[0] === B.text) {
+			latestIndexWithText = x
+			break
+		}
+	}
+
+	let latestBeginIndex = -1
+	for (let x = tokens.length - 1; x >= 0; x--) {
+		const t = tokens[x]
+		const beginBoundary = endBoundaries[token as keyof typeof endBoundaries]
+
+		const isBegin = t[1] === beginBoundary
+		const isOneOfBegin = Array.isArray(beginBoundary) && beginBoundary.some(x => x === t[1])
+		const matchesBegin = isBegin || isOneOfBegin
+
+		if (t && t[0] === B.begin && matchesBegin) {
+			latestBeginIndex = x
+			break
+		}
+	}
+
+	// const previous = tokens[tokens.length - 1]
+	// const isEmpty = previous[0] === B.begin && previous[1] === token
+	// log({previous, token, isEmpty})
+
+	const isEmpty = latestIndexWithText < latestBeginIndex
+	log({ token, isEmpty, latestIndexWithText, latestBeginIndex, })
+
+	return isEmpty
 }
 
 export function assertNever(x: never): never {
@@ -510,6 +587,27 @@ export const tests: TestRet = [
 			" doing?"
 		]
 	],
+
+	[
+		"some empty thingies `` **** [[]] #[[]] {{}} {{[[]]}} ?",
+		[
+			"some empty thingies ",
+			["`", ""],
+			" ",
+			["**", ""],
+			" ",
+			["[[", ""],
+			" ",
+			["#[[", ""],
+			" ",
+			["{{", ""],
+			" ",
+			["{{",
+				["[[", ""]
+			],
+			" ?",
+		]
+	]
 ]
 
 export function noop(..._xs: any[]): void {
