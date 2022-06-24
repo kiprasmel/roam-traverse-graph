@@ -15,6 +15,13 @@ DO_NOT_REGENERATE_IF_NO_NEW_CHANGES_IN_PRIVATE_NOTES_REPO="${7:-0}"
 # & place that json in the private notes repo.
 DO_NOT_RUN_PRIVATE_NOTES="${DO_NOT_RUN_PRIVATE_NOTES:-0}"
 
+# set this if e.g. you're experimenting w/ a new version
+# of the parser, and want to run thru the whole process,
+# but without actually pushing nor publishing the changes
+# in the public notes repo.
+# almost like DRY_RUN
+DO_NOT_PUSH_PUBLIC_NOTES="${DO_NOT_PUSH_PUBLIC_NOTES:-0}"
+
 [ -z "$NOTES_OF_NAME" ] && {
 	cache_file="cache--NOTES_OF_NAME"
 	if [ -f "$cache_file" ]; then
@@ -200,10 +207,19 @@ deploy (manual): http://github.com/$PRIVATE_NOTES_USERNAME/$PRIVATE_NOTES_REPO_N
 
 http://github.com/kiprasmel/roam-traverse-graph/commit/$ROAM_TRAVERSE_GRAPH_COMMIT_SHA
 "
-	commit_push "$MSG"
+
+	if [ "$DO_NOT_PUSH_PUBLIC_NOTES" = "0" ]; then
+		commit_push "$MSG"
+	else 
+		printf "\nNOT pushing nor publishing public notes (skipped because DO_NOT_PUSH_PUBLIC_NOTES set).\n\n"
+	fi
 fi
 
-remove_meaningless_files
+if [ "$DO_NOT_PUSH_PUBLIC_NOTES" = 0 ]; then
+	remove_meaningless_files
+else
+	printf "\nNOT removing meaningless files (skipped because DO_NOT_PUSH_PUBLIC_NOTES set).\n\n"
+fi
 
 popd
  
