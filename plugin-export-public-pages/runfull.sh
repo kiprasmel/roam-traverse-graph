@@ -58,10 +58,10 @@ repo_has_untracked_changes && {
 	printf "\nuncommitted changes in PUBLIC_NOTES_DIR ($PUBLIC_NOTES_DIR) ($(pwd))\n"
 
 	printf "\nthe html is most likely generated."
-	printf "\ndiscard with 'git reset --hard HEAD'? [y/N] "
+	printf "\ndiscard with 'git reset --hard HEAD'? [Y/n] "
 	read -r answer
 
-	if [ "$answer" = "y" ] || [ "$answer" = "Y" ]; then
+	if [ "$answer" = "y" ] || [ "$answer" = "Y" ] || [ "$naswer" = "" ]; then
 		printf "\n"
 		git reset --hard HEAD
 	else
@@ -124,10 +124,10 @@ if [ "$DO_NOT_RUN_PRIVATE_NOTES" = 0 ]; then
 		printf "\nuncommitted changes in PRIVATE_NOTES_DIR ($PRIVATE_NOTES_DIR) ($(pwd))\n"
 	
 		printf "\nthe changes are most likely auto-generated."
-		printf "\ndiscard with 'git reset --hard HEAD'? [y/N] "
+		printf "\ndiscard with 'git reset --hard HEAD'? [Y/n] "
 		read -r answer
 	
-		if [ "$answer" = "y" ] || [ "$answer" = "Y" ]; then
+		if [ "$answer" = "y" ] || [ "$answer" = "Y" ] || [ "$answer" = "" ]; then
 			printf "\n"
 			git reset --hard HEAD
 		else
