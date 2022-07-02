@@ -11,10 +11,10 @@ import { blockStringHasCode } from "../util/blockContainsCode";
 /**
  * TODO error handling
  * TODO fail & exit if unknown settings detected (to avoid typos causing miss-configurations)
- * 	TODO think about backwards compatibility & deprecation strategies (use settingsVersion?)
+ * 	TODO think about backwards compatibility & deprecation strategies (use version?)
  */
 export const parseSettingsFromRawString = (
-	rawStringOfSettingsBlock: string = '```javascript\nmodule.exports = () => {\n  return {\n    settingsVersion: "0"}\n}```', // TODO cleanup / remove
+	rawStringOfSettingsBlock: string = '```javascript\nmodule.exports = () => {\n  return {\n    version: "0"}\n}```', // TODO cleanup / remove
 	parsedSettings: Partial<SettingsForPluginFindPublicPages> = !rawStringOfSettingsBlock
 		? {}
 		: [rawStringOfSettingsBlock]
