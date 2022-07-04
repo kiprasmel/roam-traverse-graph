@@ -22,6 +22,10 @@ DO_NOT_RUN_PRIVATE_NOTES="${DO_NOT_RUN_PRIVATE_NOTES:-0}"
 # almost like DRY_RUN
 DO_NOT_PUSH_PUBLIC_NOTES="${DO_NOT_PUSH_PUBLIC_NOTES:-0}"
 
+# should auto-accept prompts that default to yes
+# possibly in the future - those who are neutral as well
+YES="${YES:-0}"
+
 [ -z "$NOTES_OF_NAME" ] && {
 	cache_file="cache--NOTES_OF_NAME"
 	if [ -f "$cache_file" ]; then
@@ -59,7 +63,12 @@ repo_has_untracked_changes && {
 
 	printf "\nthe html is most likely generated."
 	printf "\ndiscard with 'git reset --hard HEAD'? [Y/n] "
-	read -r answer
+
+	if [ "$YES" -eq 0 ]; then
+		read -r answer
+	else 
+		answer="y"
+	fi
 
 	if [ "$answer" = "y" ] || [ "$answer" = "Y" ] || [ "$naswer" = "" ]; then
 		printf "\n"
@@ -125,7 +134,12 @@ if [ "$DO_NOT_RUN_PRIVATE_NOTES" = 0 ]; then
 	
 		printf "\nthe changes are most likely auto-generated."
 		printf "\ndiscard with 'git reset --hard HEAD'? [Y/n] "
-		read -r answer
+
+		if [ "$YES" -eq 0 ]; then
+			read -r answer
+		else 
+			answer="y"
+		fi
 	
 		if [ "$answer" = "y" ] || [ "$answer" = "Y" ] || [ "$answer" = "" ]; then
 			printf "\n"
