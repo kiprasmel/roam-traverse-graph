@@ -2,13 +2,16 @@
 
 /* eslint-disable indent */
 
+// import escapeHtml from "escape-html";
+
+import fs from "fs";
+
 import { traverseBlockRecursively } from "../traverseBlockRecursively";
 import { removeUnknownProperties, markBlockPublic } from "./findPublicBlocks";
 import { findIfPagesHavePublicLinkedReferencesAndLinkThemAsMentions } from "./findLinkedReferencesOfABlock";
 import { hideBlockStringsIfNotPublic } from "./hideBlockStringsIfNotPublic";
 import { parseRoamTraverseGraphSettingsFromRoamPage } from "./parseSettingsFromRoamPage"; // TODO FIXME
 import { shallowMergeIncludingArrayValues } from "../util/shallowMergeIncludingArrayValues";
-import { createLinkedReferences } from "../util";
 import { blockStringHasCode } from "../util/blockContainsCode";
 import { sortUntilFirstXORMatchUsing, Order } from "../util/sortUntilFirstXORMatch";
 
@@ -21,6 +24,7 @@ import {
 } from "../types";
 
 import { withMetadata } from "../util/withMetadata";
+import { parseASTFromBlockString } from "./parseASTFromBlockString";
 
 export type SettingsForPluginFindPublicPages = {
 	/**
@@ -65,7 +69,7 @@ export type SettingsForPluginFindPublicPages = {
 	 * see the source code of the plugin itself to understand better.
 	 *
 	 */
-	privateTag: string; // TODO ARRAY
+	privateTags: string[];
 	/**
 	 * TODO DEPRECATE - use the .uid instead! (will work for pages too to avoid merging them lol)
 	 * (or keep and concat w/ the .title / .string to make obvious it's hidden)
@@ -77,12 +81,6 @@ export type SettingsForPluginFindPublicPages = {
 	makeThePublicTagPagePublic: boolean;
 
 	/**
-	 * TODO and DONE are more like boolean toggles to indicate if something's done or not,
-	 * and show a visual indicator, thus we have a special case for them
-	 */
-	doNotHideTodoAndDone: boolean;
-
-	/**
 	 * currently blocks', will later apply to pages as well once we implement it properly
 	 */
 	keepMetadata: boolean;
@@ -90,12 +88,11 @@ export type SettingsForPluginFindPublicPages = {
 
 export const getDefaultSettingsForPluginFindPublicPages = (): SettingsForPluginFindPublicPages => ({
 	publicGlobalTags: [],
-	publicTags: ["#public"],
+	publicTags: ["public"],
 	publicOnlyTags: [],
-	privateTag: "#private", // TODO array
+	privateTags: ["private"], // TODO array
 	hiddenStringValue: "hidden",
 	makeThePublicTagPagePublic: false,
-	doNotHideTodoAndDone: true,
 	keepMetadata: false,
 });
 
@@ -169,15 +166,27 @@ export const findPublicPages = <M0 extends RO>(
 		getDefaultSettingsForPluginFindPublicPages(),
 		[
 			optionsOrig, //
-			settingsFromSettingsPage,
+			// settingsFromSettingsPage, // TODO FIXME BRING BACK
+			{
+				// TODO FIXME REMOVE
+				publicGlobalTags: ["#public"],
+				publicTags: [
+					"public",
+					"codemods",
+					"roam-traverse-graph",
+					"git-rebase",
+					"git-stacked-rebase",
+					"software i hate (public)",
+				],
+				publicOnlyTags: ["po", "tp"],
+				privateTags: ["private", "ppl", "pipedrive"],
+			},
 		]
 	),
 	{
-		doNotHideTodoAndDone,
-		hiddenStringValue,
+		hiddenStringValue, //
 		keepMetadata,
-		makeThePublicTagPagePublic,
-		privateTag,
+		privateTags,
 		publicGlobalTags,
 		publicOnlyTags,
 		publicTags,
@@ -191,6 +200,19 @@ export const findPublicPages = <M0 extends RO>(
 		settingsFromSettingsPage,
 		merged: settings,
 	}),
+	fs.writeFileSync(
+		"debug.json",
+		JSON.stringify(
+			{
+				defaultOptions: getDefaultSettingsForPluginFindPublicPages(),
+				optionsOrig,
+				settingsFromSettingsPage,
+				merged: settings,
+			},
+			null,
+			2
+		)
+	),
 	/**
 	 * TODO: move page.children into some temporary page._children or similar
 	 * to make sure we delete it at the end,
@@ -263,15 +285,11 @@ export const findPublicPages = <M0 extends RO>(
 		)
 		// .map(p => p.children[0].metadata.)
 		// .map(p => p.children[0].metadata.)
-		.map((page) => {
-			const isThePublicTagPageAndShouldBePublic =
-				makeThePublicTagPagePublic && publicTags.some((publicTag) => titleIsPublicTag(page, publicTag));
-
-			return isThePublicTagPageAndShouldBePublic || //
-				publicGlobalTags.some((tag) => isMarkedAsFullyPublic(page, tag))
+		.map((page) =>
+			publicGlobalTags.some((tag) => isMarkedAsFullyPublic(page, tag))
 				? toFullyPublicPage(page, hiddenStringValue)
-				: toPotentiallyPartiallyPublicPage(page, hiddenStringValue);
-		})
+				: toPotentiallyPartiallyPublicPage(page, hiddenStringValue)
+		)
 		// .map(pm => pm.page.children?.[0].metadata.)
 
 		.map(
@@ -370,10 +388,9 @@ export const findPublicPages = <M0 extends RO>(
 		 *
 		 */
 		.map((pageMeta) =>
-			pageMeta.isFullyPublic ||
-			(pageMeta as any).isDailyNotesPage || // TODO TS
-			(doNotHideTodoAndDone && ["TODO", "DONE"].includes(pageMeta.originalTitle))
+			pageMeta.isFullyPublic || (pageMeta as any).isDailyNotesPage // TODO TS
 				? ((pageMeta.isTitleHidden = false), //
+				  //   (pageMeta.page.title = escapeHtml(pageMeta.page.title)),
 				  pageMeta)
 				: ((pageMeta.isTitleHidden = true), //
 				  (pageMeta.page.title = `(${hiddenStringValue}) ${pageMeta.page.uid}`),
@@ -406,6 +423,9 @@ export const findPublicPages = <M0 extends RO>(
 					// 	)(undefined) //
 					// )
 					// .map((block) => block.metadata.)
+
+					// .map(traverseBlockRecursively(() => (block) => withMetadata({})(block), {})(undefined))
+					.map(traverseBlockRecursively(parseASTFromBlockString, {})(undefined))
 					.map(
 						traverseBlockRecursively(
 							// <
@@ -422,7 +442,7 @@ export const findPublicPages = <M0 extends RO>(
 								rootParentPage: currentPageWithMeta,
 								publicTags, // TODO CONFIRM
 								publicOnlyTags,
-								privateTag: privateTag as string, // TODO TS wtf
+								privateTags,
 							}
 						)(undefined)
 					)
@@ -482,8 +502,8 @@ export const findPublicPages = <M0 extends RO>(
 					)
 					.map(
 						traverseBlockRecursively(hideBlockStringsIfNotPublic, {
-							doNotHideTodoAndDone,
 							hiddenStringValue,
+							rootParentPage: currentPageWithMeta,
 						})(undefined)
 					)
 					// .map((block) => block.metadata.)
@@ -530,14 +550,12 @@ export const findPublicPages = <M0 extends RO>(
 		.sort((_a, _b) =>
 			sortUntilFirstXORMatchUsing<PageWithMetadata<{}, {}>>(
 				[
-					(AB): boolean => publicTags.some((publicTag) => titleIsPublicTag(AB.page, publicTag)),
 					(AB): boolean =>
 						AB.isFullyPublic &&
 						/**
 						 * TODO isTerm logic
 						 */
 						[...new Set((AB.linkedMentions || []).map((ref) => ref.uidOfPageContainingBlock))].length > 2,
-					(AB): boolean => doNotHideTodoAndDone && ["TODO", "DONE"].includes(AB.originalTitle),
 					//
 					(AB): boolean => !!AB.isDailyNotesPage && new Date(AB.page.uid) <= new Date(),
 					(A, B): number =>
@@ -607,19 +625,6 @@ function keepOnlyKnownPropertiesOfPage<M0 extends RO>(
 	};
 }
 
-function titleIsPublicTag<M0 extends RO, M1 extends RO>(page: Page<M0, M1>, publicTag: string): boolean {
-	if (!page.title) {
-		return false;
-	}
-
-	const { title } = page;
-
-	return !![
-		title, //
-		...createLinkedReferences(title).map((lr) => lr.fullStr),
-	].includes(publicTag);
-}
-
 function isMarkedAsFullyPublic<M0 extends RO & { hasCodeBlock: boolean }, M1 extends RO>(
 	page: Page<M0, M1>,
 	publicTag: string
@@ -634,6 +639,10 @@ function isMarkedAsFullyPublic<M0 extends RO & { hasCodeBlock: boolean }, M1 ext
 	return !!(
 		page.children && //
 		page.children.length &&
+		/**
+		 * TODO only do this when block.metadata.stackTree is available,
+		 * to properly check linkedReferences lol
+		 */
 		page.children.some((block) => !block.children && block.string === publicTag && !block.metadata.hasCodeBlock)
 	);
 }

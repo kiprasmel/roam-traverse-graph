@@ -6,8 +6,9 @@ import fs from "fs-extra";
 import path from "path";
 
 import { findPublicPages } from "./findPublicPages";
+import { maxWidthOfLine } from "./hideBlockStringsIfNotPublic";
 
-import { createLinkedReferences, readJsonSync, writeJsonSync } from "../util";
+import { readJsonSync, writeJsonSync } from "../util";
 import { Block, LinkedMention, PageWithMetadata, RO } from "../types";
 
 /**
@@ -150,7 +151,7 @@ export const pagesWithMetaAndHtml: PageWithMetadata<
 		"originalTitleOfPageContainingBlock",
 		(meta.linkedMentions || []) //
 			.sort((A, B) => (B.blockRef["create-time"] || -Infinity) - (A.blockRef["create-time"] || -Infinity) || 0)
-	).filter((mentionsGroupedByPage) => mentionsGroupedByPage.length);
+	).filter((mentionsGroupedByPageTmp) => mentionsGroupedByPageTmp.length);
 
 	/**
 	 * TODO - we want static html here. is it time for Svelte?!
@@ -165,23 +166,12 @@ export const pagesWithMetaAndHtml: PageWithMetadata<
 	 */
 	// let initialOrderOfLinkedMentions: "oldest-first" | "newest-first" = "newest-first";
 	// eslint-disable-next-line prefer-const
-	let initialOrderOfLinkedMentions: "oldest-first" | "newest-first" = (
-		meta.linkedReferencesFromChildren || []
-	).filter(
+	let initialOrderOfLinkedMentions: "oldest-first" | "newest-first" = (meta.linkedReferencesFromChildren || []).some(
 		(lr) =>
 			lr.blockRef.metadata.depth === 1 &&
-			// lr.blockRef.metadata.linkedReferences.map((blr) => blr.candidateLR.origStr).includes("newest-first") && // TODO config
-			// !lr.blockRef.metadata.linkedReferences.map((blr) => blr.candidateLR.origStr).includes("oldest-first") // TODO config
-
-			// // TODO config
-			// createLinkedReferences("newest-first").filter(
-			// 	(candidate) => candidate.fullStr === lr.blockRef.metadata.originalString
-			// ).length &&
 			// TODO config
-			createLinkedReferences("oldest-first").filter(
-				(candidate) => candidate.fullStr === lr.blockRef.metadata.originalString
-			).length
-	).length
+			lr.referencedPageRef.originalTitle === "oldest-first"
+	)
 		? "oldest-first"
 		: "newest-first";
 
@@ -275,6 +265,64 @@ export const pagesWithMetaAndHtml: PageWithMetadata<
 					does not seem to be going in weird places, surprisingly just works
 				*/
 				position: absolute;
+			}
+
+			/*
+				links
+			*/
+			a {
+				text-decoration: none;
+			}
+			a:hover {
+				text-decoration: underline;
+			}
+
+			/* same color for visited & non visited */
+			a, a:visited {
+				color: blue;
+			}
+
+			pre {
+				border: 1px solid;
+				border-radius: 4px;
+				position: relative;
+			}
+			pre > .lang {
+				position: absolute;
+				top: 0;
+				right: 0;
+				padding: 0.3em;
+				border-bottom: 1px solid black;
+				border-left: 1px solid black;
+
+				pointer-events: none;
+				user-select: none;
+
+				color: black;
+			}
+			pre[data-line-count="1"] > .lang,
+			pre[data-line-count="2"] > .lang {
+				padding: 0.2em;
+			}
+			pre > code {
+				display: block;
+				padding: 1em;
+			}
+			pre[data-first-line-clashes] > code {
+  				margin-top: 1.8em;
+			}
+			code.inline {
+				/*
+				padding: 0.1em 0.4em;
+				background-color: hsl(35, 100%, 80%);
+				*/
+				padding: 0em 0.4em;
+				border: 2px solid hsl(35, 100%, 80%);
+				color: black;
+				border-radius: 3px;
+			}
+			code {
+				overflow-x: auto;
 			}
 
 		</style>
@@ -534,7 +582,7 @@ function blockRecursively<M0, M1>(block: Block<M0, M1>, existingTabCount: number
 	const selfHtml: string = !block.string
 		? ""
 		: `
-	<div style="max-width: 65ch;">
+	<div style="max-width: ${maxWidthOfLine}ch;">
 			${block.string}
 	</div>
 	`;
@@ -544,9 +592,9 @@ function blockRecursively<M0, M1>(block: Block<M0, M1>, existingTabCount: number
 	const joinedChildrenHtml: string = !block.children?.length ? "" : joinChildren(childrenHtml, 1);
 
 	return `<li id="${block.uid}">
-	<a href="#${block.uid}" class="block-ref"></a>
+<a href="#${block.uid}" class="block-ref"></a>
 
-	${selfHtml}
+${selfHtml}
 
 ${joinedChildrenHtml}
 </li>` //
@@ -559,18 +607,19 @@ ${joinedChildrenHtml}
 		.replace(/<li>\n\t*<\/li>/, "<li></li>");
 }
 
-function joinChildren(childrenHtmls: string[], existingTabCount: number): string {
-	return `${"\t".repeat(existingTabCount)}<ul>
+function joinChildren(childrenHtmls: string[], _existingTabCount: number): string {
+	return `${"\t".repeat(0)}<ul>
 ${childrenHtmls
 	.filter((html) => !!html)
 	.map((html) =>
 		html
 			.split("\n")
-			.map((line) => "\t".repeat(existingTabCount + 1) + line)
+			// .map((line) => "\t".repeat(0 + 1) + line)
+			.map((line) => "\t".repeat(0 + 0) + line)
 			.join("\n")
 	)
 	.join("\n")}
-${"\t".repeat(existingTabCount)}</ul>`;
+${"\t".repeat(0)}</ul>`;
 
 	// ${childrenHtmls.map((html) => "\t".repeat(existingTabCount + 1) + html).join("\n")}
 }
@@ -637,7 +686,7 @@ function drawLinkedMentions<M0 extends RO, M1 extends RO>(mentionsGroupedByPage:
 			${
 				!mention.blockRef.string
 					? ""
-					: `<div style="max-width: 65ch; ">
+					: `<div style="max-width: ${maxWidthOfLine}ch; ">
 				${mention.blockRef.string}
 			</div>`
 			}
