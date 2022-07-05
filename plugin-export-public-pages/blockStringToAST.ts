@@ -13,6 +13,9 @@ export const LLBeginBoundaries = {
 	"[[": "]]",
 	"#": "#", // edge-case
 } as const
+export const blockReferenceBeginBoundaries = {
+	"((": "))",
+} as const
 export const formattingBeginBoundaries = {
 	"__": "__",
 	"**": "**",
@@ -23,6 +26,7 @@ export const beginBoundaries = {
 	...codeblockBeginBoundaries,
 	...commandBeginBoundaries,
 	...LLBeginBoundaries,
+	...blockReferenceBeginBoundaries,
 	...formattingBeginBoundaries,
 } as const
 
@@ -39,6 +43,9 @@ export const LLEndBoundaries = {
 	// // "]]": {}, // duplicate
 	// // "#": {}, // edge-case
 } as const
+export const blockReferenceEndBoundaries = {
+	[blockReferenceBeginBoundaries["(("]]: "((",
+} as const
 export const formattingEndBoundaries = {
 	[formattingBeginBoundaries["__"]]: "__",
 	[formattingBeginBoundaries["**"]]: "**",
@@ -49,6 +56,7 @@ export const endBoundaries = {
 	...codeblockEndBoundaries,
 	...commandEndBoundaries,
 	...LLEndBoundaries,
+	...blockReferenceEndBoundaries,
 	...formattingEndBoundaries,
 } as const
 
@@ -67,7 +75,17 @@ export const extras = {
 	["#"]: {
 		discontinueIfEncounter: [
 			...boundaryKeys,
+			"(",
+			")",
+			",",
+			"'",
+			'"',
+			"!",
+			"?",
 			" ",
+			"\n",
+			"{",
+			"}",
 		] as string[],
 		doesNotHaveEnd: true,
 	},
@@ -395,6 +413,7 @@ function log(...xs: any[]): void {
 }
 
 export function ASStoAST(ass: ASS): AST {
+	console.log({ass})
 	const r = loop(0)
 	log(() => JSON.stringify(r, null, 4))
 	return r[0]
