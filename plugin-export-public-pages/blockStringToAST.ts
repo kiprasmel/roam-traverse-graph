@@ -4,6 +4,10 @@ export const codeblockBeginBoundaries = {
 	"```": "```",
 	"`": "`",
 } as const
+// TODO
+// export const quoteBeginBoundaries = {
+// 	"> ": "> ", // edge-case
+// }
 export const commandBeginBoundaries = {
 	"{{": "}}",
 } as const
@@ -24,6 +28,7 @@ export const formattingBeginBoundaries = {
 } as const
 export const beginBoundaries = {
 	...codeblockBeginBoundaries,
+	// ...quoteBeginBoundaries,
 	...commandBeginBoundaries,
 	...LLBeginBoundaries,
 	...blockReferenceBeginBoundaries,
@@ -34,6 +39,9 @@ export const codeblockEndBoundaries = {
 	[codeblockBeginBoundaries["```"]]: "```",
 	[codeblockBeginBoundaries["`"]]: "`",
 } as const
+// export const quoteEndBoundaries = {
+// 	// "> ": "> ", // edge-case
+// }
 export const commandEndBoundaries = {
 	[commandBeginBoundaries["{{"]]: "{{",
 } as const
@@ -54,6 +62,7 @@ export const formattingEndBoundaries = {
 } as const
 export const endBoundaries = {
 	...codeblockEndBoundaries,
+	// ...quoteEndBoundaries,
 	...commandEndBoundaries,
 	...LLEndBoundaries,
 	...blockReferenceEndBoundaries,
@@ -91,7 +100,10 @@ export const extras = {
 	},
 	["::"]: {
 		doesNotHaveBegin: true,
-	}
+	},
+	["> "]: {
+		doesNotHaveEnd: true,
+	},
 } as const
 
 // TODO rename to "isSubstr"
