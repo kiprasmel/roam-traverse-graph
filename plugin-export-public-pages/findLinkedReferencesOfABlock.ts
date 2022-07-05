@@ -146,5 +146,25 @@ export const getLinkedReferences = (
 		if (boundary in LLBeginBoundaries) {
 			return children.map((c) => (typeof c === "string" ? c : getLinkedReferences(c))).flat();
 		}
-		return [];
+		else {
+			// return children.filter((c) => (typeof c !== "string")).map(c => typeof c === "string" ? c : getLinkedReferences(c)).flat()
+
+			// return (
+				// 	children
+			// 		/**
+			// 		 * do not take top-level strings, because they are not inside
+			// 		 * a linked reference boundary
+			// 		 */
+			// 		.filter((c) => typeof c !== "string")
+			// 		.map((c) =>
+			// 			getLinkedReferences(
+			// 				c as TreeBoundaryNode // TODO TS AUTO_INFER
+			// 			)
+			// 		)
+			// 		.flat()
+			// );
+
+			// return children.map((c) => getLinkedReferences(c)).flat();
+			return getLinkedReferences(children)
+		}
 	}).flat();

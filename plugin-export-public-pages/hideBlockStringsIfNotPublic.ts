@@ -13,6 +13,7 @@ import {
 	AST,
 	beginBoundaries,
 	BeginBoundary,
+	blockReferenceBeginBoundaries,
 	codeblockBeginBoundaries,
 	commandBeginBoundaries,
 	endBoundaries,
@@ -46,6 +47,7 @@ export const hideBlockStringsIfNotPublic: MutatingActionToExecute<
 	{
 		isPublic: boolean;
 		isPublicOnly: boolean;
+		originalString: string;
 		hasCodeBlock: boolean;
 		linkedReferences: LinkedRef[];
 		ASS: ASS;
@@ -152,6 +154,9 @@ export const hideBlockStringsIfNotPublic: MutatingActionToExecute<
 
 					// return item.text; // TODO FIXME
 					// return extractMetaPagePotentiallyHiddenTitleFromLinkedRef(block, item);
+				} else if (kind in blockReferenceBeginBoundaries) {
+					// TODO ACTUALLY INLINE CONTENTS OF BLOCK (or not. think about better UX)
+					return `((${escapedText}))`;
 				} else if (kind in formattingBeginBoundaries) {
 					if (kind === "**") {
 						return `<b>${escapedText}</b>`;
@@ -229,6 +234,7 @@ export const hideBlockStringsIfNotPublic: MutatingActionToExecute<
 
 				onTextInsideNonText: ({ item, parent }) => {
 					const kind = parent[0];
+					// console.log({ parent, kind, item, block });
 
 					if (kind in codeblockBeginBoundaries) {
 						return "";
@@ -248,6 +254,8 @@ export const hideBlockStringsIfNotPublic: MutatingActionToExecute<
 						// });
 
 						return extractMetaPagePotentiallyHiddenTitleFromLinkedRef(block, item);
+					} else if (kind in blockReferenceBeginBoundaries) {
+						return ""; // TODO
 					} else if (kind in formattingBeginBoundaries) {
 						return ""; // TODO
 					} else {
@@ -269,36 +277,42 @@ function extractMetaPagePotentiallyHiddenTitleFromLinkedRef(
 	block: Block<
 		{
 			linkedReferences: LinkedRef[];
+			originalString: string;
 		},
 		{}
 	>,
 	item: TreeTextNode
 ): string {
-	// const linkedReference = block.metadata.linkedReferences.find((lr) => lr.textNode === item);
+	if (!item) {
+		return "";
+	}
 
-	const linkedReference = block.metadata.linkedReferences.find(
-		(lr) =>
-			lr.metaPage.originalTitle === item ||
-			/**
-			 * TODO FIXME temp work-around until i remove the "#foo's" in my graph
-			 */
-			(item.includes("#") && item.includes("'") && item.split("'")[0] === lr.metaPage.originalTitle) //
-	);
+	const linkedReference = block.metadata.linkedReferences.find((lr) => lr.metaPage.originalTitle === item);
 
 	if (!linkedReference) {
 		fs.appendFileSync("bad.off", item + "\n");
 
-		// throw new Error(
-		// 	"linked reference should've been there but wasn't." + //
-		// 		"\n" +
-		// 		"item.text = " +
-		// 		item.text +
-		// 		"\n" +
-		// 		"block.metadata.linkedReferences = " +item
-		// 		block.metadata.linkedReferences.map((lr) => lr.textNode.text)
-		// );
-		// TODO FIXME HACK
-		return "__WHAT__";
+		throw new Error(
+			"linked reference should've been there but wasn't." + //
+				"\n" +
+				"block.metadata.originalString (block.string was reset previously) = " +
+				block.metadata.originalString +
+				"\n" +
+				"item.text = " +
+				item +
+				"\n" +
+				"block.refs = " +
+				JSON.stringify(block.refs, null, 2) +
+				"\n" +
+				"block.metadata.linkedReferences (" +
+				block.metadata.linkedReferences.length +
+				") = " +
+				block.metadata.linkedReferences.map((lr) => lr.text) +
+				"\n" +
+				"AST: " +
+				JSON.stringify((block.metadata as any).AST, null, 2) // TODO TS
+		);
+		// return "__WHAT__";
 	}
 
 	/**
