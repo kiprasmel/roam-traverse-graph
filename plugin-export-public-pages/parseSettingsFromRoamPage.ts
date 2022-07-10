@@ -68,8 +68,6 @@ export const parseRoamTraverseGraphSettingsFromRoamPage = <M0 extends RO, M1 ext
 			newerVersions.map((s) => s.version).join("\n");
 
 		console.warn(msg);
-
-		return {};
 	}
 
 	if (willProceedWith === "never") {
