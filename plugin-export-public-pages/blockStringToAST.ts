@@ -1,3 +1,5 @@
+#!/usr/bin/env ts-node-dev
+
 import assert from "assert"
 
 export const codeblockBeginBoundaries = {
@@ -143,7 +145,7 @@ function isToken(pos: number, str: string): false | Boundary {
 	return false
 }
 
-enum B {
+export enum B {
 	"text"  = 0,
 	"begin" = 1,
 	"end"   = 2,
@@ -155,6 +157,7 @@ function humanKind(b: B): "text" | "begin" | "end" {
 
 // type TextNode = string
 export type TextNode = readonly [B.text, string]
+// export type BoundaryNode = readonly [B.begin, BeginBoundary] | [B.end, EndBoundary] // TODO
 export type BoundaryNode = readonly [B.begin | B.end, Boundary]
 
 export type StackNode = TextNode | BoundaryNode
@@ -425,7 +428,6 @@ function log(...xs: any[]): void {
 }
 
 export function ASStoAST(ass: ASS): AST {
-	console.log({ass})
 	const r = loop(0)
 	log(() => JSON.stringify(r, null, 4))
 	return r[0]
@@ -519,6 +521,31 @@ export const tests: TestRet = [
 			],
 			"yes",
 		],
+	],
+	[
+		"a [[b c [[d e]] f]] g",
+		[
+			"a ",
+			["[[",
+				"b c ",
+				["[[",
+					"d e"
+				],
+				" f",
+			],
+			" g",
+		],
+		[
+			[0, "a "],
+			[1, "[["],
+			[0, "b c "],
+			[1, "[["],
+			[0, "d e"],
+			[2, "]]"],
+			[0, " f"],
+			[2, "]]"],
+			[0, " g"],
+		]
 	],
 
 	[

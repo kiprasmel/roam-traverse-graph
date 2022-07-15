@@ -1,7 +1,7 @@
 /* eslint-disable indent */
-/* eslint-disable no-param-reassign */
 
-import { ASS, AST, LLBeginBoundaries, TreeBoundaryNode } from "./blockStringToAST";
+import { ASS, AST } from "./blockStringToAST";
+import { getLinkedReferences } from "./getLinkedReferencesFromAST";
 
 import { MutatingActionToExecute } from "../traverseBlockRecursively";
 import { LinkedMention, LinkedRef, PageWithMetadata } from "../types";
@@ -121,50 +121,3 @@ function findMatchingLinkedReferences(
 		})
 		.flat();
 }
-
-/**
- * TODO: what to do with nested linked references?
- * 
- * i.e. what should be returned if input is `[[foo [[bar]] baz]]`?
- * 
- * currently i think it'd be ["foo ", "bar", " baz"],
- * but should it be e.g. ["foo [[bar]] baz", "bar"]
- * 
- * 
- * 
- * TODO: abstract into "getContentsOf"
- * 
- */
-export const getLinkedReferences = (
-	AST: AST //
-): string[] =>
-	AST.map((item) => {
-		if (typeof item === "string") return [];
-
-		const [boundary, ...children]: TreeBoundaryNode = item;
-
-		if (boundary in LLBeginBoundaries) {
-			return children.map((c) => (typeof c === "string" ? c : getLinkedReferences(c))).flat();
-		}
-		else {
-			// return children.filter((c) => (typeof c !== "string")).map(c => typeof c === "string" ? c : getLinkedReferences(c)).flat()
-
-			// return (
-				// 	children
-			// 		/**
-			// 		 * do not take top-level strings, because they are not inside
-			// 		 * a linked reference boundary
-			// 		 */
-			// 		.filter((c) => typeof c !== "string")
-			// 		.map((c) =>
-			// 			getLinkedReferences(
-			// 				c as TreeBoundaryNode // TODO TS AUTO_INFER
-			// 			)
-			// 		)
-			// 		.flat()
-			// );
-
-			// return children.map((c) => getLinkedReferences(c)).flat();
-			return getLinkedReferences(children)
-		}
-	}).flat();

@@ -3,8 +3,9 @@
 import { MutatingActionToExecute } from "../traverseBlockRecursively";
 import { PageWithMetadata } from "../types";
 import { withMetadata } from "../util/withMetadata";
+
 import { ASS, AST } from "./blockStringToAST";
-import { getLinkedReferences } from "./findLinkedReferencesOfABlock";
+import { getLinkedReferences } from "./getLinkedReferencesFromAST";
 
 export const removeUnknownProperties: MutatingActionToExecute<{}> = () => (block) =>
 	!block
