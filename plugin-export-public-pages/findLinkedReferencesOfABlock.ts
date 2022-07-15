@@ -1,11 +1,11 @@
 /* eslint-disable indent */
-/* eslint-disable no-param-reassign */
 
-import { ReadonlyTuple } from "util/tuple";
+import { ASS, AST } from "./blockStringToAST";
+import { getLinkedReferences } from "./getLinkedReferencesFromAST";
+
 import { MutatingActionToExecute } from "../traverseBlockRecursively";
 import { LinkedMention, LinkedRef, PageWithMetadata } from "../types";
 import { withMetadata } from "../util/withMetadata";
-import { StackTreeItem, StackTree, StackTreeTextItem, Stack, StackTreeBoundaryItem } from "./parseASTFromBlockString";
 
 export const findIfPagesHavePublicLinkedReferencesAndLinkThemAsMentions: MutatingActionToExecute<
 	{
@@ -20,15 +20,15 @@ export const findIfPagesHavePublicLinkedReferencesAndLinkThemAsMentions: Mutatin
 		isPublic: boolean;
 		isPublicOnly: boolean;
 		depth: number;
-		stack: Stack;
-		stackTree: StackTreeItem[];
+		ASS: ASS;
+		AST: AST;
 	}
 > = ({
 	allPagesWithMetadata, //
 	rootParentPage,
 }) => (block) => {
 	// console.log({allPagesWithMetadata: allPagesWithMetadata.map(meta => meta.originalTitle)});
-	const linkedReferences: LinkedRef[] = findMatchingLinkedReferences(block.metadata.stackTree, allPagesWithMetadata);
+	const linkedReferences: LinkedRef[] = findMatchingLinkedReferences(block.metadata.AST, allPagesWithMetadata);
 	// console.log({stack: block.metadata.stack, linkedReferences});
 
 	const isBlockPublic = block.metadata.isPublic || block.metadata.isPublicOnly;
@@ -103,38 +103,21 @@ export const findIfPagesHavePublicLinkedReferencesAndLinkThemAsMentions: Mutatin
 };
 
 function findMatchingLinkedReferences(
-	blockStackTree: StackTree,
+	AST: AST,
 	allPagesWithMetadata: PageWithMetadata<{}, {}>[] // TODO TS
 ): LinkedRef[] {
-	const linkedRefs: string[] = getLinkedReferences(blockStackTree)
+	const linkedRefs: string[] = getLinkedReferences(AST);
 
 	return allPagesWithMetadata
 		.map((meta): LinkedRef | [] => {
-			let current: string | undefined = linkedRefs.find(lr => lr === (meta.originalTitle))
+			let current: string | undefined = linkedRefs.find((lr) => lr === meta.originalTitle);
 
 			return !current
 				? []
 				: {
 						metaPage: meta,
 						text: current,
-				}
+				  };
 		})
 		.flat();
-}
-
-/**
- * TODO unique? or should keep it this way to resemble how many times linked ref was used?
- */
-export const getLinkedReferences = (
-	blockStackTree: StackTree //
-): string[] => {
-
-	return (blockStackTree
-		// .filter(item => item.type === "linked-reference" && item.children.length)
-		.map(item => item.type === "linked-reference"
-			? (item.children.filter(c => c.type === "text").map(c => [c, item] as const) as unknown as ReadonlyTuple<StackTreeItem, StackTreeBoundaryItem>[])
-				// .filter(([child, parent]) => parent.type === "linked-reference" && child.type === "text")
-				.map(([child]) => child as StackTreeTextItem).map(ref => ref.text)
-		: "children" in item ? getLinkedReferences(item.children) : [])
-		).flat()
 }
