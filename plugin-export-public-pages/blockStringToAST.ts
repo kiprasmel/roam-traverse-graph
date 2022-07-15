@@ -488,11 +488,12 @@ function runTest([str, expTree, expStack]: TestData) {
 	const outStack: ASS = blockStringToASS(str)
 	const outTree: AST = ASStoAST(outStack)
 
-	assert.deepStrictEqual(outTree, expTree)
-
 	if (expStack) {
+		log({ outStack })
 		assert.deepStrictEqual(outStack, expStack)
 	}
+
+	assert.deepStrictEqual(outTree, expTree)
 }
 
 function runTests() {
