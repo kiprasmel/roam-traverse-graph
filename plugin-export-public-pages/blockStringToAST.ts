@@ -82,6 +82,8 @@ export type Boundary = BeginBoundary | EndBoundary
 
 export const boundaryKeys: Boundary[] = Object.keys(boundaries) as Boundary[] // TODO TS
 
+export const LLBoundaryKeys: string[] = Object.keys({ ...LLBeginBoundaries, ...LLEndBoundaries } as const)
+
 export const extras = {
 	["#"]: {
 		discontinueIfEncounter: [

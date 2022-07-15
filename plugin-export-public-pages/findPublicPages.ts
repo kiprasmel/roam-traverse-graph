@@ -25,6 +25,7 @@ import {
 
 import { withMetadata } from "../util/withMetadata";
 import { parseASTFromBlockString } from "./parseASTFromBlockString";
+import { LLBoundaryKeys } from "./blockStringToAST";
 
 export type SettingsForPluginFindPublicPages = {
 	/**
@@ -388,7 +389,7 @@ export const findPublicPages = <M0 extends RO>(
 		 *
 		 */
 		.map((pageMeta) =>
-			pageMeta.isFullyPublic || (pageMeta as any).isDailyNotesPage // TODO TS
+			!pageMeta.isTitleHidden && (pageMeta.isFullyPublic || (pageMeta as any).isDailyNotesPage) // TODO TS
 				? ((pageMeta.isTitleHidden = false), //
 				  //   (pageMeta.page.title = escapeHtml(pageMeta.page.title)),
 				  pageMeta)
@@ -651,6 +652,9 @@ function toFullyPublicPage<M0 extends RO, M1 extends RO>(
 	page: Page<M0, M1>,
 	hiddenStringValue: string
 ): PageWithMetadata<M0 & M1, M1> {
+	const titleHasNestedLinkedRefs: boolean = checkHasNestedLinkedRefs(page.title);
+	const isTitleHidden = !!titleHasNestedLinkedRefs;
+
 	return {
 		page, //
 		originalTitle: page.title,
@@ -661,7 +665,8 @@ function toFullyPublicPage<M0 extends RO, M1 extends RO>(
 		hasAtLeastOnePublicBlockAnywhereInTheHierarchy: true,
 		hasAtLeastOnePublicLinkedReference: false, // until found out otherwise
 		hasAtLeastOneMentionOfAPublicLinkedReference: false, // CHANGEABLE LATER
-		isTitleHidden: false, // CHANGEABLE LATER
+		isTitleHidden, // CHANGEABLE LATER
+		titleHasNestedLinkedRefs,
 		wordCount: 0,
 		wordCountOfLinkedMentions: 0,
 		wordCountTotal: 0,
@@ -672,6 +677,9 @@ function toPotentiallyPartiallyPublicPage<M0 extends RO, M1 extends RO>(
 	page: Page<M0, M1>, //
 	hiddenStringValue: string
 ): PageWithMetadata<M0 & M1, M1> {
+	const titleHasNestedLinkedRefs: boolean = checkHasNestedLinkedRefs(page.title);
+	const isTitleHidden = !!titleHasNestedLinkedRefs;
+
 	return {
 		page, //
 		originalTitle: page.title,
@@ -682,9 +690,31 @@ function toPotentiallyPartiallyPublicPage<M0 extends RO, M1 extends RO>(
 		hasAtLeastOnePublicBlockAnywhereInTheHierarchy: false, // CHANGEABLE LATER
 		hasAtLeastOnePublicLinkedReference: false, // CHANGEABLE LATER
 		hasAtLeastOneMentionOfAPublicLinkedReference: false, // CHANGEABLE LATER // TODO VERIFY
-		isTitleHidden: false, // CHANGEABLE LATER // TODO VERIFY
+		isTitleHidden, // CHANGEABLE LATER // TODO VERIFY
+		titleHasNestedLinkedRefs,
 		wordCount: 0,
 		wordCountOfLinkedMentions: 0,
 		wordCountTotal: 0,
 	};
+}
+
+/**
+ * TODO proper implementation ("decorativeAST"?)
+ *
+ * currently it's unclear how to handle nested linked refs,
+ * esp. when it comes to privacy,
+ * because if a linked ref deeper in the tree is private,
+ * meanwhile earlier in the tree the linked refs are public,
+ * then w/ current hacky solution,
+ * we'd end up leaking the private page's title.
+ *
+ */
+function checkHasNestedLinkedRefs(title: Page<RO, RO>["title"]): boolean {
+	const titleHasNestedLinkedRefs: boolean = LLBoundaryKeys.some((boundary) => title.includes(boundary));
+
+	if (titleHasNestedLinkedRefs) {
+		fs.appendFileSync("nested-ll.off", title + "\n");
+	}
+
+	return titleHasNestedLinkedRefs;
 }
