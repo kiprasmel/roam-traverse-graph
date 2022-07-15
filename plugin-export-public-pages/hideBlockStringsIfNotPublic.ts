@@ -289,35 +289,70 @@ function extractMetaPagePotentiallyHiddenTitleFromLinkedRef(
 
 	const linkedReference = block.metadata.linkedReferences.find((lr) => lr.metaPage.originalTitle === item);
 
-	if (!linkedReference) {
-		fs.appendFileSync("bad.off", item + "\n");
-
-		throw new Error(
-			"linked reference should've been there but wasn't." + //
-				"\n" +
-				"block.metadata.originalString (block.string was reset previously) = " +
-				block.metadata.originalString +
-				"\n" +
-				"item.text = " +
-				item +
-				"\n" +
-				"block.refs = " +
-				JSON.stringify(block.refs, null, 2) +
-				"\n" +
-				"block.metadata.linkedReferences (" +
-				block.metadata.linkedReferences.length +
-				") = " +
-				block.metadata.linkedReferences.map((lr) => lr.text) +
-				"\n" +
-				"AST: " +
-				JSON.stringify((block.metadata as any).AST, null, 2) // TODO TS
-		);
-		// return "__WHAT__";
+	if (linkedReference) {
+		/**
+		 * TODO PRIVACY - ensure that the page.title
+		 * already had a chance to be hidden.
+		 */
+		return linkedReference.metaPage.page.title;
 	}
 
 	/**
-	 * TODO PRIVACY - ensure that the page.title
-	 * already had a chance to be hidden.
+	 * nested linked references etc.
+	 * TODO proper implementation ("decorativeAST" or smthn?)
 	 */
-	return linkedReference.metaPage.page.title;
+	const linkedReferenceFallback = block.metadata.linkedReferences.filter((lr) =>
+		lr.metaPage.originalTitle.startsWith(item)
+	);
+
+	if (linkedReferenceFallback.length) {
+		fs.appendFileSync("semi-bad.off", item + "\n");
+
+		if (linkedReferenceFallback.length === 1) {
+			return linkedReferenceFallback[0].metaPage.page.title;
+		} else if (linkedReferenceFallback.length > 1) {
+			const longestLR = linkedReferenceFallback
+				.map((l) => l)
+				.reduce(
+					(longest, curr) =>
+						curr.metaPage.originalTitle.length >= longest.metaPage.originalTitle.length ? curr : longest,
+					{
+						metaPage: {
+							originalTitle: "",
+							page: {
+								title: "",
+							},
+						},
+					}
+				);
+
+			return longestLR.metaPage.page.title;
+		} else {
+			throw new Error("never");
+		}
+	}
+
+	fs.appendFileSync("bad.off", item + "\n");
+
+	throw new Error(
+		"linked reference should've been there but wasn't." + //
+			"\n" +
+			"block.metadata.originalString (block.string was reset previously) = " +
+			block.metadata.originalString +
+			"\n" +
+			"item.text = " +
+			item +
+			"\n" +
+			"block.refs = " +
+			JSON.stringify(block.refs, null, 2) +
+			"\n" +
+			"block.metadata.linkedReferences (" +
+			block.metadata.linkedReferences.length +
+			") = " +
+			block.metadata.linkedReferences.map((lr) => lr.text) +
+			"\n" +
+			"AST: " +
+			JSON.stringify((block.metadata as any).AST, null, 2) // TODO TS
+	);
+	// return "__WHAT__";
 }
