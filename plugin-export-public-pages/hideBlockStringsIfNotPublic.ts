@@ -150,7 +150,11 @@ export const hideBlockStringsIfNotPublic: MutatingActionToExecute<
 					/**
 					 * TODO proper href (fix title, also hiding, etc.)
 					 */
-					return `<a href="/${escapedText}.html">${escapedText}</a>`;
+					const escapedPotentiallyHiddenText: string = escapeHtml(
+						extractMetaPagePotentiallyHiddenTitleFromLinkedRef(block, item)
+					);
+
+					return `<a href="/${escapedPotentiallyHiddenText}.html">${escapedPotentiallyHiddenText}</a>`;
 
 					// return item.text; // TODO FIXME
 					// return extractMetaPagePotentiallyHiddenTitleFromLinkedRef(block, item);
