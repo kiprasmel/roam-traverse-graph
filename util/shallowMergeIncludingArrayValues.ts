@@ -49,7 +49,7 @@ export const shallowMergeIncludingArrayValues = <
 		if (Array.isArray(dest[k])) {
 			if (!Array.isArray(src[k])) {
 				throw new Error(
-					`dest[k] was an array; src[k] was not. k = ${k}, dest[k] = ${dest[k]}, src[k] = ${src[k]}.`
+					`dest[k] was an array; src[k] was not. k = ${String(k)}, dest[k] = ${dest[k]}, src[k] = ${src[k]}.`
 				);
 			}
 
