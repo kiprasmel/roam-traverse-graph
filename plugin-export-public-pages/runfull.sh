@@ -26,6 +26,18 @@ DO_NOT_PUSH_PUBLIC_NOTES="${DO_NOT_PUSH_PUBLIC_NOTES:-0}"
 # possibly in the future - those who are neutral as well
 YES="${YES:-0}"
 
+# fix up (amend) the latest commit in the private & public notes' repos.
+#
+# useful in case you recently ran the script,
+# but then did a few small changes & want to include them
+# w/o waiting, but also w/o polluting the commit history.
+#
+# or, if e.g. commit included some information you don't want public.
+# though, it's not as easy to get rid of completely,
+# see e.g. https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/removing-sensitive-data-from-a-repository
+#
+FIXUP_LAST="${FIXUP_LAST:-0}"
+
 [ -z "$NOTES_OF_NAME" ] && {
 	cache_file="cache--NOTES_OF_NAME"
 	if [ -f "$cache_file" ]; then
@@ -92,8 +104,24 @@ commit_push() {
 	MSG="${1:-Automated snapshot (manual)}"
 
 	do_it() {
-		git commit --no-gpg-sign -m "$MSG"
-		git push
+		COMMIT_AMEND_ARG=""
+		PUSH_FORCE_FLAG=""
+		[ "$FIXUP_LAST" != 0 ] && {
+			AMEND_ARG="--amend"
+
+			# as safe as possible.
+			#
+			# for max safety, it is expected that a "git pull" is performed
+			# before doing the force push.
+			# we do the pull here (as in - the public notes repo),
+			# and also in our "run.sh" script in the private notes repo.
+			#
+			PUSH_FORCE_FLAG="--force --force-with-lease --force-if-includes"
+		}
+
+		git commit $AMEND_ARG --no-gpg-sign -m "$MSG"
+
+		git push $PUSH_FORCE_FLAG
 	}
 
 	if [ "$DO_NOT_REGENERATE_IF_NO_NEW_CHANGES_IN_PRIVATE_NOTES_REPO" == 0 ]; then
