@@ -97,7 +97,11 @@ popd
 ###
 
 diffy() {
-	git diff --staged --stat --color=always | less
+	if [ "$YES" -eq 0 ]; then
+		git            diff --staged --stat --color=always | less
+	else
+		git --no-pager diff --staged --stat --color=always
+	fi
 }
 
 commit_push() {
