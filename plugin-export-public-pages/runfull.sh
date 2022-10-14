@@ -2,7 +2,8 @@
  
 set -e
 
-DIRNAME="$(dirname "$0")"
+# https://stackoverflow.com/a/24112741/9285308
+DIRNAME="$(cd "$(dirname "${BASH_SOURCE[0]}")"; pwd -P)"
 printf "DIRNAME $DIRNAME\n"
 
 PRIVATE_NOTES_DIR="${PRIVATE_NOTES_DIR:-$HOME/projects/notes-private}"
@@ -207,7 +208,7 @@ ROAM_TRAVERSE_GRAPH_COMMIT_SHA="$(get_git_sha)"
 
 ###
 
-"$DIRNAME"/generate-static-html-pages.ts
+yarn ts-node-dev "$DIRNAME"/generate-static-html-pages.ts
 
 pushd "$PUBLIC_NOTES_DIR"
 
