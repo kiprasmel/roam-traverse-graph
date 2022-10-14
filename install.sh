@@ -6,10 +6,11 @@ git submodule update --init --recursive
 
 yarn install --frozen-lockfile
 
-pushd ./roam-research-private-api
+# disabled because we don't use the private api anymore,
+# since we don't export into a separte roam graph, - rather,
+# we generate our static html 
 
-npm ci
-
-# will also download chromium lmao, we really gotta get that edn format going from json...
-
-popd
+#pushd ./roam-research-private-api
+#npm ci
+## will also download chromium lmao, we really gotta get that edn format going from json...
+#popd
