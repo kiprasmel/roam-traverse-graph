@@ -261,11 +261,7 @@ http://github.com/kiprasmel/roam-traverse-graph/commit/$ROAM_TRAVERSE_GRAPH_COMM
 	fi
 fi
 
-if [ "$DO_NOT_PUSH_PUBLIC_NOTES" = 0 ]; then
-	remove_meaningless_files
-else
-	printf "\nNOT removing meaningless files (skipped because DO_NOT_PUSH_PUBLIC_NOTES set).\n\n"
-fi
+remove_meaningless_files
 
 popd
  
