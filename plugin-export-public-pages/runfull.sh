@@ -2,6 +2,9 @@
  
 set -e
 
+DIRNAME="$(dirname "$0")"
+printf "DIRNAME $DIRNAME\n"
+
 PRIVATE_NOTES_DIR="${PRIVATE_NOTES_DIR:-$HOME/projects/notes-private}"
 PRIVATE_NOTES_USERNAME="${PRIVATE_NOTES_USERNAME:-sarpik}"
 PRIVATE_NOTES_REPO_NAME="${PRIVATE_NOTES_REPO_NAME:-notes}" # TODO notes-private by default
@@ -203,8 +206,8 @@ popd
 ROAM_TRAVERSE_GRAPH_COMMIT_SHA="$(get_git_sha)"
 
 ###
- 
-./generate-static-html-pages.ts
+
+"$DIRNAME"/generate-static-html-pages.ts
 
 pushd "$PUBLIC_NOTES_DIR"
 
