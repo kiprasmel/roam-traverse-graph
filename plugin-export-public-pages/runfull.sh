@@ -2,13 +2,13 @@
  
 set -e
 
-PRIVATE_NOTES_DIR="${1:-$HOME/projects/notes-private}"
-PRIVATE_NOTES_USERNAME="${2:-sarpik}"
-PRIVATE_NOTES_REPO_NAME="${3:-notes}" # TODO notes-private by default
-PUBLIC_NOTES_ROOT_URL="${4:-http://kiprasmel.github.io/notes}"
-PUBLIC_NOTES_DIR="${5:-notes}"
-PUBLIC_NOTES_GITHUB_URL=${6:-"http://github.com/kiprasmel/notes"}
-DO_NOT_REGENERATE_IF_NO_NEW_CHANGES_IN_PRIVATE_NOTES_REPO="${7:-0}"
+PRIVATE_NOTES_DIR="${PRIVATE_NOTES_DIR:-$HOME/projects/notes-private}"
+PRIVATE_NOTES_USERNAME="${PRIVATE_NOTES_USERNAME:-sarpik}"
+PRIVATE_NOTES_REPO_NAME="${PRIVATE_NOTES_REPO_NAME:-notes}" # TODO notes-private by default
+PUBLIC_NOTES_ROOT_URL="${PUBLIC_NOTES_ROOT_URL:-http://kiprasmel.github.io/notes}"
+PUBLIC_NOTES_DIR="${PUBLIC_NOTES_DIR:-notes}"
+PUBLIC_NOTES_GITHUB_URL=${PUBLIC_NOTES_GITHUB_URL:-"http://github.com/kiprasmel/notes"}
+DO_NOT_REGENERATE_IF_NO_NEW_CHANGES_IN_PRIVATE_NOTES_REPO="${DO_NOT_REGENERATE_IF_NO_NEW_CHANGES_IN_PRIVATE_NOTES_REPO:-0}"
 
 # set this to true if you don't have access to the private notes repo,
 # but you can open roam & export-all as json
