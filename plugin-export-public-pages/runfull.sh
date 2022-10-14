@@ -82,7 +82,7 @@ repo_has_untracked_changes && {
 		answer="y"
 	fi
 
-	if [ "$answer" = "y" ] || [ "$answer" = "Y" ] || [ "$naswer" = "" ]; then
+	if [ "$answer" = "y" ] || [ "$answer" = "Y" ] || [ "$answer" = "" ]; then
 		printf "\n"
 		git reset --hard HEAD
 	else
