@@ -24,6 +24,11 @@ DO_NOT_RUN_PRIVATE_NOTES="${DO_NOT_RUN_PRIVATE_NOTES:-0}"
 # but without actually pushing nor publishing the changes
 # in the public notes repo.
 # almost like DRY_RUN
+#
+# also useful if you have a custom way to commit & publish changes,
+# e.g. inside a CI environment
+# (e.g. a github action to publish to github pages)
+#
 DO_NOT_PUSH_PUBLIC_NOTES="${DO_NOT_PUSH_PUBLIC_NOTES:-0}"
 
 # should auto-accept prompts that default to yes
@@ -248,6 +253,8 @@ remove_meaningless_files() {
 add_meaningful_files
 diffy
 
+HAS_TEMP_COMMIT=0
+
 COUNT="$(git diff --staged | wc -l)"
 if [ $COUNT -eq 0 ]; then
 	printf "\n0 meaningful changes after individual file examination.\n\n"
@@ -262,10 +269,17 @@ http://github.com/kiprasmel/roam-traverse-graph/commit/$ROAM_TRAVERSE_GRAPH_COMM
 		commit_push "$MSG"
 	else 
 		printf "\nNOT pushing nor publishing public notes (skipped because DO_NOT_PUSH_PUBLIC_NOTES set).\n\n"
+
+		git commit --no-gpg-sign -m "TEMP commit to avoid removing all changes. needs cleanup after remove_meaningless_files"
+		HAS_TEMP_COMMIT=1
 	fi
 fi
 
 remove_meaningless_files
+
+if [ "$HAS_TEMP_COMMIT" -eq 1 ]; then
+	git reset "HEAD~"
+fi
 
 popd
  
