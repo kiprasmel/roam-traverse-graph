@@ -8,7 +8,7 @@ printf "DIRNAME $DIRNAME\n"
 
 PRIVATE_NOTES_DIR="${PRIVATE_NOTES_DIR:-$HOME/projects/notes-private}"
 PRIVATE_NOTES_USERNAME="${PRIVATE_NOTES_USERNAME:-sarpik}"
-PRIVATE_NOTES_REPO_NAME="${PRIVATE_NOTES_REPO_NAME:-notes}" # TODO notes-private by default
+PRIVATE_NOTES_REPO_NAME="${PRIVATE_NOTES_REPO_NAME:-notes-private}"
 PUBLIC_NOTES_ROOT_URL="${PUBLIC_NOTES_ROOT_URL:-http://kiprasmel.github.io/notes}"
 PUBLIC_NOTES_DIR="${PUBLIC_NOTES_DIR:-notes}"
 PUBLIC_NOTES_GITHUB_URL=${PUBLIC_NOTES_GITHUB_URL:-"http://github.com/kiprasmel/notes"}
