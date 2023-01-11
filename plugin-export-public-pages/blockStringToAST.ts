@@ -463,10 +463,47 @@ export function ASStoAST(ass: ASS): AST {
 				stack.push(value as BeginBoundary) // TODO TS `is`
 				const [childAST, processedCount] = loop(pos + 1)
 
-				const tmp: TreeBoundaryNode = [value as Boundary, ...childAST] // TODO OPTIMIZE // TODO TS `is`
-				ast.push(tmp)
+				const nextTokenPos = pos + processedCount + 0
+				const nextNode = nextTokenPos < ass.length ?  ass[nextTokenPos] : null
+				const nextTokenIsEndForOurBeginToken = !!nextNode /** is valid */
+					&& (nextNode[0] === B.end && nextNode[1] === beginBoundaries[value as BeginBoundary]) /** is ending token for current beginning token */
 
-				pos += processedCount - 1 // -1 because next loop cycle will increment
+				if (!nextTokenIsEndForOurBeginToken) {
+					/**
+					 * should've been empty, but is not.
+					 * => meaning we didn't find a matching end of a token.
+					 *
+					 * thus, do _not_ treat the begin of this current token as a boundary,
+					 * and instead - as regular text.
+					 *
+					 */
+
+					stack.pop() // remove value from stack (the one we just added), i.e. no longer expected to find an ending
+					ast.push(value) // add as regular text
+
+					/**
+					 * do not modify `pos`, since won't have effect:
+					 */
+					// pos++ // current token
+					// pos-- // next loop cycle
+
+					/**
+					 * TODO OPTIMIZE
+					 * we're throwing away the whole `childAST`,
+					 * even if only a part of it was bad.
+					 *
+					 * tho, a token can affect how others are parsed
+					 * (e.g. stuff inside ticks (`) should be treated as regular text),
+					 * then it's very hard to optimize/re-use.
+					 *
+					 * so maybe bad idea to try to optimize.. maaaybe late into the future.
+					 */
+				} else {
+					const tmp: TreeBoundaryNode = [value as Boundary, ...childAST] // TODO OPTIMIZE // TODO TS `is`
+					ast.push(tmp)
+
+					pos += processedCount - 1 // -1 because next loop cycle will increment
+				}
 			} else if (kind === B.end) {
 				if (stack.length) {
 					const last: BeginBoundary = stack.pop()! // TODO TS
@@ -681,7 +718,28 @@ export const tests: TestRet = [
 			],
 			" ?",
 		]
-	]
+	],
+
+	/**
+	 * one-off used operators, e.g. `**`, if they don't find a matching one,
+	 * should stay as text.
+	 */
+	[
+		"(32 * 2560 * 1440 * 165) / (1024 ** 3)",
+		[
+			// TODO: implement text token optimizer/connector
+			"(32 * 2560 * 1440 * 165) / (1024 ",
+			"**",
+			" 3)",
+		],
+		[
+			// TODO: first, 2nd item in array should be of type `0` instead of `1`
+			// TODO: second, there should be only 1 item in the array, instead of 3 (text token connector)
+			[ 0, '(32 * 2560 * 1440 * 165) / (1024 ' ],
+			[ 1, '**' ],
+			[ 0, ' 3)' ]
+		],
+	],
 ]
 
 export function noop(..._xs: any[]): void {
