@@ -236,8 +236,13 @@ export function blockStringToASS(str: string): ASS {
 				}
 
 				if (!is(wanted, pos, str)) {
-					// EOF, incorrect syntax (no finish)
-					throw new Error(`reached EOF and couldn't find ${wanted}. str = ${str}`)
+					/**
+					 * didn't find ending => the token is regular text
+					 */
+
+					tokens.pop() // remove just-added token
+					tokens.push([B.text, token]) // add only the "token" as text
+					pos = origPos // reset pos back to be right after the "token".
 				} else {
 					tokens.push([B.text, str.slice(origPos, pos)])
 
@@ -739,6 +744,24 @@ export const tests: TestRet = [
 			[ 1, '**' ],
 			[ 0, ' 3)' ]
 		],
+	],
+
+	/**
+	 * one-off for code block
+	 */
+	[
+		"the shortcut was `cmd+a [[nope]]`. however, a special one was cmd+`. [[foo]] bar",
+		[
+			"the shortcut was ",
+			["`",
+				"cmd+a [[nope]]"],
+			". however, a special one was cmd+",
+			"`",
+			". ",
+			["[[",
+				"foo"],
+			" bar",
+		]
 	],
 ]
 
