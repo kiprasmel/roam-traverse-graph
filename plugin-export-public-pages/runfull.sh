@@ -238,10 +238,14 @@ pushd "$PUBLIC_NOTES_DIR"
 #	return 0
 #}
 add_meaningful_files() {
+	# GNU sed required for next cmd, so verify it is correct
+	sed --version | grep "GNU sed" &>/dev/null || {
+		>&2 printf "GNU sed required, but was not detected.\n"
+		exit 1
+	}
+
 	# modified, if modifications include changes
 	# outside of lines tagged with the "GIT_MEANINGLESS_CHANGE" string
-	#
-	# note: GNU sed required
 	git status --porcelain=1 | grep "^ M" | sed 's/^ M //g;' | git --no-pager diff -I "GIT_MEANINGLESS_CHANGE" --stat=1000 | head -n -1 | cut -d"|" -f1 | sed 's/^\s*//g; s/\s*$//g; s/^"//g; s/"$//g; s/\\"/"/g;' > /tmp/gsr-new && git add --pathspec-from-file=/tmp/gsr-new
 
 	# untracked files
