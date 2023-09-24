@@ -350,6 +350,9 @@ export function blockStringToASS(str: string): ASS {
 				log({ pos, str_pos: str[pos], token })
 			}
 		}
+		else {
+			assert.deepStrictEqual(pos, str.length, `token not found, and position !== EOF (end of string). string = "${str}".`)
+		}
 	}
 
 	log("ret tokens", tokens)
@@ -763,6 +766,23 @@ export const tests: TestRet = [
 			" bar",
 		]
 	],
+
+	[
+		"{{[[query]]: {and: [[codemods]] [[typescript]]}}}",
+		[
+			["{{", 
+				["[[",
+					"query"],
+				": {and: ",
+				["[[",
+					"codemods"],
+				" ",
+				["[[",
+					"typescript"]
+			],
+			"}",
+		],
+	]
 ]
 
 export function noop(..._xs: any[]): void {
