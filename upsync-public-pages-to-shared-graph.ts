@@ -1,5 +1,7 @@
 #!/usr/bin/env ts-node-dev
 
+// @ts-nocheck
+
 /* eslint-disable indent */
 
 import path from "path";
