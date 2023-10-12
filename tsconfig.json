@@ -11,7 +11,7 @@
 		"moduleResolution": "node",
 		"removeComments": false,
 		"strict": true,
-		"types": ["node"],
+		"types": ["node", "jest"],
 		"noImplicitAny": true,
 		"strictNullChecks": true,
 		"strictFunctionTypes": true,

@@ -3,6 +3,7 @@
 import { MutatingActionToExecute } from "../traverseBlockRecursively";
 import { PageWithMetadata } from "../types";
 import { withMetadata } from "../util/withMetadata";
+import { getLinkedReferences } from "./findLinkedReferencesOfABlock";
 
 export const removeUnknownProperties: MutatingActionToExecute<{}> = () => (block) =>
 	!block
@@ -24,7 +25,7 @@ export const markBlockPublic: MutatingActionToExecute<
 	{
 		publicTags: string[];
 		publicOnlyTags: string[];
-		privateTag: string;
+		privateTags: string[];
 
 		// parentBlock: Block | null;
 		rootParentPage: PageWithMetadata<{}, {}>; // TODO FIXME
@@ -33,17 +34,20 @@ export const markBlockPublic: MutatingActionToExecute<
 		isPublic: boolean; //
 		isPublicOnly: boolean;
 		hasPublicTag: boolean;
+		hasPublicOnlyTag: boolean;
 		hasPrivateTag: boolean;
 	},
 	{
-		hasCodeBlock: boolean;
+		// hasCodeBlock: boolean;
+		stack: any;
+		stackTree: any;
 	}
 > = ({
 	// parentBlock,
 	rootParentPage,
 	publicTags,
 	publicOnlyTags,
-	privateTag,
+	privateTags,
 }) =>
 	// parentBlock
 	(block, parentBlock) => {
@@ -55,13 +59,14 @@ export const markBlockPublic: MutatingActionToExecute<
 		 * because we might have a #private tag that would affect this)
 		 *
 		 */
-		const hasSubstringNotInsideCode = (tags: string[]): boolean =>
-			!block.metadata.hasCodeBlock && tags.some((tag) => block.string.includes(tag)); //
+		// const hasSubstringNotInsideCode = (tags: string[]): boolean =>
+		// 	!block.metadata.hasCodeBlock && tags.some((tag) => block.string.includes(tag)); //
 
-		const hasPublicTag: boolean = hasSubstringNotInsideCode(publicTags);
-		const hasPublicOnlyTag: boolean = hasSubstringNotInsideCode(publicOnlyTags);
+		const linkedRefs: string[] = getLinkedReferences(block.metadata.stackTree);
 
-		const hasPrivateTag: boolean = hasSubstringNotInsideCode([privateTag]);
+		const hasPublicTag: boolean = publicTags.some((tag) => linkedRefs.includes(tag));
+		const hasPublicOnlyTag: boolean = publicOnlyTags.some((tag) => linkedRefs.includes(tag));
+		const hasPrivateTag: boolean = privateTags.some((tag) => linkedRefs.includes(tag));
 
 		/**
 		 * ---
@@ -94,6 +99,8 @@ export const markBlockPublic: MutatingActionToExecute<
 			isPublicOnly,
 			isPublic,
 			hasPublicTag,
+			hasPublicOnlyTag,
 			hasPrivateTag,
+			linkedRefs, // TODO REMOVE
 		})(block);
 	};

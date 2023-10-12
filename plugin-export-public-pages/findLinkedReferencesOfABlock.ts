@@ -1,10 +1,11 @@
 /* eslint-disable indent */
+/* eslint-disable no-param-reassign */
 
+import { ReadonlyTuple } from "util/tuple";
 import { MutatingActionToExecute } from "../traverseBlockRecursively";
 import { LinkedMention, LinkedRef, PageWithMetadata } from "../types";
 import { withMetadata } from "../util/withMetadata";
-
-import { createLinkedReferences } from "../util";
+import { StackTreeItem, StackTree, StackTreeTextItem, Stack, StackTreeBoundaryItem } from "./parseASTFromBlockString";
 
 export const findIfPagesHavePublicLinkedReferencesAndLinkThemAsMentions: MutatingActionToExecute<
 	{
@@ -19,14 +20,16 @@ export const findIfPagesHavePublicLinkedReferencesAndLinkThemAsMentions: Mutatin
 		isPublic: boolean;
 		isPublicOnly: boolean;
 		depth: number;
+		stack: Stack;
+		stackTree: StackTreeItem[];
 	}
 > = ({
 	allPagesWithMetadata, //
 	rootParentPage,
 }) => (block) => {
-	const linkedReferences: LinkedRef[] = block.metadata.hasCodeBlock
-		? []
-		: findMatchingLinkedReferences(block.string, allPagesWithMetadata);
+	// console.log({allPagesWithMetadata: allPagesWithMetadata.map(meta => meta.originalTitle)});
+	const linkedReferences: LinkedRef[] = findMatchingLinkedReferences(block.metadata.stackTree, allPagesWithMetadata);
+	// console.log({stack: block.metadata.stack, linkedReferences});
 
 	const isBlockPublic = block.metadata.isPublic || block.metadata.isPublicOnly;
 
@@ -99,60 +102,39 @@ export const findIfPagesHavePublicLinkedReferencesAndLinkThemAsMentions: Mutatin
 	// };
 };
 
-/**
- * #parent
- * #pa
- * #rent
- *
- * #parent -> #parent, not #pa, not #rent, not combination of multiple
- *
- * ---
- *
- * racecar::
- * race::
- * car::
- *
- * racecar:: -> racecar::, not race::, not car::, not combination of multiple
- *
- * ---
- *
- * impl:
- * 1. sort all candidates by length (longest to shortest)
- * 2. go 1 by 1 from longest to shortest
- * 2.1 check if the block string includes the candidate
- * 2.2 (!) check if the candidate is not already included in the end result (as a substring)
- * 2.3 add candidate to end result
- *
- */
-
 function findMatchingLinkedReferences(
-	blockString: string,
+	blockStackTree: StackTree,
 	allPagesWithMetadata: PageWithMetadata<{}, {}>[] // TODO TS
 ): LinkedRef[] {
-	return (
-		allPagesWithMetadata
-			/** begin collection (could be done once for all blocks, except the filter part) */
-			.map((metaPage) =>
-				createLinkedReferences(metaPage.originalTitle)
-					.filter((candidate) => blockString.includes(candidate.fullStr))
-					.map((candidateLR) => ({ metaPage, candidateLR }))
-			)
-			.flat()
-			.sort((a, b) => b.candidateLR.origStr.length - a.candidateLR.origStr.length)
-			/** end collection */
-			.reduce(
-				(acc, candidate) => (
-					!(
-						acc.alreadyTakenLinkedRefs.includes(candidate.candidateLR.fullStr) ||
-						acc.alreadyTakenLinkedRefs.some((linkedRef) =>
-							/* partial match */ linkedRef.includes(candidate.candidateLR.fullStr)
-						)
-					) &&
-						(acc.uniqueLinkedReferences.push(candidate),
-						acc.alreadyTakenLinkedRefs.push(candidate.candidateLR.fullStr)),
-					acc
-				),
-				{ uniqueLinkedReferences: [] as LinkedRef[], alreadyTakenLinkedRefs: [] as string[] }
-			).uniqueLinkedReferences
-	);
+	const linkedRefs: string[] = getLinkedReferences(blockStackTree)
+
+	return allPagesWithMetadata
+		.map((meta): LinkedRef | [] => {
+			let current: string | undefined = linkedRefs.find(lr => lr === (meta.originalTitle))
+
+			return !current
+				? []
+				: {
+						metaPage: meta,
+						text: current,
+				}
+		})
+		.flat();
+}
+
+/**
+ * TODO unique? or should keep it this way to resemble how many times linked ref was used?
+ */
+export const getLinkedReferences = (
+	blockStackTree: StackTree //
+): string[] => {
+
+	return (blockStackTree
+		// .filter(item => item.type === "linked-reference" && item.children.length)
+		.map(item => item.type === "linked-reference"
+			? (item.children.filter(c => c.type === "text").map(c => [c, item] as const) as unknown as ReadonlyTuple<StackTreeItem, StackTreeBoundaryItem>[])
+				// .filter(([child, parent]) => parent.type === "linked-reference" && child.type === "text")
+				.map(([child]) => child as StackTreeTextItem).map(ref => ref.text)
+		: "children" in item ? getLinkedReferences(item.children) : [])
+		).flat()
 }

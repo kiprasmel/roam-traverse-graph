@@ -124,7 +124,9 @@ export type WithIsPublic = WithMetadata<{
 // TODO TS FIXME
 export type LinkedRef<M0 extends RO = RO, M1 extends RO = RO> = {
 	metaPage: PageWithMetadata<M0, M1>;
-	candidateLR: LinkedReference;
+	// candidateLR: LinkedReference;
+	// node: StackTreeBoundaryItem;
+	text: string;
 };
 
 export type FindLinkedReferencesProps<M0, M1> = {
@@ -137,6 +139,5 @@ export type WithLinkedReferences<M0, M1> = WithIsPublic &
 	}>;
 
 export type HideBlockStringsIfNotPublicProps = {
-	doNotHideTodoAndDone: boolean;
 	hiddenStringValue: string;
 };
