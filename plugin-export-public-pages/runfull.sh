@@ -215,7 +215,15 @@ ROAM_TRAVERSE_GRAPH_COMMIT_SHA="$(get_git_sha)"
 
 ###
 
-yarn ts-node-dev "$DIRNAME"/generate-static-html-pages.ts
+# yarn ts-node-dev "$DIRNAME"/generate-static-html-pages.ts
+# for debugging/profiling:
+EXE="$(realpath $DIRNAME/../dist/plugin-export-public-pages/generate-static-html-pages.js)"
+# node "$EXE"
+# node --prof "$EXE"
+0x "$EXE"
+# 0x --visualize-cpu-profile -- node --cpu-prof "$EXE"
+# 0x -- node --cpu-prof "$EXE"
+# node --inspect-brk "$EXE"
 
 pushd "$PUBLIC_NOTES_DIR"
 

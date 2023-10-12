@@ -9,12 +9,21 @@ import { MutatingActionToExecute } from "../traverseBlockRecursively";
 import { LinkedRef, Block, PageWithMetadata } from "../types";
 
 import {
-	Stack, //
-	StackTree,
-	StackTreeBoundaryItem,
-	StackTreeItem,
-	StackTreeTextItem,
-} from "./parseASTFromBlockString";
+	ASS, //
+	AST,
+	beginBoundaries,
+	BeginBoundary,
+	blockReferenceBeginBoundaries,
+	codeblockBeginBoundaries,
+	commandBeginBoundaries,
+	endBoundaries,
+	extras,
+	formattingBeginBoundaries,
+	LLBeginBoundaries,
+	TreeBoundaryNode,
+	TreeNode,
+	TreeTextNode,
+} from "./blockStringToAST";
 
 /**
  * TODO move into `generate-static-html-pages`,
@@ -24,9 +33,10 @@ import {
 export const maxWidthOfLine: number = Number(process.env.NOTES_MAX_WIDTH_OF_LINE) || 65;
 
 // const isNotString = <T>(item: T | string): item is T => typeof item !== "string";
-const assertNever = (_x: never): never => {
-	throw new Error("never");
-};
+// TODO
+// const assertNever = (_x: never): never => {
+// 	throw new Error("never");
+// };
 
 export const hideBlockStringsIfNotPublic: MutatingActionToExecute<
 	{
@@ -37,10 +47,11 @@ export const hideBlockStringsIfNotPublic: MutatingActionToExecute<
 	{
 		isPublic: boolean;
 		isPublicOnly: boolean;
+		originalString: string;
 		hasCodeBlock: boolean;
 		linkedReferences: LinkedRef[];
-		stack: Stack;
-		stackTree: StackTree;
+		ASS: ASS;
+		AST: AST;
 	}
 > = ({
 	hiddenStringValue, //
@@ -56,51 +67,59 @@ export const hideBlockStringsIfNotPublic: MutatingActionToExecute<
 
 	block.string = "";
 
-	const nonDeterministicItemEndArrayBug = "<BUG item.end should NEVER be an array if it does consume it's ending, because then choosing the ending is non-deterministic.>" as const;
-
 	/**
 	 * TODO convertStackTreeItemsIntoStrings
 	 */
 	function walkStackTree(
-		initialStackTree: StackTree,
+		initialStackTree: AST,
 		{
-			onNonText = ({ item, walk }: { walk: typeof _walk; item: StackTreeBoundaryItem }): string => (
-				void 0,
-				// if (item.type === "command") {
-				(item.type === "formatting" || item.type === "code-block"
-					? ""
-					: `<span style="color: hsl(207,18%,71%);">${item.begin || ""}</span>`) +
-					// (item.type === "code-block" ? item.children[0].text : walk(item.children, item)) +
-					walk(item.children, item) +
-					("doesNotConsumeEndingAndThusAlsoAllowsUnfinished" in item &&
-					item.doesNotConsumeEndingAndThusAlsoAllowsUnfinished
+			onNonText = ({ item, walk }: { walk: typeof _walk; item: TreeBoundaryNode }): string => {
+				const begin: BeginBoundary = item[0] as BeginBoundary; // TODO TS NARROW in original AST definition
+				const end = beginBoundaries[begin];
+
+				// TODO REFACTOR - take from extras as well?
+				const isFormattingOrCodeBlock: boolean =
+					begin in formattingBeginBoundaries || begin in codeblockBeginBoundaries;
+
+				const doesNotHaveEnd =
+					// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+					// @ts-ignore
+					begin in extras && !!((extras?.[begin as any] as any)?.["doesNotHaveEnd"] as boolean); // TODO TS
+				const doesNotHaveBegin =
+					// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+					// @ts-ignore
+					begin in extras && !!((extras?.[begin as any] as any)?.["doesNotHaveBegin"] as boolean); // TODO TS
+
+				const beginStr =
+					doesNotHaveBegin || isFormattingOrCodeBlock
 						? ""
-						: Array.isArray(item.end)
-						? nonDeterministicItemEndArrayBug
-						: item.type === "formatting" || item.type === "code-block"
-						? ""
-						: `<span style="color: grey;">${item.end}</span>`)
-				// }
-			),
-			onIndependentText = ({ item }: { item: StackTreeTextItem }): string =>
+						: `<span style="color: hsl(207,18%,71%);">${begin || ""}</span>`;
+				const midStr = walk([item[1]], item); // TODO VERIFY
+				const endStr =
+					doesNotHaveEnd || isFormattingOrCodeBlock ? "" : `<span style="color: grey;">${end}</span>`;
+
+				return beginStr + midStr + endStr;
+			},
+			onIndependentText = ({ item }: { item: TreeTextNode }): string =>
 				// if (block.metadata.isPublic || block.metadata.isPublicOnly) {
 				// escapeHtml(item.text),
-				item.text,
+				item,
 			// } else {
 			// }
 			onTextInsideNonText = ({
 				item,
 				parent,
 			}: {
-				item: StackTreeTextItem;
-				parent: StackTreeBoundaryItem;
+				item: TreeTextNode; //
+				parent: TreeBoundaryNode;
 			}): string => {
-				const escapedText = escapeHtml(item.text);
+				const escapedText = escapeHtml(item);
+				const kind = parent[0];
 
-				if (parent.type === "code-block") {
-					if (parent.kind === "inline") {
+				if (kind in codeblockBeginBoundaries) {
+					if (kind === "`") {
 						return `<code class="inline">${escapedText}</code>`;
-					} else if (parent.kind === "whole") {
+					} else if (kind === "```") {
 						const lines = escapedText.split("\n");
 
 						const lang: string = lines[0];
@@ -112,7 +131,8 @@ export const hideBlockStringsIfNotPublic: MutatingActionToExecute<
 						preSuffix += ` data-lang="${lang}"`;
 						preSuffix += ` data-line-count="${lines.length}"`;
 
-						const remainingWidthOfLine = maxWidthOfLine - lang.length - 6;
+						const remainingWidthOfLine =
+							maxWidthOfLine - lang.length - kind.length - endBoundaries[kind].length;
 						const firstLineClashesWithLang = lines[0].length > remainingWidthOfLine;
 						if (firstLineClashesWithLang) {
 							preSuffix += ` data-first-line-clashes`;
@@ -120,42 +140,52 @@ export const hideBlockStringsIfNotPublic: MutatingActionToExecute<
 
 						return `<pre${preSuffix}><div class="lang">${lang}</div><code>${code}</code></pre>`;
 					} else {
-						return assertNever(parent);
+						throw new Error("TODO TS -- should be `assertNever`");
+						// return assertNever(); // TODO TS
 					}
-				} else if (parent.type === "command") {
+				} else if (kind in commandBeginBoundaries) {
 					return escapedText;
 					// return item.text;
-				} else if (parent.type === "linked-reference") {
+				} else if (kind in LLBeginBoundaries) {
 					/**
 					 * TODO proper href (fix title, also hiding, etc.)
 					 */
-					return `<a href="/${escapedText}.html">${escapedText}</a>`;
+					const escapedPotentiallyHiddenText: string = escapeHtml(
+						extractMetaPagePotentiallyHiddenTitleFromLinkedRef(block, item)
+					);
+
+					return `<a href="/${escapedPotentiallyHiddenText}.html">${escapedPotentiallyHiddenText}</a>`;
 
 					// return item.text; // TODO FIXME
 					// return extractMetaPagePotentiallyHiddenTitleFromLinkedRef(block, item);
-				} else if (parent.type === "formatting") {
-					if (parent.kind === "****") {
+				} else if (kind in blockReferenceBeginBoundaries) {
+					// TODO ACTUALLY INLINE CONTENTS OF BLOCK (or not. think about better UX)
+					return `((${escapedText}))`;
+				} else if (kind in formattingBeginBoundaries) {
+					if (kind === "**") {
 						return `<b>${escapedText}</b>`;
-					} else if (parent.kind === "____") {
+					} else if (kind === "__") {
 						return `<i>${escapedText}</i>`;
-					} else if (parent.kind === "~~~~") {
+					} else if (kind === "~~") {
 						return `<s>${escapedText}</s>`;
-					} else if (parent.kind === "^^^^") {
+					} else if (kind === "^^") {
 						return `<mark>${escapedText}</mark>`;
 					} else {
-						return assertNever(parent);
+						throw new Error("TODO TS -- should be `assertNever`");
+						// return assertNever(kind); // TODO TS
 					}
 				} else {
-					return assertNever(parent);
+					throw new Error("TODO TS -- should be `assertNever`");
+					// return assertNever(parent); // TODO TS
 				}
 			},
 		} = {}
 	) {
-		function _walk(stackTree: StackTree, parent: null | StackTreeBoundaryItem) {
+		function _walk(stackTree: AST, parent: null | TreeBoundaryNode) {
 			let s: string = "";
 
-			stackTree.forEach((item: StackTreeItem) => {
-				if (item.type !== "text") {
+			stackTree.forEach((item: TreeNode) => {
+				if (typeof item !== "string") {
 					s += onNonText({ walk: _walk, item });
 				} else {
 					if (parent === null) {
@@ -169,13 +199,15 @@ export const hideBlockStringsIfNotPublic: MutatingActionToExecute<
 			return s;
 		}
 
+		// console.log({ initialStackTree });
+
 		return _walk(initialStackTree, null);
 	}
 
 	// TODO FIXME UNDO
 	if (block.metadata.isPublic || block.metadata.isPublicOnly || rootParentPage.isFullyPublic) {
 		// if (Math.random() > -1) {
-		block.string = walkStackTree(block.metadata.stackTree).trim();
+		block.string = walkStackTree(block.metadata.AST).trim();
 		return block;
 	} else {
 		const hiddenLinkedRefPrefix: string = "(" + hiddenStringValue + ")" + " ";
@@ -184,28 +216,35 @@ export const hideBlockStringsIfNotPublic: MutatingActionToExecute<
 			hiddenLinkedRefPrefix +
 			block.uid +
 			" " +
-			walkStackTree(block.metadata.stackTree, {
+			walkStackTree(block.metadata.AST, {
 				/**
 				 * TODO figure out private logic
 				 */
-				onIndependentText: ({ item }) => (rootParentPage.isFullyPublic ? item.text : ""),
-				onNonText: ({ item, walk }) =>
-					item.type === "linked-reference" || item.type === "command"
-						? (item.begin || "") + //
-						  walk(item.children, item) +
-						  ("doesNotConsumeEndingAndThusAlsoAllowsUnfinished" in item &&
-						  item.doesNotConsumeEndingAndThusAlsoAllowsUnfinished
-								? ""
-								: Array.isArray(item.end)
-								? nonDeterministicItemEndArrayBug
-								: item.end)
-						: "",
+				onIndependentText: ({ item }) => (rootParentPage.isFullyPublic ? item : ""),
+
+				onNonText: ({ item, walk }) => {
+					const begin: BeginBoundary = item[0] as BeginBoundary; // TODO TS NARROW in original AST definition
+					const end = beginBoundaries[begin];
+
+					const isFormattingOrCodeBlock: boolean =
+						begin in formattingBeginBoundaries || begin in codeblockBeginBoundaries;
+
+					const beginStr = isFormattingOrCodeBlock ? "" : begin || "";
+					const midStr = walk([item[1]], item); // TODO VERIFY
+					const endStr = isFormattingOrCodeBlock ? "" : `<span style="color: grey;">${end}</span>`;
+
+					return beginStr + midStr + endStr;
+				},
+
 				onTextInsideNonText: ({ item, parent }) => {
-					if (parent.type === "code-block") {
+					const kind = parent[0];
+					// console.log({ parent, kind, item, block });
+
+					if (kind in codeblockBeginBoundaries) {
 						return "";
-					} else if (parent.type === "command") {
+					} else if (kind in commandBeginBoundaries) {
 						return "";
-					} else if (parent.type === "linked-reference") {
+					} else if (kind in LLBeginBoundaries) {
 						// const unwrap = (sr: StackTree): any =>
 						// 	sr.map((tree) => (tree.type === "text" ? tree.text : unwrap(tree.children)));
 
@@ -219,10 +258,13 @@ export const hideBlockStringsIfNotPublic: MutatingActionToExecute<
 						// });
 
 						return extractMetaPagePotentiallyHiddenTitleFromLinkedRef(block, item);
-					} else if (parent.type === "formatting") {
+					} else if (kind in blockReferenceBeginBoundaries) {
+						return ""; // TODO
+					} else if (kind in formattingBeginBoundaries) {
 						return ""; // TODO
 					} else {
-						return assertNever(parent);
+						throw new Error("TODO TS -- should be `assertNever`");
+						// return assertNever(parent); // TODO TS
 					}
 				},
 			}).trimStart()
@@ -239,43 +281,82 @@ function extractMetaPagePotentiallyHiddenTitleFromLinkedRef(
 	block: Block<
 		{
 			linkedReferences: LinkedRef[];
+			originalString: string;
 		},
 		{}
 	>,
-	item: StackTreeTextItem
+	item: TreeTextNode
 ): string {
-	// const linkedReference = block.metadata.linkedReferences.find((lr) => lr.textNode === item);
+	if (!item) {
+		return "";
+	}
 
-	const linkedReference = block.metadata.linkedReferences.find(
-		(lr) =>
-			lr.metaPage.originalTitle === item.text ||
-			/**
-			 * TODO FIXME temp work-around until i remove the "#foo's" in my graph
-			 */
-			(item.text.includes("#") &&
-				item.text.includes("'") &&
-				item.text.split("'")[0] === lr.metaPage.originalTitle) //
-	);
+	const linkedReference = block.metadata.linkedReferences.find((lr) => lr.metaPage.originalTitle === item);
 
-	if (!linkedReference) {
-		fs.appendFileSync("bad.off", item.text + "\n");
-
-		// throw new Error(
-		// 	"linked reference should've been there but wasn't." + //
-		// 		"\n" +
-		// 		"item.text = " +
-		// 		item.text +
-		// 		"\n" +
-		// 		"block.metadata.linkedReferences = " +item
-		// 		block.metadata.linkedReferences.map((lr) => lr.textNode.text)
-		// );
-		// TODO FIXME HACK
-		return "__WHAT__";
+	if (linkedReference) {
+		/**
+		 * TODO PRIVACY - ensure that the page.title
+		 * already had a chance to be hidden.
+		 */
+		return linkedReference.metaPage.page.title;
 	}
 
 	/**
-	 * TODO PRIVACY - ensure that the page.title
-	 * already had a chance to be hidden.
+	 * nested linked references etc.
+	 * TODO proper implementation ("decorativeAST" or smthn?)
 	 */
-	return linkedReference.metaPage.page.title;
+	const linkedReferenceFallback = block.metadata.linkedReferences.filter((lr) =>
+		lr.metaPage.originalTitle.startsWith(item)
+	);
+
+	if (linkedReferenceFallback.length) {
+		fs.appendFileSync("semi-bad.off", item + "\n");
+
+		if (linkedReferenceFallback.length === 1) {
+			return linkedReferenceFallback[0].metaPage.page.title;
+		} else if (linkedReferenceFallback.length > 1) {
+			const longestLR = linkedReferenceFallback
+				.map((l) => l)
+				.reduce(
+					(longest, curr) =>
+						curr.metaPage.originalTitle.length >= longest.metaPage.originalTitle.length ? curr : longest,
+					{
+						metaPage: {
+							originalTitle: "",
+							page: {
+								title: "",
+							},
+						},
+					}
+				);
+
+			return longestLR.metaPage.page.title;
+		} else {
+			throw new Error("never");
+		}
+	}
+
+	fs.appendFileSync("bad.off", item + "\n");
+
+	throw new Error(
+		"linked reference should've been there but wasn't." + //
+			"\n" +
+			"block.metadata.originalString (block.string was reset previously) = " +
+			block.metadata.originalString +
+			"\n" +
+			"item.text = " +
+			item +
+			"\n" +
+			"block.refs = " +
+			JSON.stringify(block.refs, null, 2) +
+			"\n" +
+			"block.metadata.linkedReferences (" +
+			block.metadata.linkedReferences.length +
+			") = " +
+			block.metadata.linkedReferences.map((lr) => lr.text) +
+			"\n" +
+			"AST: " +
+			JSON.stringify((block.metadata as any).AST, null, 2) // TODO TS
+	);
+	// return "__WHAT__";
 }

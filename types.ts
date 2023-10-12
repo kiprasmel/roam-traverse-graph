@@ -20,6 +20,7 @@ export type PageWithMetadata<M0 extends RO, M1 extends RO> = {
 	isTitleHidden?: boolean;
 	originalTitle: string;
 	hiddenTitle: string;
+	titleHasNestedLinkedRefs: boolean;
 
 	isDailyNotesPage?: boolean;
 
